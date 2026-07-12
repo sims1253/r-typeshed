@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # TODO: Switch to the linux x86_64 release binary after a ry release
+      # containing `typeshed validate` is published.
+      - name: Check out ry source
+        uses: actions/checkout@v4
+        with:
+          repository: sims1253/ry
+          # Coordinated Plan 08 changes are intentionally uncommitted. Pin
+          # this to their immutable SHA as soon as they land on dev.
+          ref: dev
+          path: ry
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ry -> target
+      - name: Build ry
+        run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
+      - name: Validate stubs
+        run: ry/target/release/ry typeshed validate stubs/
