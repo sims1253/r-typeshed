@@ -18,9 +18,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          # Coordinated Plan 08 changes are intentionally uncommitted. Pin
-          # this to their immutable SHA as soon as they land on dev.
-          ref: dev
+          # Pinned to the ry commit whose loader understands this repo's
+          # schema (injects, scope_effect). Bump when the schema grows.
+          ref: f1a7f2c4d92365658607b5dc4a043c7cc8acabf7
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2

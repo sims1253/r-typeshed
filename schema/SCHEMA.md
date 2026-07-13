@@ -6,7 +6,7 @@ The required header fields are `schema_version`, `package`, and `version`. `func
 
 ## Functions
 
-Function names map to signatures. A signature requires `params`, an ordered array of parameters, and `return`. A parameter may be a bare name string or an object with a required `name` and optional `type`, `required`, and `default` fields. Bare strings remain valid and mean an untyped, non-required parameter. `type` uses the same R type object as return values; absent types are not checked. `required` defaults to false and means calls must bind the parameter. `default` is informational and records whether the formal has a default. The variadic `...` parameter may be a string or `{"name": "..."}`, but cannot be typed or required. Optional signature fields are `aliases`, `eval`, `schema_effect`, `higher_order`, and `source_relative_path_arg`, a zero-based literal argument containing a path relative to the current source file.
+Function names map to signatures. A signature requires `params`, an ordered array of parameters, and `return`. A parameter may be a bare name string or an object with a required `name` and optional `type`, `required`, and `default` fields. Bare strings remain valid and mean an untyped, non-required parameter. `type` uses the same R type object as return values; absent types are not checked. `required` defaults to false and means calls must bind the parameter. `default` is informational and records whether the formal has a default. The variadic `...` parameter may be a string or `{"name": "..."}`, but cannot be typed or required. Optional signature fields are `aliases`, `eval`, `schema_effect`, `scope_effect`, `higher_order`, and `source_relative_path_arg`, a zero-based literal argument containing a path relative to the current source file.
 
 Legacy all-string `params` arrays remain inference-only because older stubs may contain abbreviated formal lists. To opt a signature into unknown-argument checking, add `required`, `default`, or `type` metadata to at least one parameter and list the complete public formal sequence, including `...` and formals after it. The checker then uses the list for exact, partial, and positional argument matching.
 
@@ -20,7 +20,18 @@ The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted
 
 `schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. The `join` and `pivot` values dispatch to the checker's deliberately bespoke join-union and pivot implementations while keeping the triggering function names in stub data.
 
+`scope_effect` describes changes to name resolution caused by a call and is independent of `schema_effect`. Its supported value, `unknown_bindings`, means the call can introduce bindings whose names cannot be determined statically; later unresolved names in the same scope are therefore treated as uncertain.
+
 `higher_order` declares callback invocation and result semantics. `callback_param` and zero-based `callback_position` locate the callback. `callback_args` may contain `element_of_arg0`, `element_of_arg1`, `unknown`, or `accumulator_and_element`; `elements_after_callback` represents variadic `Map`-style calls. Result kinds are `list_of_callback_return`, `vector_of`, `same_as_arg0`, `callback_return`, `first_arg`, `simplify`, `fun_value_template`, and `callback_identity`. A result may additionally name its vector `mode`, a `length_arg`, a returned `source_arg`, the `template_position`, whether its length becomes unknown, and whether a list result retains callback element schema. These optional properties preserve package-specific call shapes without encoding function names in the checker.
+
+`injects` declares bindings visible while selected arguments are inferred. It is an array of objects with a required `into` array of parameter names. `strings_from` names source parameters whose string literals (including literals inside `c(...)`) become opaque bindings, while `names` lists fixed opaque bindings. Named call arguments are matched first and unnamed arguments fall back to the declared parameter order. Fixed names apply to function literals nested anywhere inside an `into` argument. For example:
+
+```json
+"injects": [
+  {"into": ["code"], "strings_from": ["new"]},
+  {"into": ["public", "private", "active"], "names": ["self", "private", "super"]}
+]
+```
 
 ## Datasets and S3 methods
 
@@ -28,8 +39,14 @@ The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted
 
 ## Global checker semantics
 
-The optional top-level `globals` object contains package data used while resolving ordinary R names and S3 methods. `ambient` lists names available without a local binding, `s3_generics` lists generic prefixes recognized when splitting `<generic>.<class>` method names, and `s3_split_denylist` lists dotted names that must never be split as S3 methods. Each field is an optional array of strings and defaults to empty.
+The optional top-level `globals` object contains package data used while resolving ordinary R names and S3 methods. `ambient` lists non-function names available without a local binding, `ambient_functions` lists untyped functions available without a local binding, `s3_generics` lists generic prefixes recognized when splitting `<generic>.<class>` method names, and `s3_split_denylist` lists dotted names that must never be split as S3 methods. Each field is an optional array of strings and defaults to empty.
 
-These values normally belong to the `base` stub. A user-supplied `base` stub replaces the embedded base stub wholesale, so it also controls all three global tables.
+These values normally belong to the `base` stub. A user-supplied `base` stub replaces the embedded base stub wholesale, so it also controls all four global tables.
+
+Run `Rscript --vanilla scripts/gen_standard_globals.R` to refresh the base
+stub's ambient globals and mechanically inventoried base/recommended datasets.
+Generated datasets are unioned with the existing map, and existing curated
+entries are never replaced. Pass `--check` to verify that both inventories are
+current without writing the file.
 
 `schema_version` changes only for incompatible format changes. Package `version` describes the stub data version.
