@@ -34,7 +34,14 @@ for (path in list.files(stub_root, pattern = "[.]json$", recursive = TRUE, full.
     cat(sprintf("SKIP: package %s is not installed\n", pkg))
   } else {
     ns <- asNamespace(pkg)
-    for (name in names) if (!exists(name, ns, inherits = FALSE)) failures <- c(failures, paste0(pkg, "::", name))
+    # Re-exports (dplyr::tibble, purrr::set_names) live in the package's
+    # export list but not in its namespace environment itself.
+    exported <- getNamespaceExports(pkg)
+    for (name in names) {
+      if (!exists(name, ns, inherits = FALSE) && !(name %in% exported)) {
+        failures <- c(failures, paste0(pkg, "::", name))
+      }
+    }
   }
 }
 if (length(failures)) {
