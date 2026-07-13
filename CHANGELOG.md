@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- CI runs the generators on every push: `gen_standard_globals.R --check`
+  staleness gate and the namespace audit (`audit_typeshed.R`) via
+  r-lib/actions setup-r.
+
 ## [0.1.0] - 2026-07-13
 
 - Initial import of base R and ten package stubs from ry.

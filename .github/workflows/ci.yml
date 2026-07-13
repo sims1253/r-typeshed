@@ -30,3 +30,26 @@ jobs:
         run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
       - name: Validate stubs
         run: ry/target/release/ry typeshed validate stubs/
+
+  generators:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - name: Install R packages (generator JSON I/O + audited namespaces)
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::jsonlite
+            any::purrr
+            any::dplyr
+            any::mirai
+            any::carrier
+      - name: Standard globals are current
+        run: Rscript scripts/gen_standard_globals.R --check
+      - name: Audit stubs against installed namespaces
+        # Skips stubs whose package is not installed; the install list
+        # above pins the coverage we always get in CI.
+        run: Rscript scripts/audit_typeshed.R
