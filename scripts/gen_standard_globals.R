@@ -80,6 +80,60 @@ generated_globals <- function(document) {
   )
 }
 
+# Registered S3 methods need not be exported (for example stats registers
+# print.anova). They still participate in UseMethod dispatch, so emit a
+# conservative signature for every registration from the base/recommended
+# namespaces. Curated entries already in the stub win, preserving their more
+# precise return types.
+generated_s3_methods <- function(document) {
+  method_signature <- function(generic, class, method, ns) {
+    value <- tryCatch(get(method, envir = ns, inherits = FALSE), error = function(e) NULL)
+    if (is.null(value)) {
+      value <- tryCatch(getS3method(generic, class, optional = TRUE, envir = ns), error = function(e) NULL)
+    }
+    params <- if (is.function(value)) names(formals(value)) else c("x", "...")
+    if (is.null(params)) params <- character()
+    list(
+      generic = generic,
+      class = class,
+      params = as.list(unname(params)),
+      "return" = list(mode = "opaque", length = "unknown", na = TRUE)
+    )
+  }
+
+  entries <- list()
+  for (package in standard_packages) {
+    ns <- asNamespace(package)
+    registered <- tryCatch(getNamespaceInfo(package, "S3methods"), error = function(e) NULL)
+    # `base` has no namespace registry available through getNamespaceInfo.
+    # Query each curated base generic instead; .S3methods exposes methods
+    # registered but deliberately not exported, such as summary.connection.
+    if ((is.null(registered) || !is.matrix(registered) || ncol(registered) < 3L) && package == "base") {
+      generic_names <- unlist(document$globals$s3_generics %||% list(), use.names = FALSE)
+      base_entries <- unlist(lapply(generic_names, function(generic) {
+        methods <- tryCatch(utils:::.S3methods(generic), error = function(e) character())
+        methods <- sub("[*]$", "", methods)
+        methods[startsWith(methods, paste0(generic, "."))]
+      }), use.names = FALSE)
+      generic <- vapply(base_entries, function(method) {
+        matches <- generic_names[startsWith(method, paste0(generic_names, "."))]
+        matches[[which.max(nchar(matches))]]
+      }, character(1))
+      registered <- cbind(generic, substring(base_entries, nchar(generic) + 2L), base_entries)
+    }
+    if (is.null(registered) || !is.matrix(registered) || ncol(registered) < 3L) next
+    for (i in seq_len(nrow(registered))) {
+      generic <- registered[i, 1L]
+      class <- registered[i, 2L]
+      method <- registered[i, 3L]
+      if (!nzchar(generic) || !nzchar(class) || !nzchar(method)) next
+      key <- paste(generic, class, sep = "\r")
+      entries[[key]] <- method_signature(generic, class, method, ns)
+    }
+  }
+  entries[sort(names(entries), method = "radix")]
+}
+
 `%||%` <- function(left, right) if (is.null(left)) right else left
 
 main <- function(argv) {
@@ -97,11 +151,16 @@ main <- function(argv) {
   generated <- generated_datasets()
   existing_datasets <- document$datasets %||% list()
   document$datasets <- c(existing_datasets, generated[setdiff(names(generated), names(existing_datasets))])
+  existing_s3_methods <- unname(document$s3_methods %||% list())
+  existing_s3_keys <- vapply(existing_s3_methods, function(entry) paste(entry$generic, entry$class, sep = "\r"), character(1))
+  generated_methods <- generated_s3_methods(document)
+  document$s3_methods <- c(existing_s3_methods, unname(generated_methods[setdiff(names(generated_methods), existing_s3_keys)]))
   expected <- generated_globals(document)
 
   stale <- !identical(document$globals$ambient %||% list(), as.list(expected$ambient)) ||
     !identical(document$globals$ambient_functions %||% list(), as.list(expected$ambient_functions)) ||
-    !identical(existing_datasets, document$datasets)
+    !identical(existing_datasets, document$datasets) ||
+    !identical(existing_s3_methods, document$s3_methods)
   if (check) {
     if (stale) {
       message(sprintf("%s: standard globals or datasets are stale", stub))
