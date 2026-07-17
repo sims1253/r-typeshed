@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.0] - 2026-07-17
+## [0.3.0] - 2026-07-17
 
 Driven by the ry 0.5.0 top-500 CRAN audit and the subsequent
 generalization pass: stub-data fixes for the largest measured
@@ -61,9 +61,18 @@ package stubs that let ry drop its remaining hardcoded package knowledge.
 - `audit_typeshed.R` — dependency-free formals comparison against the
   local R installation (`--base-formals-only` mode); re-running it now
   reports zero required/default mismatches.
+
+## [0.2.0] - 2026-07-16
+
 - CI runs the generators on every push: `gen_standard_globals.R --check`
   staleness gate and the namespace audit (`audit_typeshed.R`) via
   r-lib/actions setup-r.
+- Audit understands re-exports; dropped the fabricated `purrr::vec_sort`
+  and dbplyr test-helper stubs.
+- Harvest registered-but-unexported S3 methods; declare `alist()`
+  quoting.
+- README: fixed the ry link; documented the NSE/base generators in the
+  contribution flow.
 
 ## [0.1.0] - 2026-07-13
 
