@@ -19,8 +19,9 @@ jobs:
         with:
           repository: sims1253/ry
           # Pinned to the ry commit whose loader understands this repo's
-          # schema (injects, scope_effect). Bump when the schema grows.
-          ref: f1a7f2c4d92365658607b5dc4a043c7cc8acabf7
+          # schema (no_return, captures_promise, data_mask_source). Bump when
+          # the schema grows.
+          ref: 31829c25f1e04895e91e2d2f01720536db41e5c3
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
