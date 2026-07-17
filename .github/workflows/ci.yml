@@ -18,10 +18,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          # Tracks the ry branch whose loader understands this repo's
-          # schema (no_return, captures_promise, data_mask_source). Bump when
-          # the schema grows. TODO: re-pin to a main-branch commit once sims1253/ry#20 merges (bare-SHA cross-repo fetches are refused by upload-pack).
-          ref: audit-0.6.0-precision
+          # Pinned to the ry main commit (ry#20 merge) whose loader understands
+          # this repo's schema (no_return, captures_promise, data_mask_source).
+          # Bump when the schema grows.
+          ref: 426e78bae3e68c9cfac00ccb51b385a64fb469ef
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
