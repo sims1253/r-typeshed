@@ -1,7 +1,66 @@
 # Changelog
 
-## Unreleased
+## [0.2.0] - 2026-07-17
 
+Driven by the ry 0.5.0 top-500 CRAN audit and the subsequent
+generalization pass: stub-data fixes for the largest measured
+false-positive families, three new metadata capabilities, and two new
+package stubs that let ry drop its remaining hardcoded package knowledge.
+
+### Schema additions (documented in SCHEMA.md)
+
+- `no_return: true` function metadata: the call never returns
+  (`base::stop`, `q`, `quit`; `rlang::abort`; `cli::cli_abort`). Lets the
+  checker narrow guard-clause continuations from data instead of a
+  hardcoded name list.
+- `captures_promise` eval mode: the parameter's argument is captured
+  unevaluated (rlang `enquo`/`enexpr`/`ensym`, plural forms, `quos`).
+  Drives the checker's user-NSE quoting detection and forwarding.
+- `data_mask_source: "<param>"` function metadata: named arguments with a
+  `data_mask` eval mode evaluate inside the named parameter rather than
+  the first argument. Used by formula interfaces where `data` is not
+  argument 1.
+
+### New stubs
+
+- rlang (438 exports) and cli (213 exports), generated mechanically, with
+  hand-curated `no_return` and `captures_promise` metadata.
+
+### Fixed stub data (audit-verified false positives)
+
+- `base::readLines` — `con` has a default (`stdin()`); was wrongly
+  required (RY091 on every `readLines()`).
+- `base::tapply` — gained a `higher_order` simplify spec and an opaque
+  fallback return; was typed plain `list`, flagging valid array
+  arithmetic (RY040).
+- `base::mapply` — result kind is now `simplify` (`SIMPLIFY = TRUE`
+  default); was `list_of_callback_return`.
+- `base::append` — returns the concatenation of its arguments; was
+  `arg0`, so `append(NULL, x)` stayed length 0 (RY001/RY002 cascades).
+- `base::data`, `load`, `source`, `sys.source` — declared
+  `scope_effect: unknown_bindings` (they inject statically unknowable
+  bindings).
+- stats/base formula interfaces (`lm`, `glm`, `aov`, …) and survival
+  (`survfit`, `coxph`, `survreg`, `survdiff`) — `weights`/`subset`/
+  `offset`/`id`/`cluster`/`istate` evaluate in the `data` mask via
+  `data_mask_source`.
+- shiny — NSE metadata for `reactive`, `observe`, `observeEvent`,
+  `eventReactive`, `isolate`, the `render*` family, and `testServer`
+  (quoted expressions), plus return types.
+
+### Generators and audit
+
+- New `scripts/param_optionality.R` (shared by `gen_typeshed.R` and
+  `audit_typeshed.R`): AST-based detection of `missing(param)` /
+  `maybe_missing(param)` / `nargs()` handling, so parameters that are
+  optional-by-convention are never emitted as `required` (the
+  `rlang::env_get(default=)` false-positive class). The audit reports
+  eight base-R candidates of the same shape (`.libPaths::new`,
+  `glm::data`, `read.table::file`, …) — left unchanged pending
+  corpus corroboration.
+- `audit_typeshed.R` — dependency-free formals comparison against the
+  local R installation (`--base-formals-only` mode); re-running it now
+  reports zero required/default mismatches.
 - CI runs the generators on every push: `gen_standard_globals.R --check`
   staleness gate and the namespace audit (`audit_typeshed.R`) via
   r-lib/actions setup-r.
