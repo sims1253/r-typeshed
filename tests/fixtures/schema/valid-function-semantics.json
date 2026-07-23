@@ -19,6 +19,14 @@
         "provenance": {"kind": "standalone_types_check", "fingerprint_params": ["arg", "call"]}
       }
     },
+    "intersect_like": {
+      "params": ["x", "y"],
+      "return": {"mode": "opaque", "length": "unknown", "na": true},
+      "return_length": {
+        "kind": "zero_if_any_param_zero",
+        "params": ["x", "y"]
+      }
+    },
     "recycle": {
       "params": ["...", "collapse", "recycle0"],
       "return": {"mode": "character", "length": "longest_arg", "na": true},

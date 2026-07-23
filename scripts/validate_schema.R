@@ -62,17 +62,20 @@ validate_assertion <- function(value, params, path) {
 validate_return_length <- function(value, params, path) {
   if (!is.list(value)) fail(path, "must be an object")
   kind <- value$kind
-  if (identical(kind, "shortest_of")) {
+  if (identical(kind, "zero_if_any_param_zero")) {
     assert_names(value, c("kind", "params"), path)
-    shortest_params <- as_strings(value$params)
-    if (!is.character(shortest_params) || length(shortest_params) < 2L) fail(paste0(path, ".params"), "must name at least two parameters")
-    for (param in shortest_params) assert_param(param, params, paste0(path, ".params"))
+    zero_params <- as_strings(value$params)
+    if (!is.character(zero_params) || length(zero_params) < 2L) fail(paste0(path, ".params"), "must name at least two parameters")
+    if (anyDuplicated(zero_params)) fail(paste0(path, ".params"), "must not repeat parameters")
+    for (param in zero_params) assert_param(param, params, paste0(path, ".params"))
   } else if (identical(kind, "recycled_values")) {
     assert_names(value, c("kind", "value_params", "control_params", "all_values_zero", "collapse", "recycle0"), path)
     if (!identical(value$all_values_zero, "zero")) fail(paste0(path, ".all_values_zero"), "must be zero")
     value_params <- as_strings(value$value_params)
     control_params <- as_strings(value$control_params)
     if (!is.character(value_params) || !length(value_params)) fail(paste0(path, ".value_params"), "must not be empty")
+    if (anyDuplicated(value_params) || anyDuplicated(control_params)) fail(path, "must not repeat parameters")
+    if (length(intersect(value_params, control_params))) fail(path, "value_params and control_params must be disjoint")
     for (param in c(value_params, control_params)) assert_param(param, params, paste0(path, ".params"))
     collapse <- value$collapse
     if (!is.list(collapse)) fail(paste0(path, ".collapse"), "must be an object")
@@ -84,7 +87,7 @@ validate_return_length <- function(value, params, path) {
     assert_names(recycle0, c("param", "when", "any_value_zero"), paste0(path, ".recycle0"))
     if (!identical(recycle0$when, "true") || !identical(recycle0$any_value_zero, "zero")) fail(paste0(path, ".recycle0"), "must specify true/zero")
     assert_param(recycle0$param, params, paste0(path, ".recycle0.param"))
-  } else fail(paste0(path, ".kind"), "must be shortest_of or recycled_values")
+  } else fail(paste0(path, ".kind"), "must be zero_if_any_param_zero or recycled_values")
 }
 validate_scope <- function(value, params, path) {
   if (!is.list(value)) fail(path, "must be an object")
