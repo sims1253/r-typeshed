@@ -1,0 +1,15 @@
+{
+  "schema_version": "2",
+  "package": "fixture",
+  "version": "test",
+  "functions": {
+    "intersect_like": {
+      "params": ["x", "y"],
+      "return": {"mode": "opaque", "length": "unknown", "na": true},
+      "return_length": {
+        "kind": "zero_if_any_param_zero",
+        "params": ["x", "y", "x"]
+      }
+    }
+  }
+}

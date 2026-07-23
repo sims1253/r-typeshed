@@ -7,6 +7,14 @@ on:
 permissions:
   contents: read
 
+# This immutable commit is the schema-2 consumer. It is intentionally pinned
+# rather than using a branch so CI always validates against a reviewable loader.
+# Bootstrap: it is currently local on ry's dev/typeshed-semantics-release-prep
+# branch and must be pushed before this checkout (and therefore this job) can
+# resolve. Push that ry commit first; no release is required.
+env:
+  RY_SCHEMA_2_CONSUMER_COMMIT: a70ec6dc8dfa960e2e19f239e815eddac3553f98
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,10 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          # Pinned to the ry main commit (ry#20 merge) whose loader understands
-          # this repo's schema (no_return, captures_promise, data_mask_source).
-          # Bump when the schema grows.
-          ref: 426e78bae3e68c9cfac00ccb51b385a64fb469ef
+          # Schema-2 consumer pinned above. Do not replace this with a branch:
+          # the local bootstrap commit must be pushed before this job can run.
+          ref: ${{ env.RY_SCHEMA_2_CONSUMER_COMMIT }}
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2

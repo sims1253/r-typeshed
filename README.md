@@ -30,4 +30,8 @@ silently.
 
 `schema_version` is bumped only for breaking schema changes. Tagged repository releases are immutable snapshots that ry vendors. Individual stub `version` fields describe their data revision. Schema 2 requires a ry loader that understands its semantic metadata; update ry's parser, validator, checker interpretation, and vendored snapshot together before consuming a schema-2 release.
 
+### Schema-2 CI bootstrap
+
+The schema-2 validation job is pinned to the immutable ry consumer commit declared in `.github/workflows/ci.yml`. During cross-repository preparation, that commit must be pushed to ry before a push here can resolve the checkout; it need not be released. The required safe branch-push order is **ry consumer commit first, then r-typeshed CI/stub commit**. If the final r-typeshed commit changes only CI or documentation, ry's vendored `SOURCE` may continue to name the earlier stub commit when the vendored stubs are byte-identical; do not create circular provenance solely to update that metadata.
+
 ry provides R static analysis. It shares the broader developer-tooling ecosystem with air, an R formatter, and jarl, an R linter; those tools do not consume these signatures directly.

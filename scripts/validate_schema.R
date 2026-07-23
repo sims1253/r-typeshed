@@ -82,11 +82,13 @@ validate_return_length <- function(value, params, path) {
     assert_names(collapse, c("param", "when", "length"), paste0(path, ".collapse"))
     if (!identical(collapse$when, "non_null") || !identical(collapse$length, "1")) fail(paste0(path, ".collapse"), "must specify non_null length 1")
     assert_param(collapse$param, params, paste0(path, ".collapse.param"))
+    if (!(collapse$param %in% control_params)) fail(paste0(path, ".collapse.param"), "must be a control_params member")
     recycle0 <- value$recycle0
     if (!is.list(recycle0)) fail(paste0(path, ".recycle0"), "must be an object")
     assert_names(recycle0, c("param", "when", "any_value_zero"), paste0(path, ".recycle0"))
     if (!identical(recycle0$when, "true") || !identical(recycle0$any_value_zero, "zero")) fail(paste0(path, ".recycle0"), "must specify true/zero")
     assert_param(recycle0$param, params, paste0(path, ".recycle0.param"))
+    if (!(recycle0$param %in% control_params)) fail(paste0(path, ".recycle0.param"), "must be a control_params member")
   } else fail(paste0(path, ".kind"), "must be zero_if_any_param_zero or recycled_values")
 }
 validate_scope <- function(value, params, path) {
@@ -117,8 +119,12 @@ args <- commandArgs(trailingOnly = TRUE)
 paths <- list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)
 if ("--self-test" %in% args) {
   validate_file(file.path(root, "tests", "fixtures", "schema", "valid-function-semantics.json"))
-  rejected <- tryCatch({ validate_file(file.path(root, "tests", "fixtures", "schema", "invalid-standalone-assertion.json")); FALSE }, error = function(e) TRUE)
-  if (!rejected) stop("invalid standalone assertion fixture was accepted")
+  rejected <- vapply(
+    c("invalid-standalone-assertion.json", "invalid-return-length-collapse-control.json", "invalid-return-length-recycle0-control.json", "invalid-return-length-duplicate-zero.json"),
+    function(fixture) tryCatch({ validate_file(file.path(root, "tests", "fixtures", "schema", fixture)); FALSE }, error = function(e) TRUE),
+    logical(1)
+  )
+  if (!all(rejected)) stop("invalid schema fixture was accepted")
 }
 for (path in paths) validate_file(path)
 cat(sprintf("Validated %d stub schema documents.\n", length(paths)))
