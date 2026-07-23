@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.4.0] - 2026-07-24
+
+Schema 2 release for ry 0.7.0 function-semantics debt. This is a deliberate
+schema bump: consumers must update to a schema-2-capable ry before vendoring
+this release.
+
+### Declarative semantics
+
+- Added reusable `predicate` metadata and corrected `rlang::is_null` to its
+  real required `x` formal, scalar non-missing logical return, and NULL
+  predicate target.
+- Added provenance-gated `assertion` metadata for the real standalone rlang
+  `check_bool`, `check_string`, `check_number_whole`, `check_number_decimal`,
+  and `check_data_frame` helpers. Only the documented `arg`/`call`
+  standalone-types-check fingerprint is accepted.
+- Added `return_length` rules: `base::intersect` is bounded by its shortest
+  input, while `paste`/`paste0` distinguish recycled values from `sep`,
+  `collapse`, and `recycle0`, including all-empty, collapse, and `recycle0`
+  outcomes.
+- Added `conditional_scope_effect` and accurately declared `base::source`:
+  default sourcing affects the current scope only at top level, while
+  `local = TRUE` affects a caller frame.
+- Completed base `paste`, `paste0`, and `source` public formal sequences for
+  exact argument matching.
+
+### Validation and audits
+
+- Added a strict schema-contract validator with valid/invalid fixtures and a
+  provenance audit against installed base R and rlang.
+- CI runs the new schema validator and function-semantics provenance audit.
+
 ## [0.3.0] - 2026-07-17
 
 Driven by the ry 0.5.0 top-500 CRAN audit and the subsequent

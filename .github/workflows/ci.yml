@@ -44,13 +44,18 @@ jobs:
         with:
           packages: |
             any::jsonlite
+            any::rlang
             any::purrr
             any::dplyr
             any::mirai
             any::carrier
+      - name: Validate r-typeshed schema contracts
+        run: Rscript --vanilla scripts/validate_schema.R --self-test
       - name: Standard globals are current
         run: Rscript scripts/gen_standard_globals.R --check
       - name: Audit stubs against installed namespaces
         # Skips stubs whose package is not installed; the install list
         # above pins the coverage we always get in CI.
         run: Rscript scripts/audit_typeshed.R
+      - name: Audit function-semantics provenance
+        run: Rscript --vanilla scripts/audit_function_semantics.R
