@@ -13,7 +13,7 @@ permissions:
 # branch and must be pushed before this checkout (and therefore this job) can
 # resolve. Push that ry commit first; no release is required.
 env:
-  RY_SCHEMA_2_CONSUMER_COMMIT: a70ec6dc8dfa960e2e19f239e815eddac3553f98
+  RY_SCHEMA_2_CONSUMER_COMMIT: 1d80824c87362d38e2e78d6fb17126581cc8218b
 
 jobs:
   validate:
