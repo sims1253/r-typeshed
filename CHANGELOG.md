@@ -33,7 +33,7 @@ this release.
   argument-binding names, controls, targets, and outcomes for every declared
   intersect, paste/paste0, source, predicate, and assertion semantic.
 - CI runs the new schema validator and function-semantics provenance audit, pinned
-  to schema-2 consumer ry commit `1d80824c87362d38e2e78d6fb17126581cc8218b`.
+  to schema-2 consumer ry commit `65a009be4005e0357d72b05663b913cdd4fc46f2`.
   That cross-repository bootstrap commit must be pushed to ry before this CI
   checkout can resolve; no ry release is required. Its vendored `SOURCE` may
   retain the prior r-typeshed stub commit because these final changes only
