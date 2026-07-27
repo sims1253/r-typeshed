@@ -23,7 +23,9 @@ for (name in c("paste", "paste0", "source", "intersect")) {
   declared <- param_names(base$functions[[name]])
   expect(identical(declared, actual), sprintf("base::%s parameters differ from installed R", name))
 }
-intersect_rule <- base$functions$intersect$return_length
+intersect_sig <- base$functions$intersect
+intersect_rule <- intersect_sig$return_length
+expect(identical(intersect_sig$return, "arg0"), "intersect must preserve its first argument's element type")
 expect(identical(intersect_rule$kind, "zero_if_any_param_zero"), "intersect must preserve only its exact-zero fact")
 expect(identical(as_strings(intersect_rule$params), c("x", "y")), "intersect exact-zero parameters are incomplete")
 for (name in c("paste", "paste0")) {
@@ -38,7 +40,10 @@ for (name in c("paste", "paste0")) {
   expect(identical(rule$collapse$param, "collapse") && identical(rule$collapse$when, "non_null") && identical(rule$collapse$length, "1"), sprintf("%s collapse provenance is incomplete", name))
   expect(identical(rule$recycle0$param, "recycle0") && identical(rule$recycle0$when, "true") && identical(rule$recycle0$any_value_zero, "zero"), sprintf("%s recycle0 provenance is incomplete", name))
 }
-source_rule <- base$functions$source$conditional_scope_effect
+source_sig <- base$functions$source
+source_file_param <- source_sig$params[[match("file", param_names(source_sig))]]
+expect(identical(source_file_param$default, TRUE), "source file must preserve its missing-argument default")
+source_rule <- source_sig$conditional_scope_effect
 expect(identical(source_rule$effect, "unknown_bindings"), "source must have an unknown-bindings scope effect")
 expect(identical(source_rule$current_scope_when$param, "local") && identical(source_rule$current_scope_when$equals, TRUE), "source conditional scope must be controlled by local = TRUE")
 expect(identical(source_rule$default_current_scope, "top_level"), "source default scope must be top-level only")
@@ -58,6 +63,9 @@ for (name in c("paste", "paste0")) {
   expect(identical(fn(character(0), "x", recycle0 = TRUE), character(0)), sprintf("%s recycle0 must preserve emptiness", name))
   expect(identical(fn(character(0), collapse = ","), ""), sprintf("%s collapse must produce one string", name))
 }
+source_without_file <- new.env(parent = globalenv())
+source(exprs = expression(.r_typeshed_source_exprs_binding <- TRUE), local = source_without_file)
+expect(exists(".r_typeshed_source_exprs_binding", envir = source_without_file, inherits = FALSE), "source must accept exprs without file")
 source_file <- tempfile("r-typeshed-source-", fileext = ".R")
 source_binding <- ".r_typeshed_source_audit_binding"
 writeLines(sprintf("assign(%s, TRUE)", deparse(source_binding)), source_file)
