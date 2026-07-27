@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.4.0] - 2026-07-24
+
+Schema 2 release for ry 0.7.0 function-semantics debt. This is a deliberate
+schema bump: consumers must update to a schema-2-capable ry before vendoring
+this release.
+
+### Declarative semantics
+
+- Added reusable `predicate` metadata and corrected `rlang::is_null` to its
+  real required `x` formal, scalar non-missing logical return, and NULL
+  predicate target.
+- Added provenance-gated `assertion` metadata for the real standalone rlang
+  `check_bool`, `check_string`, `check_number_whole`, `check_number_decimal`,
+  and `check_data_frame` helpers. Only the documented `arg`/`call`
+  standalone-types-check fingerprint is accepted.
+- Added sound `return_length` rules: `base::intersect` preserves the exact
+  fact that an empty input yields an empty result (all other bounded lengths
+  remain unknown), while `paste`/`paste0` distinguish recycled values from `sep`,
+  `collapse`, and `recycle0`, including all-empty, collapse, and `recycle0`
+  outcomes.
+- Added `conditional_scope_effect` and accurately declared `base::source`:
+  default sourcing affects the current scope only at top level, while
+  `local = TRUE` affects a caller frame.
+- Completed base `paste`, `paste0`, and `source` public formal sequences for
+  exact argument matching.
+
+### Validation and audits
+
+- Added a strict schema-contract validator with valid/invalid fixtures and a
+  provenance audit against installed base R and rlang. The audit verifies the
+  argument-binding names, controls, targets, and outcomes for every declared
+  intersect, paste/paste0, source, predicate, and assertion semantic.
+- CI runs the new schema validator and function-semantics provenance audit, pinned
+  to schema-2 consumer ry commit `65a009be4005e0357d72b05663b913cdd4fc46f2`.
+  That cross-repository bootstrap commit must be pushed to ry before this CI
+  checkout can resolve; no ry release is required. Its vendored `SOURCE` may
+  retain the prior r-typeshed stub commit because these final changes only
+  affect CI/docs and the stubs are byte-identical.
+
 ## [0.3.0] - 2026-07-17
 
 Driven by the ry 0.5.0 top-500 CRAN audit and the subsequent

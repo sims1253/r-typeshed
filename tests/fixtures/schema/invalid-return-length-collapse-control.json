@@ -1,0 +1,19 @@
+{
+  "schema_version": "2",
+  "package": "fixture",
+  "version": "test",
+  "functions": {
+    "recycle": {
+      "params": ["x", "collapse", "recycle0"],
+      "return": {"mode": "character", "length": "unknown", "na": true},
+      "return_length": {
+        "kind": "recycled_values",
+        "value_params": ["x"],
+        "control_params": ["recycle0"],
+        "all_values_zero": "zero",
+        "collapse": {"param": "collapse", "when": "non_null", "length": "1"},
+        "recycle0": {"param": "recycle0", "when": "true", "any_value_zero": "zero"}
+      }
+    }
+  }
+}

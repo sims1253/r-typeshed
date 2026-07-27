@@ -7,6 +7,14 @@ on:
 permissions:
   contents: read
 
+# This immutable commit is the schema-2 consumer. It is intentionally pinned
+# rather than using a branch so CI always validates against a reviewable loader.
+# Bootstrap: it is currently local on ry's dev/typeshed-semantics-release-prep
+# branch and must be pushed before this checkout (and therefore this job) can
+# resolve. Push that ry commit first; no release is required.
+env:
+  RY_SCHEMA_2_CONSUMER_COMMIT: 55a9bac7a3a53123e6bc381fdff0f6352d0f4d34
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,10 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          # Pinned to the ry main commit (ry#20 merge) whose loader understands
-          # this repo's schema (no_return, captures_promise, data_mask_source).
-          # Bump when the schema grows.
-          ref: 426e78bae3e68c9cfac00ccb51b385a64fb469ef
+          # Schema-2 consumer pinned above. Do not replace this with a branch:
+          # the local bootstrap commit must be pushed before this job can run.
+          ref: ${{ env.RY_SCHEMA_2_CONSUMER_COMMIT }}
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -44,13 +51,18 @@ jobs:
         with:
           packages: |
             any::jsonlite
+            any::rlang
             any::purrr
             any::dplyr
             any::mirai
             any::carrier
+      - name: Validate r-typeshed schema contracts
+        run: Rscript --vanilla scripts/validate_schema.R --self-test
       - name: Standard globals are current
         run: Rscript scripts/gen_standard_globals.R --check
       - name: Audit stubs against installed namespaces
         # Skips stubs whose package is not installed; the install list
         # above pins the coverage we always get in CI.
         run: Rscript scripts/audit_typeshed.R
+      - name: Audit function-semantics provenance
+        run: Rscript --vanilla scripts/audit_function_semantics.R
