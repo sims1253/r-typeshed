@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased]
+
+### Corrected stub data
+
+- Completed the public formal sequences for every `base` higher-order
+  signature, including `...` and controls after it, and opted them into exact,
+  partial, and positional argument matching. This corrects the phantom `...`
+  previously declared for `Reduce` and covers `Map`'s named-callback call shape.
+  The function-semantics audit now discovers all higher-order declarations and
+  verifies their names and required/default metadata against installed R.
+
 ## [0.4.0] - 2026-07-24
 
 Schema 2 release for ry 0.7.0 function-semantics debt. This is a deliberate

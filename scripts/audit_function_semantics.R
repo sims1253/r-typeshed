@@ -8,6 +8,7 @@ script_arg <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 script_dir <- if (length(script_arg)) dirname(normalizePath(sub("^--file=", "", script_arg[[1]]))) else "."
 root <- normalizePath(file.path(script_dir, ".."), mustWork = TRUE)
 if (!requireNamespace("jsonlite", quietly = TRUE)) stop("audit_function_semantics.R requires jsonlite")
+source(file.path(script_dir, "param_optionality.R"))
 
 base <- jsonlite::fromJSON(file.path(root, "stubs", "base", "base.json"), simplifyVector = FALSE)
 rlang_stub <- jsonlite::fromJSON(file.path(root, "stubs", "rlang", "rlang.json"), simplifyVector = FALSE)
@@ -18,10 +19,31 @@ expect <- function(ok, message) if (!isTRUE(ok)) stop(message, call. = FALSE)
 # These are real public formals, including controls that must not be mistaken
 # for recycled paste values. Semantic parameter names are formal names and are
 # interpreted only after ordinary R argument binding.
-for (name in c("paste", "paste0", "source", "intersect")) {
+verified_base_functions <- c("paste", "paste0", "source", "intersect")
+higher_order_functions <- names(Filter(function(sig) !is.null(sig$higher_order), base$functions))
+expect(length(higher_order_functions) > 0L, "base stub must declare higher-order functions")
+for (name in c(verified_base_functions, higher_order_functions)) {
   actual <- names(formals(get(name, envir = baseenv())))
   declared <- param_names(base$functions[[name]])
   expect(identical(declared, actual), sprintf("base::%s parameters differ from installed R", name))
+}
+for (name in higher_order_functions) {
+  sig <- base$functions[[name]]
+  fn <- get(name, envir = baseenv())
+  fn_formals <- formals(fn)
+  optional_params <- missing_optional_params(fn, setdiff(names(fn_formals), "..."))
+  for (i in seq_along(sig$params)) {
+    param <- sig$params[[i]]
+    param_name <- param_names(sig)[[i]]
+    if (identical(param_name, "...")) next
+    expect(is.list(param), sprintf("base::%s parameter %s must opt into argument matching", name, param_name))
+    has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
+    is_optional <- has_default || param_name %in% optional_params
+    expect(identical(isTRUE(param$default), is_optional), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
+    if (isTRUE(param$required)) {
+      expect(!is_optional, sprintf("base::%s parameter %s is required despite optional R semantics", name, param_name))
+    }
+  }
 }
 intersect_sig <- base$functions$intersect
 intersect_rule <- intersect_sig$return_length
