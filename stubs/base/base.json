@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2938,7 +2938,10 @@
     },
     "as.raw": {
       "params": [
-        "x"
+        {
+          "name": "x",
+          "required": true
+        }
       ],
       "return": {
         "mode": "raw",
@@ -3411,7 +3414,7 @@
       ],
       "scope_effect": "unknown_bindings",
       "return": {
-        "mode": "character",
+        "mode": "opaque",
         "length": "unknown",
         "na": false
       }

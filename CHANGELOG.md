@@ -39,6 +39,17 @@
   signature, including `...` and controls after it, and opted them into exact,
   partial, and positional argument matching. This corrects the phantom `...`
   previously declared for `Reduce` and covers `Map`'s named-callback call shape.
+- Corrected zero-argument optionality for `base::as.character`, `as.integer`,
+  `as.numeric`, `as.raw`, and `rep`, and made the polymorphic `base::data`
+  return opaque.
+- Corrected `rlang::env_get_list(default)` optionality and added rlang's five
+  exported typed missing-value constants.
+
+### New stubs
+
+- Added a conservative vctrs stub for `obj_is_list`, `vec_in`, `vec_set_union`,
+  `vec_size`, and `vec_slice`, covering the hermetic tidyverse audit findings
+  without guessing uncertain set-operation return types.
 
 ### Validation and audits
 
@@ -51,6 +62,8 @@
   `value` promise is captured and deferred.
 - The function-semantics audit now discovers all higher-order declarations and
   verifies their names and required/default metadata against installed R.
+- Added a side-effect-safe, allowlisted zero-argument primitive audit for
+  required first formals in base coercion and vector-constructor families.
 
 ## [0.4.0] - 2026-07-24
 

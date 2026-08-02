@@ -22,6 +22,47 @@ extract_names <- function(path) {
   out
 }
 
+`%||%` <- function(left, right) if (is.null(left)) right else left
+
+# Audit typed package values against installed namespace exports. These entries
+# use the legacy `datasets` field but may be exported constants as well as
+# conventional datasets.
+audit_package_values <- function(path, pkg) {
+  if (!requireNamespace("jsonlite", quietly = TRUE)) stop("audit_typeshed.R requires jsonlite for typed values")
+  doc <- jsonlite::fromJSON(path, simplifyVector = FALSE)
+  values <- doc$datasets %||% list()
+  if (!length(values) || !requireNamespace(pkg, quietly = TRUE)) return(character())
+  exports <- getNamespaceExports(pkg)
+  failures <- character()
+  for (name in names(values)) {
+    if (!(name %in% exports)) {
+      failures <- c(failures, paste0(pkg, "::", name, " is not an exported value"))
+      next
+    }
+    value <- tryCatch(getExportedValue(pkg, name), error = function(cnd) cnd)
+    if (inherits(value, "error")) {
+      failures <- c(failures, paste0(pkg, "::", name, " export cannot be resolved"))
+      next
+    }
+    spec <- values[[name]]
+    if (is.function(value)) failures <- c(failures, paste0(pkg, "::", name, " is callable but declared as a value"))
+    concrete_modes <- c("character", "complex", "double", "integer", "list", "logical", "raw")
+    if (spec$mode %in% concrete_modes && !identical(typeof(value), spec$mode)) {
+      failures <- c(failures, paste0(pkg, "::", name, " mode differs"))
+    }
+    if (identical(spec$mode, "null") && !is.null(value)) {
+      failures <- c(failures, paste0(pkg, "::", name, " is not NULL"))
+    }
+    if (grepl("^[0-9]+$", spec$length) && !identical(length(value), as.integer(spec$length))) {
+      failures <- c(failures, paste0(pkg, "::", name, " length differs"))
+    }
+    if (!is.null(spec$na) && !identical(anyNA(value), isTRUE(spec$na))) {
+      failures <- c(failures, paste0(pkg, "::", name, " NA metadata differs"))
+    }
+  }
+  failures
+}
+
 # Audit the base stub's parameter flags against the actual formals.  This is
 # deliberately a small, dependency-free reader for the repository's
 # pretty-printed JSON: it only needs function names and their params arrays.
@@ -177,6 +218,7 @@ for (path in list.files(stub_root, pattern = "[.]json$", recursive = TRUE, full.
         failures <- c(failures, paste0(pkg, "::", name))
       }
     }
+    failures <- c(failures, audit_package_values(path, pkg))
   }
 }
 if (length(failures)) {
