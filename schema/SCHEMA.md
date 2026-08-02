@@ -43,7 +43,15 @@ The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted
 
 ## Datasets and S3 methods
 
-`datasets` maps dataset names to R type objects. `s3_methods` is an array whose entries add required `generic` and `class` strings to all function signature fields. Registrations count even when their method function is unexported: the base inventory generator harvests `S3methods` from installed base/recommended namespaces and emits conservative signatures for them. Function and R type objects are closed: unrecognized fields are rejected.
+`datasets` maps typed package values to R type objects. Despite the legacy
+field name, entries may be exported constants as well as conventional package
+datasets; consumers resolve them as non-callable values under ordinary
+namespace/import provenance. `s3_methods` is an array whose entries add
+required `generic` and `class` strings to all function signature fields.
+Registrations count even when their method function is unexported: the base
+inventory generator harvests `S3methods` from installed base/recommended
+namespaces and emits conservative signatures for them. Function and R type
+objects are closed: unrecognized fields are rejected.
 
 ## Global checker semantics
 
