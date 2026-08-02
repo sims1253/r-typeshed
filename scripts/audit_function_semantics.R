@@ -40,9 +40,7 @@ for (name in higher_order_functions) {
     has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
     is_optional <- has_default || param_name %in% optional_params
     expect(identical(isTRUE(param$default), is_optional), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
-    if (isTRUE(param$required)) {
-      expect(!is_optional, sprintf("base::%s parameter %s is required despite optional R semantics", name, param_name))
-    }
+    expect(identical(isTRUE(param$required), !is_optional), sprintf("base::%s parameter %s has wrong required metadata", name, param_name))
   }
 }
 intersect_sig <- base$functions$intersect
