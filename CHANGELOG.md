@@ -33,6 +33,13 @@
   documents. This keeps current ry and its `scripts/sync_typeshed.sh` able
   to validate and vendor this branch.
 
+### Corrected stub data
+
+- Completed the public formal sequences for every `base` higher-order
+  signature, including `...` and controls after it, and opted them into exact,
+  partial, and positional argument matching. This corrects the phantom `...`
+  previously declared for `Reduce` and covers `Map`'s named-callback call shape.
+
 ### Validation and audits
 
 - The function-semantics provenance audit now witnesses the
@@ -42,14 +49,7 @@
   the caller's expression. `delayedAssign` witnesses pin both halves of
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
-
-### Corrected stub data
-
-- Completed the public formal sequences for every `base` higher-order
-  signature, including `...` and controls after it, and opted them into exact,
-  partial, and positional argument matching. This corrects the phantom `...`
-  previously declared for `Reduce` and covers `Map`'s named-callback call shape.
-  The function-semantics audit now discovers all higher-order declarations and
+- The function-semantics audit now discovers all higher-order declarations and
   verifies their names and required/default metadata against installed R.
 
 ## [0.4.0] - 2026-07-24
