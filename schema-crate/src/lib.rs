@@ -185,6 +185,11 @@ pub fn validate(doc: &TypeshedDocument) -> Result<(), Vec<String>> {
     }
 }
 
+pub mod pack;
+pub use pack::{
+    build_pack, compile_document, CatalogPack, CompiledEvalMode, CompiledFunction, CompiledParam,
+};
+
 #[cfg(test)]
 mod tests {
     use super::*;
