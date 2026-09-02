@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased]
+
+### Declarative semantics
+
+- Completed the defusing `eval` metadata for the base and rlang quoting
+  helpers (ry issues #41 and #49): `base::quote`, `base::bquote`, and
+  `base::expression` quote their argument as `quoted_expression`, matching
+  the existing `alist` declaration (verified correct, unchanged), while
+  `base::substitute` and `rlang::exprs` are `captures_promise` because
+  they defuse the promise supplied by the caller of the enclosing
+  function. `rlang::expr` and `rlang::quo` are `quoted_expression`; rlang
+  documents `expr()` as equivalent to `bquote()`. Base stub revision
+  0.0.3, rlang stub revision 0.1.1.
+
+### Validation and audits
+
+- The function-semantics provenance audit now witnesses the
+  `quoted_expression` versus `captures_promise` distinction against
+  installed R and rlang: the quoting helpers stay literal inside a
+  forwarding function, while `substitute()` and `rlang::exprs()` defuse
+  the caller's expression.
+
 ## [0.4.0] - 2026-07-24
 
 Schema 2 release for ry 0.7.0 function-semantics debt. This is a deliberate

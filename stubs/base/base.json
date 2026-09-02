@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -3014,6 +3014,9 @@
       "params": [
         "expr"
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "1",
@@ -3813,6 +3816,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -5869,6 +5875,9 @@
       "params": [
         "expr"
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "1",
@@ -6801,6 +6810,9 @@
       "params": [
         "expr"
       ],
+      "eval": {
+        "expr": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "1",
