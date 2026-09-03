@@ -81,6 +81,56 @@ expect(exists(source_binding, envir = .GlobalEnv, inherits = FALSE), "source() d
 expect(!exists(source_binding, envir = local_target, inherits = FALSE), "source() default must not bind a non-global caller")
 rm(list = source_binding, envir = .GlobalEnv)
 
+# Defusing evaluation modes for the base quoting helpers. The distinction
+# between quoted_expression and captures_promise is observable: a quoting
+# helper captures the syntactic argument at its own call site, while
+# substitute() defuses the promise supplied by the caller of the
+# enclosing function.
+expect(identical(base$functions$quote$eval, list(expr = "quoted_expression")), "base::quote must quote its expr argument")
+expect(identical(base$functions$bquote$eval, list(expr = "quoted_expression")), "base::bquote must quote its expr argument")
+expect(identical(base$functions$expression$eval, list("..." = "quoted_expression")), "base::expression must quote its dots")
+expect(identical(base$functions$alist$eval, list("..." = "quoted_expression")), "base::alist must quote its dots")
+expect(identical(base$functions$substitute$eval, list(expr = "captures_promise")), "base::substitute must capture the caller promise")
+expect(identical(base$functions$delayedAssign$eval, list(value = "captures_promise")), "base::delayedAssign must capture its value promise and nothing else")
+
+# Runtime witnesses: the quoting helpers stay literal inside a forwarding
+# function, while substitute() sees through to the caller's expression.
+quote_literal <- function(x) quote(x)
+expect(identical(quote_literal(a + b), as.name("x")), "quote must capture its own call site, not the caller promise")
+bquote_literal <- function(x) bquote(x)
+expect(identical(bquote_literal(a + b), as.name("x")), "bquote must capture its own call site, not the caller promise")
+expression_literal <- function(...) expression(...)
+expect(identical(expression_literal(a + b)[[1]], as.name("...")), "expression must capture its own dots literally")
+alist_literal <- function(...) alist(...)
+expect(identical(alist_literal(a + b)[[1]], as.name("...")), "alist must capture its own dots literally")
+substitute_caller <- function(x) substitute(x)
+expect(identical(substitute_caller(a + b), quote(a + b)), "substitute must defuse the promise supplied by the caller")
+
+# delayedAssign: only the value argument is captured. Installed R documents x
+# as "a variable name (given as a quoted string in the function call)" and
+# forces it as an ordinary argument: a bare symbol errors, and a variable's
+# string value supplies the target name, so x is not a quoted_symbol and
+# stays unlisted. The value promise is deferred like substitute's defusing:
+# it sees through a forwarded promise instead of the literal argument.
+delayed_name <- ".r_typeshed_delayed_assign_witness"
+delayed_source <- delayed_name
+delayedAssign(delayed_source, 1 + 1)
+expect(identical(get(delayed_name), 2), "delayedAssign must force x to obtain the target name")
+expect(inherits(try(delayedAssign(.r_typeshed_delayed_assign_undefined, 5), silent = TRUE), "try-error"), "delayedAssign must evaluate x as an ordinary argument")
+delayed_lazy <- local({
+  delayed_msg <- "old"
+  delayedAssign(delayed_name, delayed_msg)
+  delayed_msg <- "new"
+  get(delayed_name, envir = environment(), inherits = FALSE)
+})
+expect(identical(delayed_lazy, "new"), "delayedAssign must defer forcing value until first access")
+delayed_forward <- function(arg) {
+  delayedAssign(delayed_name, arg)
+  get(delayed_name, envir = environment(), inherits = FALSE)
+}
+expect(identical(delayed_forward(1 + 1), 2), "delayedAssign must capture the caller's forwarded promise")
+rm(list = c(delayed_name, "delayed_source"))
+
 if (!requireNamespace("rlang", quietly = TRUE)) {
   cat("SKIP: rlang is not installed; base function-semantics provenance verified.\n")
   quit(status = 0)
@@ -119,4 +169,19 @@ for (name in checks) {
     expect(!inherits(try(do.call(get(name, ns), c(list(x = NA), setNames(list(TRUE), assertion$allow_na_param))), silent = TRUE), "try-error"), sprintf("rlang::%s allow_na does not admit NA", name))
   }
 }
+
+# rlang defusing family. expr() and quo() capture the syntactic argument
+# at their own call site (rlang documents expr() as equivalent to
+# bquote()), while the variadic exprs() defuses the caller's forwarded
+# dots like the already-declared quos()/enquos().
+expect(identical(rlang_stub$functions$expr$eval, list(expr = "quoted_expression")), "rlang::expr must quote its expr argument")
+expect(identical(rlang_stub$functions$quo$eval, list(expr = "quoted_expression")), "rlang::quo must quote its expr argument")
+expect(identical(rlang_stub$functions$exprs$eval, list("..." = "captures_promise")), "rlang::exprs must capture the caller dots")
+expr_literal <- function(x) rlang::expr(x)
+expect(identical(expr_literal(a + b), as.name("x")), "rlang::expr must capture its own call site, not the caller promise")
+quo_literal <- function(x) rlang::quo(x)
+expect(identical(rlang::quo_get_expr(quo_literal(a + b)), as.name("x")), "rlang::quo must capture its own call site, not the caller promise")
+exprs_caller <- function(...) rlang::exprs(...)
+expect(identical(exprs_caller(a + b)[[1]], quote(a + b)), "rlang::exprs must defuse the caller dots")
+
 cat(sprintf("Function-semantics provenance verified (%d standalone rlang checks).\n", length(checks)))
