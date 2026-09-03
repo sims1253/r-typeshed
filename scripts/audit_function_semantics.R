@@ -91,6 +91,7 @@ expect(identical(base$functions$bquote$eval, list(expr = "quoted_expression")), 
 expect(identical(base$functions$expression$eval, list("..." = "quoted_expression")), "base::expression must quote its dots")
 expect(identical(base$functions$alist$eval, list("..." = "quoted_expression")), "base::alist must quote its dots")
 expect(identical(base$functions$substitute$eval, list(expr = "captures_promise")), "base::substitute must capture the caller promise")
+expect(identical(base$functions$delayedAssign$eval, list(value = "captures_promise")), "base::delayedAssign must capture its value promise and nothing else")
 
 # Runtime witnesses: the quoting helpers stay literal inside a forwarding
 # function, while substitute() sees through to the caller's expression.
@@ -104,6 +105,31 @@ alist_literal <- function(...) alist(...)
 expect(identical(alist_literal(a + b)[[1]], as.name("...")), "alist must capture its own dots literally")
 substitute_caller <- function(x) substitute(x)
 expect(identical(substitute_caller(a + b), quote(a + b)), "substitute must defuse the promise supplied by the caller")
+
+# delayedAssign: only the value argument is captured. Installed R documents x
+# as "a variable name (given as a quoted string in the function call)" and
+# forces it as an ordinary argument: a bare symbol errors, and a variable's
+# string value supplies the target name, so x is not a quoted_symbol and
+# stays unlisted. The value promise is deferred like substitute's defusing:
+# it sees through a forwarded promise instead of the literal argument.
+delayed_name <- ".r_typeshed_delayed_assign_witness"
+delayed_source <- delayed_name
+delayedAssign(delayed_source, 1 + 1)
+expect(identical(get(delayed_name), 2), "delayedAssign must force x to obtain the target name")
+expect(inherits(try(delayedAssign(.r_typeshed_delayed_assign_undefined, 5), silent = TRUE), "try-error"), "delayedAssign must evaluate x as an ordinary argument")
+delayed_lazy <- local({
+  delayed_msg <- "old"
+  delayedAssign(delayed_name, delayed_msg)
+  delayed_msg <- "new"
+  get(delayed_name, envir = environment(), inherits = FALSE)
+})
+expect(identical(delayed_lazy, "new"), "delayedAssign must defer forcing value until first access")
+delayed_forward <- function(arg) {
+  delayedAssign(delayed_name, arg)
+  get(delayed_name, envir = environment(), inherits = FALSE)
+}
+expect(identical(delayed_forward(1 + 1), 2), "delayedAssign must capture the caller's forwarded promise")
+rm(list = c(delayed_name, "delayed_source"))
 
 if (!requireNamespace("rlang", quietly = TRUE)) {
   cat("SKIP: rlang is not installed; base function-semantics provenance verified.\n")

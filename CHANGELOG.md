@@ -4,15 +4,34 @@
 
 ### Declarative semantics
 
-- Completed the defusing `eval` metadata for the base and rlang quoting
-  helpers (ry issues #41 and #49): `base::quote`, `base::bquote`, and
-  `base::expression` quote their argument as `quoted_expression`, matching
-  the existing `alist` declaration (verified correct, unchanged), while
-  `base::substitute` and `rlang::exprs` are `captures_promise` because
-  they defuse the promise supplied by the caller of the enclosing
+- Declared defusing `eval` metadata for the base and rlang quoting helpers
+  that ship stubs (ry issues #41 and #49): `base::quote`, `base::bquote`,
+  and `base::expression` quote their argument as `quoted_expression`,
+  matching the existing `alist` declaration (verified correct, unchanged),
+  while `base::substitute` and `rlang::exprs` are `captures_promise`
+  because they defuse the promise supplied by the caller of the enclosing
   function. `rlang::expr` and `rlang::quo` are `quoted_expression`; rlang
-  documents `expr()` as equivalent to `bquote()`. Base stub revision
-  0.0.3, rlang stub revision 0.1.1.
+  documents `expr()` as equivalent to `bquote()`. `base::delayedAssign`
+  declares only its `value` as `captures_promise`: installed R forces `x`
+  as an ordinary argument to obtain the target name string (a bare symbol
+  is an error), and `eval.env`/`assign.env` also evaluate normally, so all
+  three are omitted. That enumeration is the complete scope within
+  base/rlang: `base::evalq`, `base::local`, and `base::makeActiveBinding`
+  ship no stubs, and rlang's `sym`, `abort`, `inform`, `new_formula`, and
+  `new_quosure` are outside the quoting family, so none of them gained
+  `eval` metadata here. Downstream note: once this is vendored, ry's
+  `nse_symbol_fallback_does_not_overlap_stub_eval_modes` guard test will
+  fail until the corresponding NSE list retirement (ry issues #41 and #49)
+  lands in the same vendor bump — `ry typeshed validate` alone stays
+  green, so vendor-without-retire is a silent trap for ry's test suite.
+  Base stub revision 0.0.3, rlang stub revision 0.1.1.
+
+### Fixed stub data
+
+- `base::rep` return length is now `unknown`: current ry's validator
+  retired the `x_times` symbolic length, which SCHEMA.md no longer
+  documents. This keeps current ry and its `scripts/sync_typeshed.sh` able
+  to validate and vendor this branch.
 
 ### Validation and audits
 
@@ -20,7 +39,9 @@
   `quoted_expression` versus `captures_promise` distinction against
   installed R and rlang: the quoting helpers stay literal inside a
   forwarding function, while `substitute()` and `rlang::exprs()` defuse
-  the caller's expression.
+  the caller's expression. `delayedAssign` witnesses pin both halves of
+  its declaration: `x` is forced for the target name while the forwarded
+  `value` promise is captured and deferred.
 
 ## [0.4.0] - 2026-07-24
 

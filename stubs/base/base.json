@@ -3416,6 +3416,9 @@
         "x",
         "value"
       ],
+      "eval": {
+        "value": "captures_promise"
+      },
       "return": {
         "mode": "null",
         "length": "0",
@@ -6085,7 +6088,7 @@
       ],
       "return": {
         "mode": "arg0",
-        "length": "x_times",
+        "length": "unknown",
         "na": true
       }
     },
