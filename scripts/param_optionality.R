@@ -1,6 +1,11 @@
 # Determine which no-default formals are optional by convention in an R
-# function body.  Keep this deliberately narrow: it is a generator heuristic,
+# function body. Keep this deliberately narrow: it is a generator heuristic,
 # not an attempt to infer arbitrary control flow or promise forcing.
+#
+# This cannot detect rlang::env_get_list(default): its missing(default) branch
+# lives in the sibling env_get() implementation and env_get_list() forwards the
+# unevaluated value to C. That formal is deliberately curated in the stub and
+# must remain optional across regeneration.
 
 call_name <- function(expr) {
   head <- expr[[1L]]

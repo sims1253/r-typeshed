@@ -14,8 +14,10 @@ See [schema/SCHEMA.md](schema/SCHEMA.md) for the file format.
 3. Hand-curate return types, remaining evaluation modes, `injects` /
    `scope_effect` entries, aliases, datasets, and methods.
 4. Run `Rscript scripts/audit_typeshed.R` to check names against installed packages.
-5. Run `Rscript --vanilla scripts/validate_schema.R --self-test`, `Rscript --vanilla scripts/audit_function_semantics.R`, and `ry typeshed validate stubs/`.
-6. Open a pull request containing `stubs/<package>/<package>.json`.
+5. Run `Rscript --vanilla scripts/audit_zero_arg_primitives.R` for the
+   allowlisted base primitive optionality gate.
+6. Run `Rscript --vanilla scripts/validate_schema.R --self-test`, `Rscript --vanilla scripts/audit_function_semantics.R`, and `ry typeshed validate stubs/`.
+7. Open a pull request containing `stubs/<package>/<package>.json`.
 
 The generators are a starting point, not type inference. Every draft requires review.
 

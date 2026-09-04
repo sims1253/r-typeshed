@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### Integrated from the recovered function-semantics branch
+
+- Integrated the stub-relevant commits of the lost
+  `dev/function-semantics-release-prep` work, recovered on
+  `origin/dev/function-semantics-release-prep`: 93c6ae7
+  `fix(base): complete higher-order formals`, 512fe9c
+  `test(base): enforce higher-order optionality`, and d445345
+  `fix(stubs): complete hermetic dependency metadata` (the commit ry's
+  vendor tree pinned), cherry-picked in order onto master so the PR #4
+  eval metadata and the hermetic formals/datasets work both survive.
+- Version reconciliation: base 0.0.5 and rlang 0.1.2. The lost snapshot's
+  own numbers (base 0.0.4, rlang 0.1.1) describe hermetic-only data;
+  master already shipped different content under rlang 0.1.1 (and base
+  0.0.3), so the merged superset is content-unique and must not reuse
+  either number. vctrs enters at the recovered 0.0.1.
+- `base::rep` keeps master's `unknown` return length: the recovered d445345
+  still carried the retired `x_times` symbolic length, which current ry's
+  validator rejects.
+- The P39 WIP commits above d445345 on that branch (bd6d3ce schema-crate
+  bootstrap, 0e6f4d9 pack format and compiler, fe34ca0 leftovers) are
+  deliberately NOT integrated and remain on their branch.
+
 ### Declarative semantics
 
 - Declared defusing `eval` metadata for the base and rlang quoting helpers
@@ -33,6 +55,88 @@
   documents. This keeps current ry and its `scripts/sync_typeshed.sh` able
   to validate and vendor this branch.
 
+### Corrected stub data
+
+- Completed the public formal sequences for every `base` higher-order
+  signature, including `...` and controls after it, and opted them into exact,
+  partial, and positional argument matching. This corrects the phantom `...`
+  previously declared for `Reduce` and covers `Map`'s named-callback call shape.
+- Corrected zero-argument optionality: `base::as.raw` now requires `x`
+  (it rejects zero-argument calls), and the polymorphic `base::data`
+  returns opaque. For `base::as.character`, `as.double`, `as.integer`,
+  `as.logical`, `as.numeric`, and `rep`, R accepts the degenerate
+  zero-argument calls (`as.character()` is `character(0)`, `rep()` is
+  NULL`), so their `x` formals now record `required: false`. The object
+  form keeps the flag as explicit schema metadata — ry decodes
+  `required: false` and a bare string identically, and its exact-argument
+  check is unreachable for signatures declaring `...` either way — so this
+  avoids upstream d445345's bare-string downgrade without asserting that
+  calls must bind `x`; `as.double` and `as.logical`
+  also gained their missing `...` formal, so `as.numeric` and `as.double`
+  (one and the same primitive) no longer carry opposite required-ness. The
+  zero-argument primitive audit pins this decision per entry and derives
+  it: a pinned primitive that accepts zero-argument calls must not have
+  its first formal required.
+- Corrected `rlang::env_get_list(default)` optionality and added rlang's five
+  exported typed missing-value constants.
+- Corrected `default` metadata to SCHEMA.md's syntactic meaning (`default`
+  records whether the formal has a default expression): `base::Reduce(init)`,
+  `base::exists(frame)`, `base::sample(size)`, `base::source(file)`, and
+  `base::source(exprs)` are omittable through `missing()` handling without a
+  syntactic default, so they now record `required: false` instead of
+  `default: true`.
+- Re-audited `vctrs::vec_in` against the vctrs 0.6.5 source and installed
+  vctrs 0.7.3: its `na: true` return flag stands. The result is NA-free under the
+  default `na_equal = TRUE`, but `na_equal = FALSE` propagates missing
+  needles into NA results, and the stub convention records NA possibility
+  under any admissible arguments (`base::rank` follows the same rule for
+  `na.last = "keep"`).
+- Corrected `vctrs::vec_in` return length from `arg0` to `unknown`: the
+  result holds one element per size unit, not per R length, so
+  `vec_in(df, df)` on a 3-by-2 data frame has length 3 while `arg0` has
+  length 2. The length vocabulary has no size-based symbolic length, so
+  `unknown` takes the conservative route already used by `vec_slice`.
+- Corrected nine stale entries in the base stub's datasets block, found by
+  extending the typeshed audit to cover it with correct attribution (base
+  namespace or the `datasets` package): `OrchardSprays` and `Theoph` had
+  wrong lengths and `OrchardSprays` two phantom factor columns; `rivers`,
+  `discoveries`, and `WorldPhones` are double, not integer; `pressure` is
+  a 19-row two-column data frame, not a length-19 double vector; the
+  `USAccdeaths` entry named a binding that no longer exists (removed in
+  favor of the already-correct `USAccDeaths`); `.Options` is a pairlist
+  that can hold NA options and is now `opaque`/`na: true`;
+  `sunspot.month` is a drifting series whose exact length now only R knows
+  (`unknown`).
+- Corrected the class order of the nine remaining ordered-factor columns
+  that still declared the reversed `["factor", "ordered"]` — R reports
+  `class()` as `c("ordered", "factor")`: `CO2$Plant`, `esoph$agegp`,
+  `esoph$alcgp`, `esoph$tobgp`, `Loblolly$Seed`, `ChickWeight$Chick`,
+  `DNase$Run`, `Indometh$Subject`, and `Orange$Tree` (joining the
+  `Theoph$Subject` entry corrected above). `class` is consumer-visible
+  vocabulary (ry's `JsonRType.class`) and is now audited (see below).
+- Corrected four column-level modes surfaced by the new column checks:
+  `npk$N`, `npk$P`, and `npk$K` are integer factors (they also gained the
+  missing `class: ["factor"]`, matching sibling `npk$block`), and
+  `rock$area` is integer, not double.
+- Recorded the full class vectors of the seven nlme-style groupedData
+  frames — `CO2`, `Theoph`, `ChickWeight`, `Loblolly`, `DNase`,
+  `Indometh`, and `Orange` declared only the `["data.frame"]` tail while
+  the stored objects carry
+  `c("nfnGroupedData", "nfGroupedData", "groupedData", "data.frame")` —
+  and added the two missing special-class declarations surfaced by the
+  same sweep: `freeny$y` is `"ts"` and `WorldPhones` is
+  `c("matrix", "array")`. Verified ry consumes class vectors
+  order-sensitively only through its S3 dispatch walk, which tries every
+  class in order, and through membership checks (`contains`,
+  `classes_overlap`), so a non-`data.frame` vector head changes no
+  consumer outcome while making dispatch-eligible classes truthful.
+
+### New stubs
+
+- Added a conservative vctrs stub for `obj_is_list`, `vec_in`, `vec_set_union`,
+  `vec_size`, and `vec_slice`, covering the hermetic tidyverse audit findings
+  without guessing uncertain set-operation return types.
+
 ### Validation and audits
 
 - The function-semantics provenance audit now witnesses the
@@ -42,6 +146,41 @@
   the caller's expression. `delayedAssign` witnesses pin both halves of
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
+- The function-semantics audit now discovers all base higher-order declarations
+  and verifies their names against installed R, `default` metadata against
+  syntactic default presence, and `required` metadata against omittability
+  (a syntactic default or `missing()` handling), matching SCHEMA.md's
+  definition of the two fields. Declarations in other packages are not yet
+  covered: purrr alone declares 27 inference-only `higher_order` signatures
+  that this audit does not check against installed purrr.
+- Added a side-effect-safe, allowlisted zero-argument primitive audit for
+  required first formals in base coercion and vector-constructor families.
+  The reviewed pin table is itself audited: a missing `first_formal_required`
+  pin is a hard error, and a pinned primitive that accepts zero-argument
+  calls must not have its first formal required, restoring the coupling
+  between the runtime probe and the stub data.
+- The typeshed audit now covers the base stub's 119-entry `datasets` block,
+  attributing each entry to the environment that provides it (base's own
+  constants, or the `datasets` package's lazy-data environment, reached
+  through `.__NAMESPACE__.$lazydata` with `inherits = FALSE` so the lookup
+  cannot resolve foreign names such as `lm` or `read.csv` through the
+  namespace's parent chain) before checking existence, mode, length, and
+  NA; SCHEMA.md now documents that base's dataset entries name values from
+  the default search path rather than base-only bindings. Value checks
+  recurse into declared `columns` against the value's elements under the
+  same rules, covering the 214 column type objects across the 46
+  column-carrying entries. A declared `class` vector must equal the live
+  `class()` exactly and in order (an absent field is skipped, since the
+  corpus convention declares `class` only when it differs from the
+  typeof's implicit class); this check would have caught all nine
+  ordered-factor reversals and every groupedData tail truncation. Value
+  failures name the entry, a missing
+  `mode` or `length` is a named failure instead of an opaque error, and
+  the `na` check is one-directional and skips an absent field: `na: true`
+  stays a conservative upper bound, and only `na: false` contradicted by
+  an actual missing value fails. The rlang assertion witnesses are invoked
+  under each assertion's declared `subject_param`, and a check without a
+  witness value fails loudly instead of probing `NULL`.
 
 ## [0.4.0] - 2026-07-24
 

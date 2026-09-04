@@ -52,6 +52,7 @@ jobs:
           packages: |
             any::jsonlite
             any::rlang
+            any::vctrs
             any::purrr
             any::dplyr
             any::mirai
@@ -60,6 +61,8 @@ jobs:
         run: Rscript --vanilla scripts/validate_schema.R --self-test
       - name: Standard globals are current
         run: Rscript scripts/gen_standard_globals.R --check
+      - name: Audit allowlisted zero-argument primitives
+        run: Rscript --vanilla scripts/audit_zero_arg_primitives.R
       - name: Audit stubs against installed namespaces
         # Skips stubs whose package is not installed; the install list
         # above pins the coverage we always get in CI.

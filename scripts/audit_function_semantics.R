@@ -8,6 +8,7 @@ script_arg <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 script_dir <- if (length(script_arg)) dirname(normalizePath(sub("^--file=", "", script_arg[[1]]))) else "."
 root <- normalizePath(file.path(script_dir, ".."), mustWork = TRUE)
 if (!requireNamespace("jsonlite", quietly = TRUE)) stop("audit_function_semantics.R requires jsonlite")
+source(file.path(script_dir, "param_optionality.R"))
 
 base <- jsonlite::fromJSON(file.path(root, "stubs", "base", "base.json"), simplifyVector = FALSE)
 rlang_stub <- jsonlite::fromJSON(file.path(root, "stubs", "rlang", "rlang.json"), simplifyVector = FALSE)
@@ -18,10 +19,33 @@ expect <- function(ok, message) if (!isTRUE(ok)) stop(message, call. = FALSE)
 # These are real public formals, including controls that must not be mistaken
 # for recycled paste values. Semantic parameter names are formal names and are
 # interpreted only after ordinary R argument binding.
-for (name in c("paste", "paste0", "source", "intersect")) {
+verified_base_functions <- c("paste", "paste0", "source", "intersect")
+higher_order_functions <- names(Filter(function(sig) !is.null(sig$higher_order), base$functions))
+expect(length(higher_order_functions) > 0L, "base stub must declare higher-order functions")
+for (name in c(verified_base_functions, higher_order_functions)) {
   actual <- names(formals(get(name, envir = baseenv())))
   declared <- param_names(base$functions[[name]])
   expect(identical(declared, actual), sprintf("base::%s parameters differ from installed R", name))
+}
+for (name in higher_order_functions) {
+  sig <- base$functions[[name]]
+  fn <- get(name, envir = baseenv())
+  fn_formals <- formals(fn)
+  optional_params <- missing_optional_params(fn, setdiff(names(fn_formals), "..."))
+  for (i in seq_along(sig$params)) {
+    param <- sig$params[[i]]
+    param_name <- param_names(sig)[[i]]
+    if (identical(param_name, "...")) next
+    expect(is.list(param), sprintf("base::%s parameter %s must opt into argument matching", name, param_name))
+    has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
+    is_optional <- has_default || param_name %in% optional_params
+    # Per SCHEMA.md, `default` records whether the formal has a syntactic
+    # default expression; `required` encodes omittability, which missing()
+    # handling also provides. A missing()-optional formal such as Reduce's
+    # `init` therefore records no default but is not required either.
+    expect(identical(isTRUE(param$default), has_default), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
+    expect(identical(isTRUE(param$required), !is_optional), sprintf("base::%s parameter %s has wrong required metadata", name, param_name))
+  }
 }
 intersect_sig <- base$functions$intersect
 intersect_rule <- intersect_sig$return_length
@@ -42,7 +66,9 @@ for (name in c("paste", "paste0")) {
 }
 source_sig <- base$functions$source
 source_file_param <- source_sig$params[[match("file", param_names(source_sig))]]
-expect(identical(source_file_param$default, TRUE), "source file must preserve its missing-argument default")
+source_exprs_param <- source_sig$params[[match("exprs", param_names(source_sig))]]
+expect(!isTRUE(source_file_param$default) && !isTRUE(source_file_param$required), "source file must stay omittable via missing() handling, not a syntactic default")
+expect(!isTRUE(source_exprs_param$default) && !isTRUE(source_exprs_param$required), "source exprs must stay omittable via missing() handling, not a syntactic default")
 source_rule <- source_sig$conditional_scope_effect
 expect(identical(source_rule$effect, "unknown_bindings"), "source must have an unknown-bindings scope effect")
 expect(identical(source_rule$current_scope_when$param, "local") && identical(source_rule$current_scope_when$equals, TRUE), "source conditional scope must be controlled by local = TRUE")
@@ -161,7 +187,9 @@ for (name in checks) {
   }
   expect(identical(assertion$provenance$kind, "standalone_types_check"), sprintf("rlang::%s has unsupported assertion provenance", name))
   expect(identical(sort(unlist(assertion$provenance$fingerprint_params)), c("arg", "call")), sprintf("rlang::%s has wrong assertion fingerprint", name))
-  expect(!inherits(try(do.call(get(name, ns), list(x = assertion_witnesses[[name]])), silent = TRUE), "try-error"), sprintf("rlang::%s rejects its declared target witness", name))
+  witness <- assertion_witnesses[[name]]
+  expect(!is.null(witness), sprintf("rlang::%s has no witness value declared in this audit", name))
+  expect(!inherits(try(do.call(get(name, ns), setNames(list(witness), assertion$subject_param)), silent = TRUE), "try-error"), sprintf("rlang::%s rejects its declared target witness", name))
   if (!is.null(assertion$allow_null_param)) {
     expect(!inherits(try(do.call(get(name, ns), c(list(x = NULL), setNames(list(TRUE), assertion$allow_null_param))), silent = TRUE), "try-error"), sprintf("rlang::%s allow_null does not admit NULL", name))
   }
