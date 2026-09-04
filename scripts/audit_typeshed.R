@@ -31,7 +31,9 @@ extract_names <- function(path) {
 # needed" error. The `na` check is deliberately one-directional: `na` is an
 # optional field, `na: true` is the corpus-wide conservative upper bound (a
 # declared-NA value that happens to hold no missing value is sound), and only
-# `na: false` contradicted by an actual missing value is an error. Declared
+# `na: false` contradicted by an actual missing value is an error. A declared
+# `class` vector must match the live `class()` exactly and in order; an
+# absent field is skipped rather than read as "no class". Declared
 # `columns` recurse through the same checks against the value's elements.
 check_value_spec <- function(label, value, spec) {
   if (is.function(value)) return(paste0(label, " is callable but declared as a value"))
@@ -51,6 +53,14 @@ check_value_spec <- function(label, value, spec) {
   any_na <- tryCatch(anyNA(value), error = function(cnd) NA)
   if (!is.null(spec$na) && identical(isTRUE(spec$na), FALSE) && identical(any_na, TRUE)) {
     failures <- c(failures, paste0(label, " is declared non-NA but contains NA"))
+  }
+  # A declared class vector must equal the live class() exactly, in order.
+  # An absent field is skipped: the corpus convention records `class` only
+  # when it differs from the typeof's implicit class (a plain double vector
+  # has implicit class "numeric" and declares nothing), so absence is not a
+  # claim of "no class".
+  if (!is.null(spec$class) && !identical(unlist(spec$class), class(value))) {
+    failures <- c(failures, paste0(label, " class differs"))
   }
   columns <- spec$columns
   if (!is.null(columns) && length(columns)) {

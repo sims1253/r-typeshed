@@ -7867,6 +7867,9 @@
       "length": "5",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8097,6 +8100,9 @@
       "length": "3",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8155,7 +8161,10 @@
         "y": {
           "mode": "double",
           "length": "39",
-          "na": false
+          "na": false,
+          "class": [
+            "ts"
+          ]
         },
         "lag.quarterly.revenue": {
           "mode": "double",
@@ -8246,6 +8255,9 @@
       "length": "4",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8284,6 +8296,9 @@
       "length": "3",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8314,6 +8329,9 @@
       "length": "3",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8380,6 +8398,9 @@
       "length": "3",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8410,6 +8431,9 @@
       "length": "5",
       "na": false,
       "class": [
+        "nfnGroupedData",
+        "nfGroupedData",
+        "groupedData",
         "data.frame"
       ],
       "note": "data.frame",
@@ -8953,7 +8977,11 @@
     "WorldPhones": {
       "mode": "double",
       "length": "49",
-      "na": false
+      "na": false,
+      "class": [
+        "matrix",
+        "array"
+      ]
     },
     "letters": {
       "mode": "character",

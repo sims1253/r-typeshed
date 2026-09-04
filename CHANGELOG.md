@@ -112,13 +112,24 @@
   `class()` as `c("ordered", "factor")`: `CO2$Plant`, `esoph$agegp`,
   `esoph$alcgp`, `esoph$tobgp`, `Loblolly$Seed`, `ChickWeight$Chick`,
   `DNase$Run`, `Indometh$Subject`, and `Orange$Tree` (joining the
-  `Theoph$Subject` entry corrected above), so the datasets block is now
-  self-consistent. `class` is consumer-visible vocabulary (ry's
-  `JsonRType.class`), though no audit checks it yet.
+  `Theoph$Subject` entry corrected above). `class` is consumer-visible
+  vocabulary (ry's `JsonRType.class`) and is now audited (see below).
 - Corrected four column-level modes surfaced by the new column checks:
   `npk$N`, `npk$P`, and `npk$K` are integer factors (they also gained the
   missing `class: ["factor"]`, matching sibling `npk$block`), and
   `rock$area` is integer, not double.
+- Recorded the full class vectors of the seven nlme-style groupedData
+  frames — `CO2`, `Theoph`, `ChickWeight`, `Loblolly`, `DNase`,
+  `Indometh`, and `Orange` declared only the `["data.frame"]` tail while
+  the stored objects carry
+  `c("nfnGroupedData", "nfGroupedData", "groupedData", "data.frame")` —
+  and added the two missing special-class declarations surfaced by the
+  same sweep: `freeny$y` is `"ts"` and `WorldPhones` is
+  `c("matrix", "array")`. Verified ry consumes class vectors
+  order-sensitively only through its S3 dispatch walk, which tries every
+  class in order, and through membership checks (`contains`,
+  `classes_overlap`), so a non-`data.frame` vector head changes no
+  consumer outcome while making dispatch-eligible classes truthful.
 
 ### New stubs
 
@@ -158,7 +169,12 @@
   the default search path rather than base-only bindings. Value checks
   recurse into declared `columns` against the value's elements under the
   same rules, covering the 214 column type objects across the 46
-  column-carrying entries. Value failures name the entry, a missing
+  column-carrying entries. A declared `class` vector must equal the live
+  `class()` exactly and in order (an absent field is skipped, since the
+  corpus convention declares `class` only when it differs from the
+  typeof's implicit class); this check would have caught all nine
+  ordered-factor reversals and every groupedData tail truncation. Value
+  failures name the entry, a missing
   `mode` or `length` is a named failure instead of an opaque error, and
   the `na` check is one-directional and skips an absent field: `na: true`
   stays a conservative upper bound, and only `na: false` contradicted by
