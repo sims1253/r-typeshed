@@ -71,6 +71,18 @@
   checking. The zero-argument primitive audit pins this decision per entry.
 - Corrected `rlang::env_get_list(default)` optionality and added rlang's five
   exported typed missing-value constants.
+- Corrected `default` metadata to SCHEMA.md's syntactic meaning (`default`
+  records whether the formal has a default expression): `base::Reduce(init)`,
+  `base::exists(frame)`, `base::sample(size)`, `base::source(file)`, and
+  `base::source(exprs)` are omittable through `missing()` handling without a
+  syntactic default, so they now record `required: false` instead of
+  `default: true`.
+- Re-audited `vctrs::vec_in` against the vctrs 0.6.5 source and installed
+  vctrs: its `na: true` return flag stands. The result is NA-free under the
+  default `na_equal = TRUE`, but `na_equal = FALSE` propagates missing
+  needles into NA results, and the stub convention records NA possibility
+  under any admissible arguments (`base::rank` follows the same rule for
+  `na.last = "keep"`).
 
 ### New stubs
 
@@ -88,7 +100,10 @@
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
 - The function-semantics audit now discovers all higher-order declarations and
-  verifies their names and required/default metadata against installed R.
+  verifies their names against installed R, `default` metadata against
+  syntactic default presence, and `required` metadata against omittability
+  (a syntactic default or `missing()` handling), matching SCHEMA.md's
+  definition of the two fields.
 - Added a side-effect-safe, allowlisted zero-argument primitive audit for
   required first formals in base coercion and vector-constructor families.
 

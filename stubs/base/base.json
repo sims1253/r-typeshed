@@ -2601,7 +2601,7 @@
         },
         {
           "name": "init",
-          "default": true
+          "required": false
         },
         {
           "name": "right",
@@ -3816,7 +3816,7 @@
         },
         {
           "name": "frame",
-          "default": true
+          "required": false
         },
         {
           "name": "mode",
@@ -6380,7 +6380,7 @@
         },
         {
           "name": "size",
-          "default": true
+          "required": false
         },
         {
           "name": "replace",
@@ -6646,7 +6646,7 @@
       "params": [
         {
           "name": "file",
-          "default": true
+          "required": false
         },
         {
           "name": "local",
@@ -6662,7 +6662,7 @@
         },
         {
           "name": "exprs",
-          "default": true
+          "required": false
         },
         {
           "name": "spaced",

@@ -39,7 +39,11 @@ for (name in higher_order_functions) {
     expect(is.list(param), sprintf("base::%s parameter %s must opt into argument matching", name, param_name))
     has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
     is_optional <- has_default || param_name %in% optional_params
-    expect(identical(isTRUE(param$default), is_optional), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
+    # Per SCHEMA.md, `default` records whether the formal has a syntactic
+    # default expression; `required` encodes omittability, which missing()
+    # handling also provides. A missing()-optional formal such as Reduce's
+    # `init` therefore records no default but is not required either.
+    expect(identical(isTRUE(param$default), has_default), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
     expect(identical(isTRUE(param$required), !is_optional), sprintf("base::%s parameter %s has wrong required metadata", name, param_name))
   }
 }
@@ -62,7 +66,9 @@ for (name in c("paste", "paste0")) {
 }
 source_sig <- base$functions$source
 source_file_param <- source_sig$params[[match("file", param_names(source_sig))]]
-expect(identical(source_file_param$default, TRUE), "source file must preserve its missing-argument default")
+source_exprs_param <- source_sig$params[[match("exprs", param_names(source_sig))]]
+expect(!isTRUE(source_file_param$default) && !isTRUE(source_file_param$required), "source file must stay omittable via missing() handling, not a syntactic default")
+expect(!isTRUE(source_exprs_param$default) && !isTRUE(source_exprs_param$required), "source exprs must stay omittable via missing() handling, not a syntactic default")
 source_rule <- source_sig$conditional_scope_effect
 expect(identical(source_rule$effect, "unknown_bindings"), "source must have an unknown-bindings scope effect")
 expect(identical(source_rule$current_scope_when$param, "local") && identical(source_rule$current_scope_when$equals, TRUE), "source conditional scope must be controlled by local = TRUE")
