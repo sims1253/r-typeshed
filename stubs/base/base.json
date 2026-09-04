@@ -8410,8 +8410,8 @@
           "length": "132",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "Wt": {

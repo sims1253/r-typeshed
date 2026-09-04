@@ -20,8 +20,9 @@ if (!requireNamespace("jsonlite", quietly = TRUE)) {
 # means calls must bind the parameter), so the audit enforces that coupling
 # below. as.character/as.double/as.integer/as.logical/as.numeric/rep accept
 # degenerate zero-argument calls (`as.character()` is `character(0)`, `rep()`
-# is `NULL`) and keep `required: false` metadata, which still opts their
-# signatures into exact-argument checking; as.raw genuinely rejects zero
+# is `NULL`) and keep `required: false` metadata: the object form preserves
+# the flag as explicit schema completeness rather than downgrading to a bare
+# string; as.raw genuinely rejects zero
 # arguments ("requires 1") and stays required. Changing any pinned value
 # requires deliberate review here.
 reviewed <- list(

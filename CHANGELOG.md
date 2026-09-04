@@ -66,10 +66,12 @@
   returns opaque. For `base::as.character`, `as.double`, `as.integer`,
   `as.logical`, `as.numeric`, and `rep`, R accepts the degenerate
   zero-argument calls (`as.character()` is `character(0)`, `rep()` is
-  `NULL`), so their `x` formals now record `required: false`. An explicit
-  flag still opts each signature into exact-argument checking, satisfying
-  the constraint that ruled out upstream d445345's bare-string formals,
-  without asserting that calls must bind `x`; `as.double` and `as.logical`
+  NULL`), so their `x` formals now record `required: false`. The object
+  form keeps the flag as explicit schema metadata — ry decodes
+  `required: false` and a bare string identically, and its exact-argument
+  check is unreachable for signatures declaring `...` either way — so this
+  avoids upstream d445345's bare-string downgrade without asserting that
+  calls must bind `x`; `as.double` and `as.logical`
   also gained their missing `...` formal, so `as.numeric` and `as.double`
   (one and the same primitive) no longer carry opposite required-ness. The
   zero-argument primitive audit pins this decision per entry and derives
@@ -84,7 +86,7 @@
   syntactic default, so they now record `required: false` instead of
   `default: true`.
 - Re-audited `vctrs::vec_in` against the vctrs 0.6.5 source and installed
-  vctrs: its `na: true` return flag stands. The result is NA-free under the
+  vctrs 0.7.3: its `na: true` return flag stands. The result is NA-free under the
   default `na_equal = TRUE`, but `na_equal = FALSE` propagates missing
   needles into NA results, and the stub convention records NA possibility
   under any admissible arguments (`base::rank` follows the same rule for
@@ -93,7 +95,7 @@
   result holds one element per size unit, not per R length, so
   `vec_in(df, df)` on a 3-by-2 data frame has length 3 while `arg0` has
   length 2. The length vocabulary has no size-based symbolic length, so
-  `unknown` matches the conservative `vec_size`/`vec_slice` entries.
+  `unknown` takes the conservative route already used by `vec_slice`.
 - Corrected nine stale entries in the base stub's datasets block, found by
   extending the typeshed audit to cover it with correct attribution (base
   namespace or the `datasets` package): `OrchardSprays` and `Theoph` had
@@ -134,7 +136,7 @@
   pin is a hard error, and a pinned primitive that accepts zero-argument
   calls must not have its first formal required, restoring the coupling
   between the runtime probe and the stub data.
-- The typeshed audit now covers the base stub's 120-entry `datasets` block,
+- The typeshed audit now covers the base stub's 119-entry `datasets` block,
   attributing each entry to the namespace that provides it (base's own
   constants, or the `datasets` package, whose objects live in its
   lazy-data environment rather than its empty export list) before checking
