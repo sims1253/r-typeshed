@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### Integrated from the recovered function-semantics branch
+
+- Integrated the stub-relevant commits of the lost
+  `dev/function-semantics-release-prep` work, recovered on
+  `origin/dev/function-semantics-release-prep`: 93c6ae7
+  `fix(base): complete higher-order formals`, 512fe9c
+  `test(base): enforce higher-order optionality`, and d445345
+  `fix(stubs): complete hermetic dependency metadata` (the commit ry's
+  vendor tree pinned), cherry-picked in order onto master so the PR #4
+  eval metadata and the hermetic formals/datasets work both survive.
+- Version reconciliation: base 0.0.5 and rlang 0.1.2. The lost snapshot's
+  own numbers (base 0.0.4, rlang 0.1.1) describe hermetic-only data;
+  master already shipped different content under rlang 0.1.1 (and base
+  0.0.3), so the merged superset is content-unique and must not reuse
+  either number. vctrs enters at the recovered 0.0.1.
+- `base::rep` keeps master's `unknown` return length: the recovered d445345
+  still carried the retired `x_times` symbolic length, which current ry's
+  validator rejects.
+- The P39 WIP commits above d445345 on that branch (bd6d3ce schema-crate
+  bootstrap, 0e6f4d9 pack format and compiler, fe34ca0 leftovers) are
+  deliberately NOT integrated and remain on their branch.
+
 ### Declarative semantics
 
 - Declared defusing `eval` metadata for the base and rlang quoting helpers
@@ -39,9 +61,14 @@
   signature, including `...` and controls after it, and opted them into exact,
   partial, and positional argument matching. This corrects the phantom `...`
   previously declared for `Reduce` and covers `Map`'s named-callback call shape.
-- Corrected zero-argument optionality for `base::as.character`, `as.integer`,
-  `as.numeric`, `as.raw`, and `rep`, and made the polymorphic `base::data`
-  return opaque.
+- Corrected zero-argument optionality: `base::as.raw` now requires `x`
+  (it rejects zero-argument calls), and the polymorphic `base::data`
+  returns opaque. For `base::as.character`, `as.integer`, `as.numeric`, and
+  `rep` this integration deliberately keeps the master lineage's
+  `{name, required}` `x` formals even though R accepts their degenerate
+  zero-argument calls: upstream d445345 dropped the flags to bare strings,
+  but bare-string formals opt those signatures out of exact-argument
+  checking. The zero-argument primitive audit pins this decision per entry.
 - Corrected `rlang::env_get_list(default)` optionality and added rlang's five
   exported typed missing-value constants.
 

@@ -14,17 +14,23 @@ if (!requireNamespace("jsonlite", quietly = TRUE)) {
   stop("audit_zero_arg_primitives.R requires jsonlite")
 }
 
+# Each entry pins `first_formal_required`, the stub's first-formal required
+# flag, independently of the zero-argument runtime contract: R accepts the
+# degenerate zero-argument calls of as.character/as.integer/as.numeric/rep,
+# but this repository keeps their `x` formals required (the master lineage's
+# exact-argument-checking form; upstream d445345 dropped the flags instead).
+# Changing any pinned value requires deliberate review here.
 reviewed <- list(
-  "as.character" = list(params = c("x", "..."), succeeds = TRUE, type = "character", length = 0L),
-  "as.double" = list(params = "x", succeeds = TRUE, type = "double", length = 0L),
-  "as.integer" = list(params = c("x", "..."), succeeds = TRUE, type = "integer", length = 0L),
-  "as.logical" = list(params = "x", succeeds = TRUE, type = "logical", length = 0L),
-  "as.numeric" = list(params = c("x", "..."), succeeds = TRUE, type = "double", length = 0L),
-  "as.raw" = list(params = "x", succeeds = FALSE),
-  "c" = list(params = "...", succeeds = TRUE, type = "NULL", length = 0L),
-  "expression" = list(params = "...", succeeds = TRUE, type = "expression", length = 0L),
-  "list" = list(params = "...", succeeds = TRUE, type = "list", length = 0L),
-  "rep" = list(params = c("x", "..."), succeeds = TRUE, type = "NULL", length = 0L)
+  "as.character" = list(params = c("x", "..."), succeeds = TRUE, type = "character", length = 0L, first_formal_required = TRUE),
+  "as.double" = list(params = "x", succeeds = TRUE, type = "double", length = 0L, first_formal_required = FALSE),
+  "as.integer" = list(params = c("x", "..."), succeeds = TRUE, type = "integer", length = 0L, first_formal_required = TRUE),
+  "as.logical" = list(params = "x", succeeds = TRUE, type = "logical", length = 0L, first_formal_required = FALSE),
+  "as.numeric" = list(params = c("x", "..."), succeeds = TRUE, type = "double", length = 0L, first_formal_required = TRUE),
+  "as.raw" = list(params = "x", succeeds = FALSE, first_formal_required = TRUE),
+  "c" = list(params = "...", succeeds = TRUE, type = "NULL", length = 0L, first_formal_required = FALSE),
+  "expression" = list(params = "...", succeeds = TRUE, type = "expression", length = 0L, first_formal_required = FALSE),
+  "list" = list(params = "...", succeeds = TRUE, type = "list", length = 0L, first_formal_required = FALSE),
+  "rep" = list(params = c("x", "..."), succeeds = TRUE, type = "NULL", length = 0L, first_formal_required = TRUE)
 )
 if (!length(reviewed)) stop("reviewed zero-argument primitive inventory is empty")
 
@@ -64,11 +70,9 @@ for (name in names(reviewed)) {
     if (!identical(typeof(result$value), contract$type) || !identical(length(result$value), contract$length)) {
       stop(sprintf("base::%s zero-argument result changed", name))
     }
-    if (first_required(signature)) {
-      stop(sprintf("base::%s accepts zero arguments but its first stub formal is required", name))
-    }
-  } else if (!first_required(signature)) {
-    stop(sprintf("base::%s rejects zero arguments but its first stub formal is not required", name))
+  }
+  if (!identical(first_required(signature), isTRUE(contract$first_formal_required))) {
+    stop(sprintf("base::%s stub first-formal required flag differs from the reviewed contract", name))
   }
 }
 if (!identical(invoked, length(reviewed))) stop("not every reviewed primitive was invoked")
