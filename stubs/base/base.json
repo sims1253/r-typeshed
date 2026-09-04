@@ -2832,7 +2832,7 @@
       "params": [
         {
           "name": "x",
-          "required": true
+          "required": false
         },
         "..."
       ],
@@ -2857,7 +2857,11 @@
     },
     "as.double": {
       "params": [
-        "x"
+        {
+          "name": "x",
+          "required": false
+        },
+        "..."
       ],
       "return": {
         "mode": "double",
@@ -2882,7 +2886,7 @@
       "params": [
         {
           "name": "x",
-          "required": true
+          "required": false
         },
         "..."
       ],
@@ -2904,7 +2908,11 @@
     },
     "as.logical": {
       "params": [
-        "x"
+        {
+          "name": "x",
+          "required": false
+        },
+        "..."
       ],
       "return": {
         "mode": "logical",
@@ -2926,7 +2934,7 @@
       "params": [
         {
           "name": "x",
-          "required": true
+          "required": false
         },
         "..."
       ],
@@ -6176,7 +6184,7 @@
       "params": [
         {
           "name": "x",
-          "required": true
+          "required": false
         },
         "..."
       ],
@@ -8043,45 +8051,29 @@
     },
     "OrchardSprays": {
       "mode": "list",
-      "length": "8",
+      "length": "4",
       "na": false,
       "class": [
         "data.frame"
       ],
       "note": "data.frame",
       "columns": {
-        "rowpos": {
-          "mode": "integer",
-          "length": "64",
-          "na": false
-        },
-        "colpos": {
-          "mode": "integer",
-          "length": "64",
-          "na": false
-        },
-        "treatment": {
-          "mode": "integer",
-          "length": "64",
-          "na": false,
-          "class": [
-            "factor"
-          ]
-        },
         "decrease": {
           "mode": "double",
           "length": "64",
           "na": false
         },
-        "rowpos.f": {
-          "mode": "integer",
+        "rowpos": {
+          "mode": "double",
           "length": "64",
-          "na": false,
-          "class": [
-            "factor"
-          ]
+          "na": false
         },
-        "colpos.f": {
+        "colpos": {
+          "mode": "double",
+          "length": "64",
+          "na": false
+        },
+        "treatment": {
           "mode": "integer",
           "length": "64",
           "na": false,
@@ -8406,7 +8398,7 @@
     },
     "Theoph": {
       "mode": "list",
-      "length": "3",
+      "length": "5",
       "na": false,
       "class": [
         "data.frame"
@@ -8872,7 +8864,7 @@
     },
     "sunspot.month": {
       "mode": "double",
-      "length": "2820",
+      "length": "unknown",
       "na": false,
       "class": [
         "ts"
@@ -8900,12 +8892,12 @@
       "na": false
     },
     "rivers": {
-      "mode": "integer",
+      "mode": "double",
       "length": "141",
       "na": false
     },
     "discoveries": {
-      "mode": "integer",
+      "mode": "double",
       "length": "100",
       "na": false,
       "class": [
@@ -8913,9 +8905,25 @@
       ]
     },
     "pressure": {
-      "mode": "double",
-      "length": "19",
-      "na": false
+      "mode": "list",
+      "length": "2",
+      "na": false,
+      "class": [
+        "data.frame"
+      ],
+      "note": "data.frame",
+      "columns": {
+        "temperature": {
+          "mode": "double",
+          "length": "19",
+          "na": false
+        },
+        "pressure": {
+          "mode": "double",
+          "length": "19",
+          "na": false
+        }
+      }
     },
     "lh": {
       "mode": "double",
@@ -8934,17 +8942,9 @@
       ]
     },
     "WorldPhones": {
-      "mode": "integer",
+      "mode": "double",
       "length": "49",
       "na": false
-    },
-    "USAccdeaths": {
-      "mode": "integer",
-      "length": "72",
-      "na": false,
-      "class": [
-        "ts"
-      ]
     },
     "letters": {
       "mode": "character",
@@ -8992,9 +8992,9 @@
       "na": false
     },
     ".Options": {
-      "mode": "list",
+      "mode": "opaque",
       "length": "unknown",
-      "na": false
+      "na": true
     },
     "ability.cov": {
       "mode": "list",

@@ -187,7 +187,9 @@ for (name in checks) {
   }
   expect(identical(assertion$provenance$kind, "standalone_types_check"), sprintf("rlang::%s has unsupported assertion provenance", name))
   expect(identical(sort(unlist(assertion$provenance$fingerprint_params)), c("arg", "call")), sprintf("rlang::%s has wrong assertion fingerprint", name))
-  expect(!inherits(try(do.call(get(name, ns), list(x = assertion_witnesses[[name]])), silent = TRUE), "try-error"), sprintf("rlang::%s rejects its declared target witness", name))
+  witness <- assertion_witnesses[[name]]
+  expect(!is.null(witness), sprintf("rlang::%s has no witness value declared in this audit", name))
+  expect(!inherits(try(do.call(get(name, ns), setNames(list(witness), assertion$subject_param)), silent = TRUE), "try-error"), sprintf("rlang::%s rejects its declared target witness", name))
   if (!is.null(assertion$allow_null_param)) {
     expect(!inherits(try(do.call(get(name, ns), c(list(x = NULL), setNames(list(TRUE), assertion$allow_null_param))), silent = TRUE), "try-error"), sprintf("rlang::%s allow_null does not admit NULL", name))
   }

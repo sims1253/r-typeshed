@@ -63,12 +63,18 @@
   previously declared for `Reduce` and covers `Map`'s named-callback call shape.
 - Corrected zero-argument optionality: `base::as.raw` now requires `x`
   (it rejects zero-argument calls), and the polymorphic `base::data`
-  returns opaque. For `base::as.character`, `as.integer`, `as.numeric`, and
-  `rep` this integration deliberately keeps the master lineage's
-  `{name, required}` `x` formals even though R accepts their degenerate
-  zero-argument calls: upstream d445345 dropped the flags to bare strings,
-  but bare-string formals opt those signatures out of exact-argument
-  checking. The zero-argument primitive audit pins this decision per entry.
+  returns opaque. For `base::as.character`, `as.double`, `as.integer`,
+  `as.logical`, `as.numeric`, and `rep`, R accepts the degenerate
+  zero-argument calls (`as.character()` is `character(0)`, `rep()` is
+  `NULL`), so their `x` formals now record `required: false`. An explicit
+  flag still opts each signature into exact-argument checking, satisfying
+  the constraint that ruled out upstream d445345's bare-string formals,
+  without asserting that calls must bind `x`; `as.double` and `as.logical`
+  also gained their missing `...` formal, so `as.numeric` and `as.double`
+  (one and the same primitive) no longer carry opposite required-ness. The
+  zero-argument primitive audit pins this decision per entry and derives
+  it: a pinned primitive that accepts zero-argument calls must not have
+  its first formal required.
 - Corrected `rlang::env_get_list(default)` optionality and added rlang's five
   exported typed missing-value constants.
 - Corrected `default` metadata to SCHEMA.md's syntactic meaning (`default`
@@ -83,6 +89,22 @@
   needles into NA results, and the stub convention records NA possibility
   under any admissible arguments (`base::rank` follows the same rule for
   `na.last = "keep"`).
+- Corrected `vctrs::vec_in` return length from `arg0` to `unknown`: the
+  result holds one element per size unit, not per R length, so
+  `vec_in(df, df)` on a 3-by-2 data frame has length 3 while `arg0` has
+  length 2. The length vocabulary has no size-based symbolic length, so
+  `unknown` matches the conservative `vec_size`/`vec_slice` entries.
+- Corrected nine stale entries in the base stub's datasets block, found by
+  extending the typeshed audit to cover it with correct attribution (base
+  namespace or the `datasets` package): `OrchardSprays` and `Theoph` had
+  wrong lengths and `OrchardSprays` two phantom factor columns; `rivers`,
+  `discoveries`, and `WorldPhones` are double, not integer; `pressure` is
+  a 19-row two-column data frame, not a length-19 double vector; the
+  `USAccdeaths` entry named a binding that no longer exists (removed in
+  favor of the already-correct `USAccDeaths`); `.Options` is a pairlist
+  that can hold NA options and is now `opaque`/`na: true`;
+  `sunspot.month` is a drifting series whose exact length now only R knows
+  (`unknown`).
 
 ### New stubs
 
@@ -99,13 +121,32 @@
   the caller's expression. `delayedAssign` witnesses pin both halves of
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
-- The function-semantics audit now discovers all higher-order declarations and
-  verifies their names against installed R, `default` metadata against
+- The function-semantics audit now discovers all base higher-order declarations
+  and verifies their names against installed R, `default` metadata against
   syntactic default presence, and `required` metadata against omittability
   (a syntactic default or `missing()` handling), matching SCHEMA.md's
-  definition of the two fields.
+  definition of the two fields. Declarations in other packages are not yet
+  covered: purrr alone declares 27 inference-only `higher_order` signatures
+  that this audit does not check against installed purrr.
 - Added a side-effect-safe, allowlisted zero-argument primitive audit for
   required first formals in base coercion and vector-constructor families.
+  The reviewed pin table is itself audited: a missing `first_formal_required`
+  pin is a hard error, and a pinned primitive that accepts zero-argument
+  calls must not have its first formal required, restoring the coupling
+  between the runtime probe and the stub data.
+- The typeshed audit now covers the base stub's 120-entry `datasets` block,
+  attributing each entry to the namespace that provides it (base's own
+  constants, or the `datasets` package, whose objects live in its
+  lazy-data environment rather than its empty export list) before checking
+  existence, mode, length, and NA; SCHEMA.md now documents that base's
+  dataset entries name values from the default search path rather than
+  base-only bindings. Value failures name the entry, a missing
+  `mode` or `length` is a named failure instead of an opaque error, and the
+  `na` check is one-directional: `na: true` stays a conservative upper
+  bound, and only `na: false` contradicted by an actual missing value
+  fails. The rlang assertion witnesses are invoked under each assertion's
+  declared `subject_param`, and a check without a witness value fails
+  loudly instead of probing `NULL`.
 
 ## [0.4.0] - 2026-07-24
 

@@ -46,7 +46,11 @@ The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted
 `datasets` maps typed package values to R type objects. Despite the legacy
 field name, entries may be exported constants as well as conventional package
 datasets; consumers resolve them as non-callable values under ordinary
-namespace/import provenance. `s3_methods` is an array whose entries add
+namespace/import provenance. In the `base` stub the entries are inventoried
+from the default search path: some name base's own namespace constants
+(`letters`, `pi`), while the conventional datasets (`mtcars`, `state.name`)
+are provided by the attached `datasets` package rather than by base itself.
+`s3_methods` is an array whose entries add
 required `generic` and `class` strings to all function signature fields.
 Registrations count even when their method function is unexported: the base
 inventory generator harvests `S3methods` from installed base/recommended

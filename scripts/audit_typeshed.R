@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 
 # Check that every stubbed function exists in its package namespace. Packages
-# not installed locally are skipped. This base-R script extracts function keys
-# from the stable, pretty-printed repository JSON without external packages.
+# not installed locally are skipped. Function names are extracted from the
+# stable, pretty-printed repository JSON without external packages; auditing
+# the typed `datasets` values additionally requires jsonlite.
 
 script_arg <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 script_dir <- if (length(script_arg)) dirname(normalizePath(sub("^--file=", "", script_arg[[1]]))) else "."
@@ -24,6 +25,35 @@ extract_names <- function(path) {
 
 `%||%` <- function(left, right) if (is.null(left)) right else left
 
+# Check one typed value entry against its live value. Every failure names the
+# entry. Mode and length are required by the schema; a missing field is a
+# reported failure instead of an opaque "missing value where TRUE/FALSE
+# needed" error. The `na` check is deliberately one-directional: `na: true`
+# is the corpus-wide conservative upper bound (a declared-NA value that
+# happens to hold no missing value is sound), so only `na: false` contradicted
+# by an actual missing value is an error.
+check_value_spec <- function(label, value, spec) {
+  if (is.function(value)) return(paste0(label, " is callable but declared as a value"))
+  if (is.null(spec$mode)) return(paste0(label, " declares no mode"))
+  if (is.null(spec$length)) return(paste0(label, " declares no length"))
+  failures <- character()
+  concrete_modes <- c("character", "complex", "double", "integer", "list", "logical", "raw")
+  if (isTRUE(spec$mode %in% concrete_modes) && !identical(typeof(value), spec$mode)) {
+    failures <- c(failures, paste0(label, " mode differs"))
+  }
+  if (identical(spec$mode, "null") && !is.null(value)) {
+    failures <- c(failures, paste0(label, " is not NULL"))
+  }
+  if (isTRUE(grepl("^[0-9]+$", spec$length)) && !identical(length(value), as.integer(spec$length))) {
+    failures <- c(failures, paste0(label, " length differs"))
+  }
+  any_na <- tryCatch(anyNA(value), error = function(cnd) NA)
+  if (identical(isTRUE(spec$na), FALSE) && identical(any_na, TRUE)) {
+    failures <- c(failures, paste0(label, " is declared non-NA but contains NA"))
+  }
+  failures
+}
+
 # Audit typed package values against installed namespace exports. These entries
 # use the legacy `datasets` field but may be exported constants as well as
 # conventional datasets.
@@ -44,21 +74,38 @@ audit_package_values <- function(path, pkg) {
       failures <- c(failures, paste0(pkg, "::", name, " export cannot be resolved"))
       next
     }
-    spec <- values[[name]]
-    if (is.function(value)) failures <- c(failures, paste0(pkg, "::", name, " is callable but declared as a value"))
-    concrete_modes <- c("character", "complex", "double", "integer", "list", "logical", "raw")
-    if (spec$mode %in% concrete_modes && !identical(typeof(value), spec$mode)) {
-      failures <- c(failures, paste0(pkg, "::", name, " mode differs"))
+    failures <- c(failures, check_value_spec(paste0(pkg, "::", name), value, values[[name]]))
+  }
+  failures
+}
+
+# Audit the base stub's datasets block. Its entries name ambient values from
+# the default search path: some are base's own namespace constants (letters,
+# pi), while the conventional datasets (mtcars, state.name) live in the
+# datasets package, whose objects sit in the namespace's lazy-data
+# environment (that package exports nothing through its export list).
+# Attribute each entry to the namespace that actually provides it, then run
+# the same value checks as for any other package.
+audit_base_values <- function(path) {
+  if (!requireNamespace("jsonlite", quietly = TRUE)) stop("audit_typeshed.R requires jsonlite for typed values")
+  doc <- jsonlite::fromJSON(path, simplifyVector = FALSE)
+  values <- doc$datasets %||% list()
+  if (!length(values)) return(character())
+  base_ns <- asNamespace("base")
+  datasets_ns <- asNamespace("datasets")
+  failures <- character()
+  for (name in names(values)) {
+    if (exists(name, envir = base_ns, inherits = FALSE)) {
+      home <- "base"
+      value <- get(name, envir = base_ns, inherits = FALSE)
+    } else if (exists(name, envir = datasets_ns, inherits = TRUE)) {
+      home <- "datasets"
+      value <- get(name, envir = datasets_ns, inherits = TRUE)
+    } else {
+      failures <- c(failures, paste0("base datasets entry ", name, " is provided by neither base nor datasets"))
+      next
     }
-    if (identical(spec$mode, "null") && !is.null(value)) {
-      failures <- c(failures, paste0(pkg, "::", name, " is not NULL"))
-    }
-    if (grepl("^[0-9]+$", spec$length) && !identical(length(value), as.integer(spec$length))) {
-      failures <- c(failures, paste0(pkg, "::", name, " length differs"))
-    }
-    if (!is.null(spec$na) && !identical(anyNA(value), isTRUE(spec$na))) {
-      failures <- c(failures, paste0(pkg, "::", name, " NA metadata differs"))
-    }
+    failures <- c(failures, check_value_spec(paste0(home, "::", name, " (base datasets entry)"), value, values[[name]]))
   }
   failures
 }
@@ -206,6 +253,7 @@ for (path in list.files(stub_root, pattern = "[.]json$", recursive = TRUE, full.
       method <- tryCatch(utils::getS3method(sub("[.][^.]+$", "", name), sub("^.*[.]", "", name), optional = TRUE), error = function(e) NULL)
       if (is.null(method)) failures <- c(failures, paste0(pkg, "::", name))
     }
+    failures <- c(failures, audit_base_values(path))
   } else if (!requireNamespace(pkg, quietly = TRUE)) {
     cat(sprintf("SKIP: package %s is not installed\n", pkg))
   } else {
