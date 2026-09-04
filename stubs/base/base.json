@@ -3912,6 +3912,20 @@
         "na": false
       }
     },
+    "file.mode": {
+      "params": [
+        "..."
+      ],
+      "return": {
+        "mode": "double",
+        "length": "arg0",
+        "class": [
+          "octmode"
+        ],
+        "na": true,
+        "note": "File permission bits as an octmode object (double storage with class 'octmode'). NA for paths that do not exist."
+      }
+    },
     "file.path": {
       "params": [
         "..."
@@ -4163,9 +4177,14 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
+        "mode": "union",
         "length": "unknown",
-        "na": false
+        "members": [
+          "integer",
+          "character"
+        ],
+        "na": false,
+        "note": "With value = TRUE the matches themselves are returned as character; otherwise the integer indices. The schema cannot express the conditional, so the return is widened to the sound union."
       }
     },
     "grepl": {
@@ -21551,6 +21570,54 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
+        "na": true
+      }
+    },
+    {
+      "generic": "&",
+      "class": "octmode",
+      "params": [
+        "e1",
+        "e2"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "class": [
+          "octmode"
+        ],
+        "na": true,
+        "note": "Bitwise AND of octmode values; accepts octmode or character arguments, e.g. file.mode(path) & \"0077\"."
+      }
+    },
+    {
+      "generic": "|",
+      "class": "octmode",
+      "params": [
+        "e1",
+        "e2"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "class": [
+          "octmode"
+        ],
+        "na": true
+      }
+    },
+    {
+      "generic": "!",
+      "class": "octmode",
+      "params": [
+        "e1"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "class": [
+          "octmode"
+        ],
         "na": true
       }
     }

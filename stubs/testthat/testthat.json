@@ -3,6 +3,89 @@
   "package": "testthat",
   "version": "0.0.1",
   "functions": {
+    "expect_condition": {
+      "params": [
+        "object",
+        "class",
+        "regexp",
+        "..."
+      ],
+      "eval": {
+        "object": "error_fixture"
+      },
+      "return": {
+        "mode": "opaque",
+        "length": "unknown"
+      },
+      "note": "The `object` argument is code expected to signal a condition. Type-error rules are suppressed inside it: the signalled condition is the assertion."
+    },
+    "expect_error": {
+      "params": [
+        "object",
+        "class",
+        "regexp",
+        "..."
+      ],
+      "eval": {
+        "object": "error_fixture"
+      },
+      "return": {
+        "mode": "opaque",
+        "length": "unknown"
+      },
+      "note": "The `object` argument is code expected to error. Type-error rules are suppressed inside it: the error is the assertion."
+    },
+    "expect_message": {
+      "params": [
+        "object",
+        "class",
+        "regexp",
+        "..."
+      ],
+      "eval": {
+        "object": "error_fixture"
+      },
+      "return": {
+        "mode": "opaque",
+        "length": "unknown"
+      },
+      "note": "The `object` argument is code expected to signal a message condition."
+    },
+    "expect_snapshot": {
+      "params": [
+        "code",
+        "...",
+        "error",
+        "transform",
+        "variant"
+      ],
+      "conditional_eval": {
+        "param": "code",
+        "when_param": "error",
+        "when_equals": true
+      },
+      "return": {
+        "mode": "opaque",
+        "length": "unknown"
+      },
+      "note": "With `error = TRUE` the `code` argument is an error fixture and type-error rules are suppressed inside it; otherwise it is ordinary snapshot code."
+    },
+    "expect_warning": {
+      "params": [
+        "object",
+        "class",
+        "regexp",
+        "..."
+      ],
+      "eval": {
+        "object": "error_fixture"
+      },
+      "return": {
+        "mode": "opaque",
+        "length": "unknown"
+      },
+      "note": "The `object` argument is code expected to signal a warning condition."
+    },
     "test_path": {
       "params": [
         "..."
