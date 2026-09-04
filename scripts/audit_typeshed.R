@@ -28,10 +28,11 @@ extract_names <- function(path) {
 # Check one typed value entry against its live value. Every failure names the
 # entry. Mode and length are required by the schema; a missing field is a
 # reported failure instead of an opaque "missing value where TRUE/FALSE
-# needed" error. The `na` check is deliberately one-directional: `na: true`
-# is the corpus-wide conservative upper bound (a declared-NA value that
-# happens to hold no missing value is sound), so only `na: false` contradicted
-# by an actual missing value is an error.
+# needed" error. The `na` check is deliberately one-directional: `na` is an
+# optional field, `na: true` is the corpus-wide conservative upper bound (a
+# declared-NA value that happens to hold no missing value is sound), and only
+# `na: false` contradicted by an actual missing value is an error. Declared
+# `columns` recurse through the same checks against the value's elements.
 check_value_spec <- function(label, value, spec) {
   if (is.function(value)) return(paste0(label, " is callable but declared as a value"))
   if (is.null(spec$mode)) return(paste0(label, " declares no mode"))
@@ -48,8 +49,22 @@ check_value_spec <- function(label, value, spec) {
     failures <- c(failures, paste0(label, " length differs"))
   }
   any_na <- tryCatch(anyNA(value), error = function(cnd) NA)
-  if (identical(isTRUE(spec$na), FALSE) && identical(any_na, TRUE)) {
+  if (!is.null(spec$na) && identical(isTRUE(spec$na), FALSE) && identical(any_na, TRUE)) {
     failures <- c(failures, paste0(label, " is declared non-NA but contains NA"))
+  }
+  columns <- spec$columns
+  if (!is.null(columns) && length(columns)) {
+    if (!is.list(value)) {
+      failures <- c(failures, paste0(label, " declares columns but the value is not a list"))
+    } else {
+      for (column in names(columns)) {
+        if (!(column %in% names(value))) {
+          failures <- c(failures, paste0(label, " declares a column `", column, "` the value does not have"))
+          next
+        }
+        failures <- c(failures, check_value_spec(paste0(label, "$", column), value[[column]], columns[[column]]))
+      }
+    }
   }
   failures
 }
@@ -82,25 +97,28 @@ audit_package_values <- function(path, pkg) {
 # Audit the base stub's datasets block. Its entries name ambient values from
 # the default search path: some are base's own namespace constants (letters,
 # pi), while the conventional datasets (mtcars, state.name) live in the
-# datasets package, whose objects sit in the namespace's lazy-data
-# environment (that package exports nothing through its export list).
-# Attribute each entry to the namespace that actually provides it, then run
-# the same value checks as for any other package.
+# datasets package. That package exports nothing through its export list;
+# its objects sit in the namespace's lazy-data environment, reached via
+# `.__NAMESPACE__.$lazydata` and checked with `inherits = FALSE` so the
+# fallback cannot resolve names through the namespace's parent chain (where
+# `lm`, `str`, or `read.csv` would otherwise answer). Attribute each entry
+# to the environment that actually provides it, then run the same value
+# checks as for any other package.
 audit_base_values <- function(path) {
   if (!requireNamespace("jsonlite", quietly = TRUE)) stop("audit_typeshed.R requires jsonlite for typed values")
   doc <- jsonlite::fromJSON(path, simplifyVector = FALSE)
   values <- doc$datasets %||% list()
   if (!length(values)) return(character())
   base_ns <- asNamespace("base")
-  datasets_ns <- asNamespace("datasets")
+  datasets_lazydata <- asNamespace("datasets")$.__NAMESPACE__.$lazydata
   failures <- character()
   for (name in names(values)) {
     if (exists(name, envir = base_ns, inherits = FALSE)) {
       home <- "base"
       value <- get(name, envir = base_ns, inherits = FALSE)
-    } else if (exists(name, envir = datasets_ns, inherits = TRUE)) {
+    } else if (exists(name, envir = datasets_lazydata, inherits = FALSE)) {
       home <- "datasets"
-      value <- get(name, envir = datasets_ns, inherits = TRUE)
+      value <- get(name, envir = datasets_lazydata, inherits = FALSE)
     } else {
       failures <- c(failures, paste0("base datasets entry ", name, " is provided by neither base nor datasets"))
       next

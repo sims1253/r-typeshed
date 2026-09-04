@@ -107,6 +107,18 @@
   that can hold NA options and is now `opaque`/`na: true`;
   `sunspot.month` is a drifting series whose exact length now only R knows
   (`unknown`).
+- Corrected the class order of the nine remaining ordered-factor columns
+  that still declared the reversed `["factor", "ordered"]` — R reports
+  `class()` as `c("ordered", "factor")`: `CO2$Plant`, `esoph$agegp`,
+  `esoph$alcgp`, `esoph$tobgp`, `Loblolly$Seed`, `ChickWeight$Chick`,
+  `DNase$Run`, `Indometh$Subject`, and `Orange$Tree` (joining the
+  `Theoph$Subject` entry corrected above), so the datasets block is now
+  self-consistent. `class` is consumer-visible vocabulary (ry's
+  `JsonRType.class`), though no audit checks it yet.
+- Corrected four column-level modes surfaced by the new column checks:
+  `npk$N`, `npk$P`, and `npk$K` are integer factors (they also gained the
+  missing `class: ["factor"]`, matching sibling `npk$block`), and
+  `rock$area` is integer, not double.
 
 ### New stubs
 
@@ -137,18 +149,22 @@
   calls must not have its first formal required, restoring the coupling
   between the runtime probe and the stub data.
 - The typeshed audit now covers the base stub's 119-entry `datasets` block,
-  attributing each entry to the namespace that provides it (base's own
-  constants, or the `datasets` package, whose objects live in its
-  lazy-data environment rather than its empty export list) before checking
-  existence, mode, length, and NA; SCHEMA.md now documents that base's
-  dataset entries name values from the default search path rather than
-  base-only bindings. Value failures name the entry, a missing
-  `mode` or `length` is a named failure instead of an opaque error, and the
-  `na` check is one-directional: `na: true` stays a conservative upper
-  bound, and only `na: false` contradicted by an actual missing value
-  fails. The rlang assertion witnesses are invoked under each assertion's
-  declared `subject_param`, and a check without a witness value fails
-  loudly instead of probing `NULL`.
+  attributing each entry to the environment that provides it (base's own
+  constants, or the `datasets` package's lazy-data environment, reached
+  through `.__NAMESPACE__.$lazydata` with `inherits = FALSE` so the lookup
+  cannot resolve foreign names such as `lm` or `read.csv` through the
+  namespace's parent chain) before checking existence, mode, length, and
+  NA; SCHEMA.md now documents that base's dataset entries name values from
+  the default search path rather than base-only bindings. Value checks
+  recurse into declared `columns` against the value's elements under the
+  same rules, covering the 214 column type objects across the 46
+  column-carrying entries. Value failures name the entry, a missing
+  `mode` or `length` is a named failure instead of an opaque error, and
+  the `na` check is one-directional and skips an absent field: `na: true`
+  stays a conservative upper bound, and only `na: false` contradicted by
+  an actual missing value fails. The rlang assertion witnesses are invoked
+  under each assertion's declared `subject_param`, and a check without a
+  witness value fails loudly instead of probing `NULL`.
 
 ## [0.4.0] - 2026-07-24
 

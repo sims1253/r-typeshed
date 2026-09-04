@@ -7876,8 +7876,8 @@
           "length": "84",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "Type": {
@@ -7922,8 +7922,8 @@
           "length": "88",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "alcgp": {
@@ -7931,8 +7931,8 @@
           "length": "88",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "tobgp": {
@@ -7940,8 +7940,8 @@
           "length": "88",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "ncases": {
@@ -8028,19 +8028,28 @@
           ]
         },
         "N": {
-          "mode": "double",
+          "mode": "integer",
           "length": "24",
-          "na": false
+          "na": false,
+          "class": [
+            "factor"
+          ]
         },
         "P": {
-          "mode": "double",
+          "mode": "integer",
           "length": "24",
-          "na": false
+          "na": false,
+          "class": [
+            "factor"
+          ]
         },
         "K": {
-          "mode": "double",
+          "mode": "integer",
           "length": "24",
-          "na": false
+          "na": false,
+          "class": [
+            "factor"
+          ]
         },
         "yield": {
           "mode": "double",
@@ -8107,8 +8116,8 @@
           "length": "84",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         }
       }
@@ -8256,8 +8265,8 @@
           "length": "578",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "Diet": {
@@ -8284,8 +8293,8 @@
           "length": "176",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "conc": {
@@ -8314,8 +8323,8 @@
           "length": "66",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "time": {
@@ -8380,8 +8389,8 @@
           "length": "35",
           "na": false,
           "class": [
-            "factor",
-            "ordered"
+            "ordered",
+            "factor"
           ]
         },
         "age": {
@@ -8781,7 +8790,7 @@
       "note": "data.frame",
       "columns": {
         "area": {
-          "mode": "double",
+          "mode": "integer",
           "length": "48",
           "na": false
         },
