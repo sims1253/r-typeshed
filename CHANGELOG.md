@@ -2,12 +2,6 @@
 
 ## [Unreleased]
 
-### Empty quosures
-
-- Mark `rlang::quo(expr)` optional: `quo()` returns an empty quosure, as used
-  by lazyeval compatibility helpers. Bump the rlang stub to 0.1.3 and audit
-  both the empty result and the parameter declaration.
-
 ### Integrated from the recovered function-semantics branch
 
 - Integrated the stub-relevant commits of the lost
@@ -55,6 +49,10 @@
   Base stub revision 0.0.3, rlang stub revision 0.1.1.
 
 ### Fixed stub data
+
+- Mark `rlang::quo(expr)` optional: `quo()` returns an empty quosure, as used
+  by lazyeval compatibility helpers. Bump the rlang stub to 0.1.3 and audit
+  both the empty result and the parameter declaration.
 
 - `base::rep` return length is now `unknown`: current ry's validator
   retired the `x_times` symbolic length, which SCHEMA.md no longer
