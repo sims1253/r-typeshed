@@ -180,6 +180,12 @@ is_null_formals <- formals(get("is_null", ns))
 expect(is.primitive(get("is_null", ns)) || identical(names(is_null_formals), "x"), "rlang::is_null must take x")
 expect(identical(is_null$predicate$subject_param, "x"), "rlang::is_null predicate must bind x")
 expect(identical(is_null$predicate$target$mode, "null") && identical(is_null$predicate$target$length, "0"), "rlang::is_null predicate target must be NULL")
+# quo() defuses a missing argument into a usable empty quosure -- the
+# lazyeval compatibility shims call it on their missing() branch -- so the
+# stub's expr formal is curated optional, like env_get_list's default.
+expect(rlang::is_quosure(rlang::quo()) && rlang::quo_is_missing(rlang::quo()), "rlang::quo() must return an empty quosure")
+expect(identical(rlang_stub$functions$quo$params, list(list(name = "expr", required = FALSE))), "rlang::quo's expr formal must be optional in the stub")
+
 checks <- names(Filter(function(sig) !is.null(sig$assertion), rlang_stub$functions))
 assertion_witnesses <- list(
   check_bool = TRUE,

@@ -48,6 +48,10 @@
 
 ### Fixed stub data
 
+- Mark `rlang::quo(expr)` optional: `quo()` returns an empty quosure, as used
+  by lazyeval compatibility helpers. Bump the rlang stub to 0.1.3 and audit
+  both the empty result and the parameter declaration.
+
 - `base::rep` return length is now `unknown`: current ry's validator
   retired the `x_times` symbolic length, which SCHEMA.md no longer
   documents. This keeps current ry and its `scripts/sync_typeshed.sh` able
