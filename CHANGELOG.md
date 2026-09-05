@@ -5,7 +5,8 @@
 ### Cleanup
 
 - Complete purrr's 27 higher-order formal lists and correct seven callback
-  positions. Audit both base and purrr against installed packages.
+  positions and `walk2` callback arity. Bump purrr to 0.0.2 and audit both
+  base and purrr against installed packages.
 - Preserve structured parameters when generating NSE metadata. Generate
   schema-2 drafts, include function re-exports, and leave unknown returns
   able to contain NA.
@@ -143,19 +144,15 @@
   the caller's expression. `delayedAssign` witnesses pin both halves of
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
-- The function-semantics audit now discovers all base higher-order declarations
-  and verifies their names against installed R, `default` metadata against
-  syntactic default presence, and `required` metadata against omittability
-  (a syntactic default or `missing()` handling), matching SCHEMA.md's
-  definition of the two fields. Declarations in other packages are not yet
-  covered: purrr alone declares 27 inference-only `higher_order` signatures
-  that this audit does not check against installed purrr.
-- Added a side-effect-safe, allowlisted zero-argument primitive audit for
-  required first formals in base coercion and vector-constructor families.
-  The reviewed pin table is itself audited: a missing `first_formal_required`
-  pin is a hard error, and a pinned primitive that accepts zero-argument
-  calls must not have its first formal required, restoring the coupling
-  between the runtime probe and the stub data.
+- The function-semantics audit discovers higher-order declarations in installed
+  packages and verifies their formal sequences and callback positions. It
+  covers 12 base and 27 purrr signatures, and checks structured parameters'
+  `default` and `required` metadata against installed formals and reviewed
+  omittability conventions.
+- Added an allowlisted zero-argument primitive audit for base coercion and
+  vector-constructor families. It checks runtime outcomes and formal sequences;
+  successful zero-argument calls must have an optional first formal, while
+  `as.raw` requires its first argument. An empty reviewed inventory is an error.
 - The typeshed audit now covers the base stub's 119-entry `datasets` block,
   attributing each entry to the environment that provides it (base's own
   constants, or the `datasets` package's lazy-data environment, reached

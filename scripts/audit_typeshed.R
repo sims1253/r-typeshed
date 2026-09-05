@@ -172,6 +172,8 @@ failures <- character()
 for (path in list.files(stub_root, pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
   doc <- jsonlite::read_json(path)
   pkg <- doc$package
+  if (!is.character(pkg) || length(pkg) != 1L || !nzchar(pkg)) stop(path, ": requires a package name", call. = FALSE)
+  if (is.null(doc$functions) || !is.list(doc$functions)) stop(path, ": requires a functions object", call. = FALSE)
   names <- names(doc$functions)
   if (pkg == "base") {
     for (name in names) if (!exists(name, where = search(), inherits = TRUE)) {

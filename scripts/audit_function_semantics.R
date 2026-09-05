@@ -27,6 +27,7 @@ for (name in verified_base_functions) {
 for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
   doc <- jsonlite::read_json(path)
   signatures <- Filter(function(sig) !is.null(sig$higher_order), doc$functions)
+  if (identical(doc$package, "base")) expect(length(signatures) > 0L, "base stub must declare higher-order functions")
   if (!length(signatures)) next
   if (!requireNamespace(doc$package, quietly = TRUE)) {
     cat(sprintf("SKIP: %s higher-order formals (package not installed)\n", doc$package))
@@ -39,7 +40,10 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
     fn_formals <- formals(fn)
     declared <- param_names(sig)
     expect(identical(declared, names(fn_formals)), sprintf("%s parameters differ from installed R", label))
-    expect(identical(declared[[sig$higher_order$callback_position + 1L]], sig$higher_order$callback_param), sprintf("%s callback position differs from callback parameter", label))
+    position <- sig$higher_order$callback_position
+    expect(is.numeric(position) && length(position) == 1L && !is.na(position) &&
+           position %in% (seq_along(declared) - 1L), sprintf("%s has invalid callback position", label))
+    expect(identical(declared[[position + 1L]], sig$higher_order$callback_param), sprintf("%s callback position differs from callback parameter", label))
     optional_params <- missing_optional_params(fn, setdiff(declared, "..."))
     for (i in seq_along(sig$params)) {
       param <- sig$params[[i]]

@@ -141,7 +141,7 @@ merge_package <- function(package) {
     if (is.null(existing)) {
       existing <- list(
         params = as.list(generated$params),
-        "return" = list(mode = "opaque", length = "unknown")
+        "return" = list(mode = "opaque", length = "unknown", na = TRUE)
       )
     } else {
       existing_names <- vapply(existing$params, function(param) if (is.character(param)) param else param$name, character(1))

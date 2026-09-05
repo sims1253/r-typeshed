@@ -28,6 +28,7 @@ reviewed <- list(
   "list" = list(params = "...", succeeds = TRUE, type = "list", length = 0L),
   "rep" = list(params = c("x", "..."), succeeds = TRUE, type = "NULL", length = 0L)
 )
+if (!length(reviewed)) stop("reviewed zero-argument primitive inventory is empty")
 
 stub <- jsonlite::fromJSON(
   file.path(root, "stubs", "base", "base.json"),

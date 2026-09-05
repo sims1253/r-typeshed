@@ -607,7 +607,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0"], "result": {"kind": "first_arg", "source_arg": 0}},
+      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "first_arg", "source_arg": 0}},
       "return": {
         "mode": "opaque",
         "length": "arg0",

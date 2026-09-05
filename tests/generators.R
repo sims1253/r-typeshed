@@ -24,6 +24,9 @@ main <- function() {
   stopifnot(identical(draft$schema_version, "2"), setequal(names(draft$functions), functions))
   stopifnot(all(vapply(draft$functions, function(sig) isTRUE(sig$return$na), logical(1))))
 
+  stopifnot(identical(draft$functions$mutate$params[[1]], list(name = ".data", required = TRUE)))
+  stopifnot(identical(draft$functions$mutate$params[[2]], "..."))
+
   dir.create(file.path(work, "stubs", "dplyr"), recursive = TRUE)
   path <- file.path(work, "stubs", "dplyr", "dplyr.json")
   data_param <- list(name = ".data", required = TRUE, type = list(mode = "list", length = "unknown"))
@@ -43,7 +46,9 @@ main <- function() {
   stopifnot(identical(jsonlite::read_json(path), generated))
   unlink(path)
   run("gen_nse_metadata.R", "dplyr", output)
-  stopifnot(identical(jsonlite::read_json(path)$schema_version, "2"))
+  fresh <- jsonlite::read_json(path)
+  stopifnot(identical(fresh$schema_version, "2"))
+  stopifnot(all(vapply(fresh$functions, function(sig) isTRUE(sig$return$na), logical(1))))
   cat("Generator drafts, re-exports, curated parameters, and idempotence verified.\n")
 }
 
