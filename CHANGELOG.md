@@ -2,27 +2,24 @@
 
 ## [Unreleased]
 
-### Integrated from the recovered function-semantics branch
+### Cleanup
 
-- Integrated the stub-relevant commits of the lost
-  `dev/function-semantics-release-prep` work, recovered on
-  `origin/dev/function-semantics-release-prep`: 93c6ae7
-  `fix(base): complete higher-order formals`, 512fe9c
-  `test(base): enforce higher-order optionality`, and d445345
-  `fix(stubs): complete hermetic dependency metadata` (the commit ry's
-  vendor tree pinned), cherry-picked in order onto master so the PR #4
-  eval metadata and the hermetic formals/datasets work both survive.
-- Version reconciliation: base 0.0.5 and rlang 0.1.2. The lost snapshot's
-  own numbers (base 0.0.4, rlang 0.1.1) describe hermetic-only data;
-  master already shipped different content under rlang 0.1.1 (and base
-  0.0.3), so the merged superset is content-unique and must not reuse
-  either number. vctrs enters at the recovered 0.0.1.
-- `base::rep` keeps master's `unknown` return length: the recovered d445345
-  still carried the retired `x_times` symbolic length, which current ry's
-  validator rejects.
-- The P39 WIP commits above d445345 on that branch (bd6d3ce schema-crate
-  bootstrap, 0e6f4d9 pack format and compiler, fe34ca0 leftovers) are
-  deliberately NOT integrated and remain on their branch.
+- Complete purrr's 27 higher-order formal lists and correct seven callback
+  positions. Audit both base and purrr against installed packages.
+- Preserve structured parameters when generating NSE metadata. Generate
+  schema-2 drafts, include function re-exports, and leave unknown returns
+  able to contain NA.
+- Replace the namespace audit's handwritten JSON readers with jsonlite.
+  Resolve package names from stub headers, including Rcpp and S7.
+- Validate Rcpp and S7 explicitly in CI; the pinned consumer skips their
+  mixed-case paths when scanning the parent directory.
+
+### Recovered function semantics
+
+- Restore the completed base higher-order formals and hermetic dependency
+  metadata. Base is version 0.0.5, rlang is 0.1.2, and vctrs is 0.0.1.
+- Keep `base::rep` return length `unknown`; the recovered `x_times` value
+  is no longer supported by ry.
 
 ### Declarative semantics
 
