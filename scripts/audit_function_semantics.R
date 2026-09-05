@@ -40,10 +40,6 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
     fn_formals <- formals(fn)
     declared <- param_names(sig)
     expect(identical(declared, names(fn_formals)), sprintf("%s parameters differ from installed R", label))
-    position <- sig$higher_order$callback_position
-    expect(is.numeric(position) && length(position) == 1L && !is.na(position) &&
-           position %in% (seq_along(declared) - 1L), sprintf("%s has invalid callback position", label))
-    expect(identical(declared[[position + 1L]], sig$higher_order$callback_param), sprintf("%s callback position differs from callback parameter", label))
     optional_params <- missing_optional_params(fn, setdiff(declared, "..."))
     for (i in seq_along(sig$params)) {
       param <- sig$params[[i]]

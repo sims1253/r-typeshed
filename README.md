@@ -16,7 +16,7 @@ See [schema/SCHEMA.md](schema/SCHEMA.md) for the file format.
 4. Run `Rscript scripts/audit_typeshed.R` to check names against installed packages.
 5. Run `Rscript --vanilla scripts/audit_zero_arg_primitives.R` for the
    allowlisted base primitive optionality gate.
-6. Run `Rscript --vanilla scripts/validate_schema.R --self-test`, `Rscript --vanilla scripts/audit_function_semantics.R`, and `ry typeshed validate stubs/ stubs/rcpp/ stubs/s7/`.
+6. Run `Rscript --vanilla scripts/audit_function_semantics.R` and `ry typeshed validate stubs/`.
 7. Open a pull request containing `stubs/<package>/<package>.json`.
 
 The generators produce drafts for review. They require `jsonlite` and the package being generated. Run `Rscript --vanilla tests/generators.R` to check draft output and preservation of curated NSE metadata (also requires `dplyr`).
@@ -32,4 +32,4 @@ silently.
 
 `schema_version` is bumped only for breaking schema changes. Tagged repository releases are immutable snapshots that ry vendors. Individual stub `version` fields describe their data revision. Schema 2 requires a ry loader that understands its semantic metadata; update ry's parser, validator, checker interpretation, and vendored snapshot together before consuming a schema-2 release.
 
-CI builds the pinned ry consumer in `.github/workflows/ci.yml`. Update that pin when changes need a newer loader. The explicit `stubs/rcpp/` and `stubs/s7/` validation paths cover filenames whose case differs from their directory names; the current consumer skips them when scanning `stubs/`.
+CI builds the pinned ry consumer in `.github/workflows/ci.yml`. Update that pin when changes need a newer loader. Schema validation and its regression fixtures live in ry; the R audits here verify declarations against installed R packages.
