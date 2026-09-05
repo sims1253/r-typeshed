@@ -170,7 +170,7 @@ expect(identical(is_null$predicate$target$mode, "null") && identical(is_null$pre
 # quo() defuses a missing argument into a usable empty quosure -- the
 # lazyeval compatibility shims call it on their missing() branch -- so the
 # stub's expr formal is curated optional, like env_get_list's default.
-expect(inherits(rlang::quo(), "quosure"), "rlang::quo() must return an empty quosure, not error")
+expect(rlang::is_quosure(rlang::quo()) && rlang::quo_is_missing(rlang::quo()), "rlang::quo() must return an empty quosure")
 expect(identical(rlang_stub$functions$quo$params, list(list(name = "expr", required = FALSE))), "rlang::quo's expr formal must be optional in the stub")
 
 checks <- names(Filter(function(sig) !is.null(sig$assertion), rlang_stub$functions))

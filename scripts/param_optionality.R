@@ -5,7 +5,8 @@
 # This cannot detect rlang::env_get_list(default): its missing(default) branch
 # lives in the sibling env_get() implementation and env_get_list() forwards the
 # unevaluated value to C. That formal is deliberately curated in the stub and
-# must remain optional across regeneration.
+# must remain optional across regeneration. quo(expr) similarly forwards to
+# enquo() without a missing() branch; its optionality is pinned by the audit.
 
 call_name <- function(expr) {
   head <- expr[[1L]]
