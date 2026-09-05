@@ -52,9 +52,7 @@ argument_modes <- function(rd) {
       mode <- if (grepl("data-masking", description, fixed = TRUE) ||
                   legacy_data_mask) {
         "data_mask"
-      } else if (grepl("tidy-select", description, fixed = TRUE)) {
-        "tidy_select"
-      } else if (legacy_tidy_select) {
+      } else if (grepl("tidy-select", description, fixed = TRUE) || legacy_tidy_select) {
         "tidy_select"
       } else {
         next
@@ -129,7 +127,7 @@ merge_package <- function(package) {
     stub <- jsonlite::read_json(stub_path, simplifyVector = FALSE)
   } else {
     stub <- list(
-      schema_version = "1",
+      schema_version = "2",
       package = package,
       version = "0.0.1",
       functions = list()
@@ -143,12 +141,15 @@ merge_package <- function(package) {
     if (is.null(existing)) {
       existing <- list(
         params = as.list(generated$params),
-        return = list(mode = "opaque", length = "unknown")
+        "return" = list(mode = "opaque", length = "unknown", na = TRUE)
       )
     } else {
-      existing_params <- unlist(existing$params, use.names = FALSE)
-      missing_params <- setdiff(generated$params, existing_params)
-      existing$params <- as.list(c(existing_params, missing_params))
+      existing_names <- vapply(existing$params, function(param) if (is.character(param)) param else param$name, character(1))
+      params <- setNames(existing$params, existing_names)
+      order <- c(generated$params, setdiff(existing_names, generated$params))
+      existing$params <- lapply(order, function(name) {
+        if (name %in% existing_names) params[[name]] else name
+      })
     }
 
     existing_eval <- existing$eval

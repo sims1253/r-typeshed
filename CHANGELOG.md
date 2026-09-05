@@ -2,27 +2,25 @@
 
 ## [Unreleased]
 
-### Integrated from the recovered function-semantics branch
+### Cleanup
 
-- Integrated the stub-relevant commits of the lost
-  `dev/function-semantics-release-prep` work, recovered on
-  `origin/dev/function-semantics-release-prep`: 93c6ae7
-  `fix(base): complete higher-order formals`, 512fe9c
-  `test(base): enforce higher-order optionality`, and d445345
-  `fix(stubs): complete hermetic dependency metadata` (the commit ry's
-  vendor tree pinned), cherry-picked in order onto master so the PR #4
-  eval metadata and the hermetic formals/datasets work both survive.
-- Version reconciliation: base 0.0.5 and rlang 0.1.2. The lost snapshot's
-  own numbers (base 0.0.4, rlang 0.1.1) describe hermetic-only data;
-  master already shipped different content under rlang 0.1.1 (and base
-  0.0.3), so the merged superset is content-unique and must not reuse
-  either number. vctrs enters at the recovered 0.0.1.
-- `base::rep` keeps master's `unknown` return length: the recovered d445345
-  still carried the retired `x_times` symbolic length, which current ry's
-  validator rejects.
-- The P39 WIP commits above d445345 on that branch (bd6d3ce schema-crate
-  bootstrap, 0e6f4d9 pack format and compiler, fe34ca0 leftovers) are
-  deliberately NOT integrated and remain on their branch.
+- Complete purrr's 27 higher-order formal lists and correct seven callback
+  positions and `walk2` callback arity. Bump purrr to 0.0.2 and audit both
+  base and purrr against installed packages.
+- Preserve structured parameters when generating NSE metadata. Generate
+  schema-2 drafts, include function re-exports, and leave unknown returns
+  able to contain NA.
+- Replace the namespace audit's handwritten JSON readers with jsonlite.
+  Resolve package names from stub headers, including Rcpp and S7.
+- Validate Rcpp and S7 explicitly in CI; the pinned consumer skips their
+  mixed-case paths when scanning the parent directory.
+
+### Recovered function semantics
+
+- Restore the completed base higher-order formals and hermetic dependency
+  metadata. Base is version 0.0.5, rlang is 0.1.2, and vctrs is 0.0.1.
+- Keep `base::rep` return length `unknown`; the recovered `x_times` value
+  is no longer supported by ry.
 
 ### Declarative semantics
 
@@ -146,19 +144,15 @@
   the caller's expression. `delayedAssign` witnesses pin both halves of
   its declaration: `x` is forced for the target name while the forwarded
   `value` promise is captured and deferred.
-- The function-semantics audit now discovers all base higher-order declarations
-  and verifies their names against installed R, `default` metadata against
-  syntactic default presence, and `required` metadata against omittability
-  (a syntactic default or `missing()` handling), matching SCHEMA.md's
-  definition of the two fields. Declarations in other packages are not yet
-  covered: purrr alone declares 27 inference-only `higher_order` signatures
-  that this audit does not check against installed purrr.
-- Added a side-effect-safe, allowlisted zero-argument primitive audit for
-  required first formals in base coercion and vector-constructor families.
-  The reviewed pin table is itself audited: a missing `first_formal_required`
-  pin is a hard error, and a pinned primitive that accepts zero-argument
-  calls must not have its first formal required, restoring the coupling
-  between the runtime probe and the stub data.
+- The function-semantics audit discovers higher-order declarations in installed
+  packages and verifies their formal sequences and callback positions. It
+  covers 12 base and 27 purrr signatures, and checks structured parameters'
+  `default` and `required` metadata against installed formals and reviewed
+  omittability conventions.
+- Added an allowlisted zero-argument primitive audit for base coercion and
+  vector-constructor families. It checks runtime outcomes and formal sequences;
+  successful zero-argument calls must have an optional first formal, while
+  `as.raw` requires its first argument. An empty reviewed inventory is an error.
 - The typeshed audit now covers the base stub's 119-entry `datasets` block,
   attributing each entry to the environment that provides it (base's own
   constants, or the `datasets` package's lazy-data environment, reached

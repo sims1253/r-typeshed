@@ -7,11 +7,7 @@ on:
 permissions:
   contents: read
 
-# This immutable commit is the schema-2 consumer. It is intentionally pinned
-# rather than using a branch so CI always validates against a reviewable loader.
-# Bootstrap: it is currently local on ry's dev/typeshed-semantics-release-prep
-# branch and must be pushed before this checkout (and therefore this job) can
-# resolve. Push that ry commit first; no release is required.
+# Immutable ry consumer with schema-2 support.
 env:
   RY_SCHEMA_2_CONSUMER_COMMIT: 55a9bac7a3a53123e6bc381fdff0f6352d0f4d34
 
@@ -26,8 +22,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          # Schema-2 consumer pinned above. Do not replace this with a branch:
-          # the local bootstrap commit must be pushed before this job can run.
           ref: ${{ env.RY_SCHEMA_2_CONSUMER_COMMIT }}
           path: ry
       - uses: dtolnay/rust-toolchain@stable
@@ -37,7 +31,8 @@ jobs:
       - name: Build ry
         run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
       - name: Validate stubs
-        run: ry/target/release/ry typeshed validate stubs/
+        # The consumer skips nested filenames that differ in case from the directory.
+        run: ry/target/release/ry typeshed validate stubs/ stubs/rcpp/ stubs/s7/
 
   generators:
     runs-on: ubuntu-latest
@@ -59,13 +54,15 @@ jobs:
             any::carrier
       - name: Validate r-typeshed schema contracts
         run: Rscript --vanilla scripts/validate_schema.R --self-test
+      - name: Test generators
+        run: Rscript --vanilla tests/generators.R
       - name: Standard globals are current
         run: Rscript scripts/gen_standard_globals.R --check
       - name: Audit allowlisted zero-argument primitives
         run: Rscript --vanilla scripts/audit_zero_arg_primitives.R
       - name: Audit stubs against installed namespaces
         # Skips stubs whose package is not installed; the install list
-        # above pins the coverage we always get in CI.
+        # above defines the coverage we always get in CI.
         run: Rscript scripts/audit_typeshed.R
       - name: Audit function-semantics provenance
         run: Rscript --vanilla scripts/audit_function_semantics.R

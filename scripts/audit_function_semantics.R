@@ -20,32 +20,45 @@ expect <- function(ok, message) if (!isTRUE(ok)) stop(message, call. = FALSE)
 # for recycled paste values. Semantic parameter names are formal names and are
 # interpreted only after ordinary R argument binding.
 verified_base_functions <- c("paste", "paste0", "source", "intersect")
-higher_order_functions <- names(Filter(function(sig) !is.null(sig$higher_order), base$functions))
-expect(length(higher_order_functions) > 0L, "base stub must declare higher-order functions")
-for (name in c(verified_base_functions, higher_order_functions)) {
+for (name in verified_base_functions) {
   actual <- names(formals(get(name, envir = baseenv())))
-  declared <- param_names(base$functions[[name]])
-  expect(identical(declared, actual), sprintf("base::%s parameters differ from installed R", name))
+  expect(identical(param_names(base$functions[[name]]), actual), sprintf("base::%s parameters differ from installed R", name))
 }
-for (name in higher_order_functions) {
-  sig <- base$functions[[name]]
-  fn <- get(name, envir = baseenv())
-  fn_formals <- formals(fn)
-  optional_params <- missing_optional_params(fn, setdiff(names(fn_formals), "..."))
-  for (i in seq_along(sig$params)) {
-    param <- sig$params[[i]]
-    param_name <- param_names(sig)[[i]]
-    if (identical(param_name, "...")) next
-    expect(is.list(param), sprintf("base::%s parameter %s must opt into argument matching", name, param_name))
-    has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
-    is_optional <- has_default || param_name %in% optional_params
-    # Per SCHEMA.md, `default` records whether the formal has a syntactic
-    # default expression; `required` encodes omittability, which missing()
-    # handling also provides. A missing()-optional formal such as Reduce's
-    # `init` therefore records no default but is not required either.
-    expect(identical(isTRUE(param$default), has_default), sprintf("base::%s parameter %s has wrong default metadata", name, param_name))
-    expect(identical(isTRUE(param$required), !is_optional), sprintf("base::%s parameter %s has wrong required metadata", name, param_name))
+for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
+  doc <- jsonlite::read_json(path)
+  signatures <- Filter(function(sig) !is.null(sig$higher_order), doc$functions)
+  if (identical(doc$package, "base")) expect(length(signatures) > 0L, "base stub must declare higher-order functions")
+  if (!length(signatures)) next
+  if (!requireNamespace(doc$package, quietly = TRUE)) {
+    cat(sprintf("SKIP: %s higher-order formals (package not installed)\n", doc$package))
+    next
   }
+  for (name in names(signatures)) {
+    sig <- signatures[[name]]
+    label <- paste0(doc$package, "::", name)
+    fn <- getExportedValue(doc$package, name)
+    fn_formals <- formals(fn)
+    declared <- param_names(sig)
+    expect(identical(declared, names(fn_formals)), sprintf("%s parameters differ from installed R", label))
+    position <- sig$higher_order$callback_position
+    expect(is.numeric(position) && length(position) == 1L && !is.na(position) &&
+           position %in% (seq_along(declared) - 1L), sprintf("%s has invalid callback position", label))
+    expect(identical(declared[[position + 1L]], sig$higher_order$callback_param), sprintf("%s callback position differs from callback parameter", label))
+    optional_params <- missing_optional_params(fn, setdiff(declared, "..."))
+    for (i in seq_along(sig$params)) {
+      param <- sig$params[[i]]
+      param_name <- declared[[i]]
+      if (identical(param_name, "...")) next
+      if (doc$package == "base") expect(is.list(param), sprintf("%s parameter %s must opt into argument matching", label, param_name))
+      if (!is.list(param)) next
+      has_default <- !identical(fn_formals[[param_name]], quote(expr = ))
+      is_optional <- has_default || param_name %in% optional_params
+      # A missing()-optional formal has no syntactic default but is omittable.
+      expect(identical(isTRUE(param$default), has_default), sprintf("%s parameter %s has wrong default metadata", label, param_name))
+      expect(identical(isTRUE(param$required), !is_optional), sprintf("%s parameter %s has wrong required metadata", label, param_name))
+    }
+  }
+  cat(sprintf("Verified %d %s higher-order signatures.\n", length(signatures), doc$package))
 }
 intersect_sig <- base$functions$intersect
 intersect_rule <- intersect_sig$return_length
@@ -95,7 +108,6 @@ expect(exists(".r_typeshed_source_exprs_binding", envir = source_without_file, i
 source_file <- tempfile("r-typeshed-source-", fileext = ".R")
 source_binding <- ".r_typeshed_source_audit_binding"
 writeLines(sprintf("assign(%s, TRUE)", deparse(source_binding)), source_file)
-on.exit(unlink(source_file), add = TRUE)
 if (exists(source_binding, envir = .GlobalEnv, inherits = FALSE)) rm(list = source_binding, envir = .GlobalEnv)
 local_target <- new.env(parent = globalenv())
 evalq(source(source_file, local = TRUE), local_target)
@@ -106,6 +118,7 @@ evalq(source(source_file), local_target)
 expect(exists(source_binding, envir = .GlobalEnv, inherits = FALSE), "source() default must bind .GlobalEnv")
 expect(!exists(source_binding, envir = local_target, inherits = FALSE), "source() default must not bind a non-global caller")
 rm(list = source_binding, envir = .GlobalEnv)
+unlink(source_file)
 
 # Defusing evaluation modes for the base quoting helpers. The distinction
 # between quoted_expression and captures_promise is observable: a quoting
