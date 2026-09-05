@@ -32,4 +32,4 @@ silently.
 
 `schema_version` is bumped only for breaking schema changes. Tagged repository releases are immutable snapshots that ry vendors. Individual stub `version` fields describe their data revision. Schema 2 requires a ry loader that understands its semantic metadata; update ry's parser, validator, checker interpretation, and vendored snapshot together before consuming a schema-2 release.
 
-CI builds the pinned ry consumer in `.github/workflows/ci.yml`. Update that pin when changes need a newer loader. Schema validation and its regression fixtures live in ry; the R audits here verify declarations against installed R packages.
+CI builds the pinned ry consumer in `.github/workflows/ci.yml`. Use that revision for local validation too; older releases can miss mixed-case stub paths. Update the pin when changes need a newer loader. Schema validation and its regression fixtures live in ry; the R audits here verify declarations against installed R packages.

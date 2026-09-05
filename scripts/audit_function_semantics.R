@@ -26,6 +26,7 @@ for (name in verified_base_functions) {
 }
 for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
   doc <- jsonlite::read_json(path)
+  expect(identical(doc$schema_version, "2"), sprintf("%s must use schema_version 2", path))
   signatures <- Filter(function(sig) !is.null(sig$higher_order), doc$functions)
   if (identical(doc$package, "base")) expect(length(signatures) > 0L, "base stub must declare higher-order functions")
   if (!length(signatures)) next
