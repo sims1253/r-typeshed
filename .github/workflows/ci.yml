@@ -7,9 +7,9 @@ on:
 permissions:
   contents: read
 
-# Immutable ry consumer with schema-2 support.
+# Immutable ry consumer with duplicate-definition and formal-name validation.
 env:
-  RY_SCHEMA_2_CONSUMER_COMMIT: 82ed383d3d69e975c0fc210f5eb8cf91fbf46481
+  RY_SCHEMA_2_CONSUMER_COMMIT: 1b84cd247dc82025d3eda0f69c545f059feac7ed
 
 jobs:
   validate:
