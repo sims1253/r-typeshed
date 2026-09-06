@@ -57,7 +57,8 @@ The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted
 records a reviewed guarantee for calls with exactly one supplied, non-missing
 argument. That argument must be unnamed, or use the exact formal name when
 `allow_named` is true. The call starts evaluating this argument before it can
-return, signal, or dispatch; this is stronger than forcing only on normal return.
+alter caller bindings, run other user code, return, signal, or dispatch. This
+is an entry guarantee, not merely forcing on normal return.
 It does not describe multiple arguments, forwarded `...`, partial names, or
 later evaluation of captured code. `eval: "normal"` alone makes no forcing
 guarantee, and an absent `force` contract means unknown.

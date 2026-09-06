@@ -47,9 +47,14 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
       expect(identical(contract$kind, "sole_argument"), paste(label, "unknown force contract"))
       fn <- getExportedValue(doc$package, name)
       for (named in c(FALSE, if (isTRUE(contract$allow_named)) TRUE)) {
-        args <- list(quote(stop("typeshed-force-witness")))
-        if (named) names(args) <- contract$param
-        result <- tryCatch(eval(as.call(c(list(fn), args))), error = conditionMessage)
+        # Supply a promise binding so replacing the caller's binding before
+        # forcing the actual would fail this witness too.
+        invoke <- function(witness = stop("typeshed-force-witness")) {
+          args <- list(quote(witness))
+          if (named) names(args) <- contract$param
+          eval(as.call(c(list(fn), args)))
+        }
+        result <- tryCatch(invoke(), error = conditionMessage)
         expect(identical(result, "typeshed-force-witness"), paste(label, "did not force its sole argument"))
       }
     }
