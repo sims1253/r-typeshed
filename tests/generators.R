@@ -44,6 +44,21 @@ main <- function() {
   stopifnot(identical(mutate$eval$.data, "normal"), identical(mutate$eval[["..."]], "data_mask"))
   run("gen_nse_metadata.R", "dplyr", output)
   stopifnot(identical(jsonlite::read_json(path), generated))
+  # Upstream formal order must not change curated positional metadata.
+  generated$functions$mutate$params <- list("...", data_param)
+  generated$functions$mutate$higher_order <- list(callback_param = ".data", callback_position = 1L)
+  jsonlite::write_json(generated, path, auto_unbox = TRUE)
+  run("gen_nse_metadata.R", "dplyr", output)
+  reordered <- jsonlite::read_json(path)
+  stopifnot(identical(reordered$functions$mutate$params[1:2], list("...", data_param)))
+  stopifnot(identical(reordered$functions$mutate$higher_order, generated$functions$mutate$higher_order))
+  stopifnot(identical(reordered$functions$mutate$return, result))
+  expected <- c("...", ".data", setdiff(names(formals(dplyr::mutate)), c("...", ".data")))
+  actual <- vapply(reordered$functions$mutate$params, function(param) if (is.character(param)) param else param$name, character(1))
+  stopifnot(identical(actual, expected))
+  generated <- reordered
+  run("gen_nse_metadata.R", "dplyr", output)
+  stopifnot(identical(jsonlite::read_json(path), generated))
   # Existing paths need not match package capitalization (for example Rcpp).
   alternate <- file.path(work, "stubs", "DPLYR", "dplyr.json")
   dir.create(dirname(alternate))

@@ -9,6 +9,9 @@
 
 ### Cleanup
 
+- Preserve curated parameter order during NSE generation so positional semantic
+  metadata still refers to the same parameters.
+
 - Update existing stub files during NSE generation even when their directories use
   different names, and reject duplicate package stub paths before writing.
 
