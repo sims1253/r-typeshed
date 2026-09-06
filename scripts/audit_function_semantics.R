@@ -293,3 +293,12 @@ for (name in c("vec_c", "vec_size_common", "vec_recycle_common", "vec_cast_commo
   expect(identical(sig$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
   expect(identical(fn(!!!list(1, 2)), fn(1, 2)), paste(name, "splicing differs from positional arguments"))
 }
+
+purrr_stub <- jsonlite::fromJSON(file.path(root, "stubs", "purrr", "purrr.json"), simplifyVector = FALSE)
+expect(is.null(purrr_stub$functions$map_if$higher_order), "map_if must not treat every value as transformed")
+expect(is.null(purrr_stub$functions$accumulate$higher_order), "accumulate must not use one callback result as its output type")
+expect(identical(purrr_stub$functions$accumulate$return$length, "unknown"), "accumulate length depends on .init and early termination")
+expect(identical(as_strings(purrr_stub$functions$imap$higher_order$callback_args), c("element_of_arg0", "unknown")), "imap supplies a value and a name or index")
+expect(identical(purrr::map_if(list(1, 2), c(FALSE, TRUE), function(x) "text")[[1]], 1), "map_if preserves unmatched values")
+expect(identical(purrr::accumulate(1:3, `+`), c(1L, 3L, 6L)), "accumulate returns intermediate values")
+expect(identical(purrr::imap(list(a = 1), function(value, index) index), list(a = "a")), "imap supplies names")
