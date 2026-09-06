@@ -19,10 +19,22 @@ expect <- function(ok, message) if (!isTRUE(ok)) stop(message, call. = FALSE)
 # These are real public formals, including controls that must not be mistaken
 # for recycled paste values. Semantic parameter names are formal names and are
 # interpreted only after ordinary R argument binding.
-verified_base_functions <- c("paste", "paste0", "source", "intersect")
+verified_base_functions <- c("paste", "paste0", "source", "intersect", "integer", "numeric", "double", "logical", "character", "raw", "complex", "vector")
 for (name in verified_base_functions) {
   actual <- names(formals(get(name, envir = baseenv())))
   expect(identical(param_names(base$functions[[name]]), actual), sprintf("base::%s parameters differ from installed R", name))
+}
+for (name in c("integer", "numeric", "double", "logical", "character", "raw")) {
+  sig <- base$functions[[name]]
+  rule <- sig$return_length
+  expect(identical(rule$kind, "param_value") && identical(rule$param, "length") && rule$default_length == 0,
+    paste(name, "must use the size value, with default zero"))
+  fn <- get(name, envir = baseenv())
+  expect(length(fn()) == rule$default_length, paste(name, "default size differs"))
+  for (size in c(0, 1, 10, 2.9, -0.2)) {
+    expect(length(fn(size)) == trunc(size), paste(name, "size value differs"))
+  }
+  expect(identical(sig$return$length, "unknown"), paste(name, "must not copy the argument's length"))
 }
 for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
   doc <- jsonlite::read_json(path)
@@ -55,6 +67,20 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
       callback <- function(...) value
       actual <- if (startsWith(name, "map2_")) fn(1L, 1L, callback) else if (startsWith(name, "pmap_")) fn(list(1L, 1L), callback) else fn(1L, callback)
       expect(anyNA(actual) && isTRUE(sig$return$na), paste(label, "must allow missing results"))
+    }
+    if (doc$package == "purrr" && grepl("^(map|map2|pmap)_(chr|dbl|int|lgl)$", name)) {
+      expect(identical(sig$higher_order$callback_return_mode, sig$higher_order$result$mode),
+        paste(label, "must declare its callback contract independently of result length"))
+      callback <- if (sig$higher_order$callback_return_mode == "character") function(...) 1 else function(...) "x"
+      invoke <- function(inputs) {
+        if (startsWith(name, "map2_")) fn(inputs[[1]], inputs[[2]], callback)
+        else if (startsWith(name, "pmap_")) fn(inputs, callback)
+        else fn(inputs[[1]], callback)
+      }
+      expect(inherits(tryCatch(invoke(list(1L, 1L)), error = identity), "error"),
+        paste(label, "must reject an incompatible callback result"))
+      expect(length(invoke(list(integer(), integer()))) == 0L,
+        paste(label, "must not invoke the callback on empty inputs"))
     }
     fn_formals <- formals(fn)
     declared <- param_names(sig)
@@ -247,3 +273,57 @@ exprs_caller <- function(...) rlang::exprs(...)
 expect(identical(exprs_caller(a + b)[[1]], quote(a + b)), "rlang::exprs must defuse the caller dots")
 
 cat(sprintf("Function-semantics provenance verified (%d standalone rlang checks).\n", length(checks)))
+
+expect(identical(rlang::inject(list(!!list(1))), list(list(1))), "inject must process double bang")
+expect(inherits(tryCatch(!!list(1), error = identity), "error"), "ordinary double bang must retain negation")
+expect(inherits(tryCatch(with(data.frame(x = "text"), !!x), error = identity), "error"), "base data masks do not imply injection")
+expect(identical(dplyr::mutate(data.frame(x = 1), y = !!"text")$y, "text"), "dplyr masks support injection")
+
+for (name in c("list2", "dots_list", "exec", "call2")) {
+  expect(identical(rlang_stub$functions[[name]]$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
+}
+expect(identical(rlang::list2(!!!list(1)), list(1)), "dynamic dots splice lists")
+expect(inherits(tryCatch(rlang::list2(!!list(1)), error = identity), "error"), "dynamic dots reject unquoting")
+
+vctrs_stub <- jsonlite::fromJSON(file.path(root, "stubs", "vctrs", "vctrs.json"), simplifyVector = FALSE)
+for (name in c("vec_c", "vec_size_common", "vec_recycle_common", "vec_cast_common")) {
+  sig <- vctrs_stub$functions[[name]]
+  fn <- getExportedValue("vctrs", name)
+  expect(identical(param_names(sig), names(formals(fn))), paste(name, "formals differ"))
+  expect(identical(sig$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
+  expect(identical(fn(!!!list(1, 2)), fn(1, 2)), paste(name, "splicing differs from positional arguments"))
+}
+
+purrr_stub <- jsonlite::fromJSON(file.path(root, "stubs", "purrr", "purrr.json"), simplifyVector = FALSE)
+expect(is.null(purrr_stub$functions$map_if$higher_order), "map_if must not treat every value as transformed")
+expect(is.null(purrr_stub$functions$accumulate$higher_order), "accumulate must not use one callback result as its output type")
+expect(identical(purrr_stub$functions$accumulate$return$length, "unknown"), "accumulate length depends on .init and early termination")
+expect(identical(as_strings(purrr_stub$functions$imap$higher_order$callback_args), c("element_of_arg0", "unknown")), "imap supplies a value and a name or index")
+expect(identical(purrr::map_if(list(1, 2), c(FALSE, TRUE), function(x) "text")[[1]], 1), "map_if preserves unmatched values")
+expect(identical(purrr::accumulate(1:3, `+`), c(1L, 3L, 6L)), "accumulate returns intermediate values")
+expect(identical(purrr::imap(list(a = 1), function(value, index) index), list(a = "a")), "imap supplies names")
+
+for (name in c("pairlist2", "dots_values", "dots_splice", "env_bind", "env", "try_fetch", "with_handlers", "chr")) {
+  expect(identical(rlang_stub$functions[[name]]$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
+}
+expect(identical(rlang::pairlist2(!!!list(x = 1)), pairlist(x = 1)), "pairlist2 splices")
+invisible(rlang::dots_values(!!!list(1, 2)))
+expect(identical(unname(suppressWarnings(rlang::dots_splice(!!!list(1, 2)))), list(1, 2)), "dots_splice splices")
+expect(identical(rlang::env(!!!list(x = 1))$x, 1), "env splices")
+e <- new.env()
+rlang::env_bind(e, !!!list(x = 1))
+expect(identical(e$x, 1), "env_bind splices")
+expect(identical(rlang::try_fetch(stop("x"), !!!list(error = function(cnd) "caught")), "caught"), "try_fetch splices handlers")
+expect(identical(suppressWarnings(rlang::with_handlers(stop("x"), !!!list(error = function(cnd) "caught"))), "caught"), "with_handlers splices")
+expect(identical(suppressWarnings(rlang::chr(!!!list("a", "b"))), c("a", "b")), "chr splices")
+expect(identical(dplyr::tibble(!!!list(x = 1))$x, 1), "tibble splices")
+expect(identical(dplyr::tibble(x = !!1)$x, 1), "tibble unquotes")
+
+expect(identical(rlang_stub$functions$call_modify$injection[["..."]], "splice"), "call_modify declares dynamic dots")
+expect(identical(rlang::call_modify(quote(f()), !!!list(x = 1)), quote(f(x = 1))), "call_modify splices")
+expect(identical(rlang_stub$functions$env_bind_lazy$injection[["..."]], "full"), "env_bind_lazy declares injection")
+e <- new.env()
+rlang::env_bind_lazy(e, x = !!1)
+expect(identical(e$x, 1), "env_bind_lazy unquotes")
+expect(identical(dplyr::bind_cols(!!"x" := 1)$x, 1), "bind_cols injects names")
+expect(identical(dplyr::bind_rows(!!!list(data.frame(x = 1)))$x, 1), "bind_rows splices")

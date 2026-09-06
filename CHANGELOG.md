@@ -9,6 +9,14 @@
 
 ### Cleanup
 
+- Remove unsupported callback-result refinements from `accumulate()` and
+  `map_if()`. Supply both callback arguments for `imap()`.
+
+- Correct constructor formals and model size values separately from argument
+  lengths. Declare typed callback requirements and tidy-evaluation/splicing modes.
+- Make the namespace audit fail on invalid formal names. Distinguish reviewed
+  forwarding from misspelled parameters and test audit failure detection.
+
 - Correct typed `map2_*` and `pmap_*` results to atomic vectors. Keep their
   lengths unknown because recycling and component lengths cannot be derived
   from one formal argument. Allow missing results throughout the typed map

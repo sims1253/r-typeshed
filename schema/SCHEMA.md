@@ -70,3 +70,11 @@ entries are never replaced. Pass `--check` to verify that both inventories are
 current without writing the file.
 
 `schema_version` changes only for incompatible format changes. Package `version` describes the stub data version.
+
+## Literal sizes, typed callbacks, and injection
+
+`return_length: {"kind": "param_value", "param": "length", "default_length": 0}` uses a numeric parameter's value as the result length. Numeric sizes truncate towards zero. Dynamic or invalid sizes remain unknown. The named parameter must exist. This differs from `return.length: "arg0"`, which copies the length of the argument itself.
+
+`higher_order.callback_return_mode` optionally requires each callback result to be one logical, integer, double, or character value. It is independent of the result vector's length and mode. Consumers must allow potentially valid numeric conversions and avoid checking callbacks for known-empty inputs. `callback_args: ["elements_of_arg0"]` supplies one element from each component of the first argument, as in `pmap()`.
+
+`injection` maps formal names to `"full"` (tidy-evaluation `!!` and `!!!`) or `"splice"` (dynamic dots accepting `!!!` for values and `!!` on the left of `:=`). For example, `rlang::list2()` declares `{"...": "splice"}`. It uses ordinary argument matching, including `...`. Data masking alone does not imply injection: base `with()` evaluates `!!x` as two negations. Known ordinary arguments retain R negation semantics. When a callable has no available evaluation contract, a consumer must allow for argument capture rather than assume repeated negation executes.
