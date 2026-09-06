@@ -146,11 +146,10 @@ merge_package <- function(package) {
       )
     } else {
       existing_names <- vapply(existing$params, function(param) if (is.character(param)) param else param$name, character(1))
-      params <- setNames(existing$params, existing_names)
-      order <- c(generated$params, setdiff(existing_names, generated$params))
-      existing$params <- lapply(order, function(name) {
-        if (name %in% existing_names) params[[name]] else name
-      })
+      # Positional semantic metadata refers to the curated parameter order.
+      # Append new formals without moving or removing existing parameters.
+      added <- setdiff(generated$params, existing_names)
+      existing$params <- c(existing$params, as.list(added))
     }
 
     existing_eval <- existing$eval

@@ -33,8 +33,10 @@ The generators produce drafts for review. Replace the generated `"draft"`
 version with a stub data revision before submitting it. Record each stub data
 change under `[Unreleased]` in `CHANGELOG.md`. NSE generation writes
 to the existing stub file, even when its directory uses different capitalization,
-and preserves curated evaluation metadata. It stops if multiple files match the
-package name.
+and preserves curated evaluation metadata and parameter order. New parameters
+are appended so positional metadata keeps its meaning. Review the order against
+the installed package before submitting changes. The generator stops if multiple
+files match the package name.
 
 ## Local checks
 
