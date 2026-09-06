@@ -32,7 +32,9 @@ you want to describe before running either generator.
 The generators produce drafts for review. Replace the generated `"draft"`
 version with a stub data revision before submitting it. Record each stub data
 change under `[Unreleased]` in `CHANGELOG.md`. NSE generation writes
-to the stub file and preserves existing curated evaluation metadata.
+to the existing stub file, even when its directory uses different capitalization,
+and preserves curated evaluation metadata. It stops if multiple files match the
+package name.
 
 ## Local checks
 
