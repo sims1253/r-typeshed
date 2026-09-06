@@ -104,7 +104,9 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/typeshed-draft"
           cp "stubs/$PACKAGE/$PACKAGE.json" "$RUNNER_TEMP/typeshed-draft/stub.json"
+          printf '\nFull audit logs: https://github.com/%s/actions/runs/%s\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> "$RUNNER_TEMP/review.md"
           cp "$RUNNER_TEMP/review.md" "$RUNNER_TEMP/typeshed-draft/review.md"
+          cp "$RUNNER_TEMP/schema.log" "$RUNNER_TEMP/names.log" "$RUNNER_TEMP/semantics.log" "$RUNNER_TEMP/typeshed-draft/"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: typeshed-${{ matrix.package }}
