@@ -9,7 +9,7 @@ permissions:
 
 # Immutable ry consumer with schema-2 support.
 env:
-  RY_SCHEMA_2_CONSUMER_COMMIT: 0fc10cccd704fcb1425ac464140e2e4aef590b7c
+  RY_SCHEMA_2_CONSUMER_COMMIT: 82ed383d3d69e975c0fc210f5eb8cf91fbf46481
 
 jobs:
   validate:
