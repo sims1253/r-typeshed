@@ -15,8 +15,6 @@ jobs:
       - name: Read consumer revision
         id: consumer
         run: echo "ref=$(cat .github/ry-consumer)" >> "$GITHUB_OUTPUT"
-      # TODO: Switch to the linux x86_64 release binary after a ry release
-      # containing `typeshed validate` is published.
       - name: Check out ry source
         uses: actions/checkout@v4
         with:
@@ -50,6 +48,8 @@ jobs:
             any::dplyr
             any::mirai
             any::carrier
+      - name: Test audit failure detection
+        run: Rscript --vanilla tests/audits.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation

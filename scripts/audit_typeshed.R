@@ -109,10 +109,22 @@ find_base_function <- function(name) {
   NULL
 }
 
+# These wrappers and generics forward dots to the named implementation.
+# The allowed names are read from that implementation's real formals.
+forwarded_formals <- c(
+  aov = "lm", cor.test = "cor.test.formula", cut = "cut.default",
+  head = "head.default", ks.test = "ks.test.default", lag = "lag.default",
+  mood.test = "mood.test.default", seq = "seq.default", subset = "subset.data.frame",
+  t.test = "t.test.formula", tail = "tail.default", update = "update.default",
+  var.test = "var.test.default", wilcox.test = "wilcox.test.formula",
+  window = "window.default", write.csv = "write.table"
+)
+
 audit_base_formals <- function(doc) {
   first_category <- character()
   reverse_category <- character()
   name_mismatches <- character()
+  forwarded_names <- character()
   skipped_primitives <- character()
   missing_optional_not_default <- character()
   stub_params <- lapply(doc$functions, function(sig) sig$params)
@@ -128,7 +140,12 @@ audit_base_formals <- function(doc) {
     for (param in stub_params[[fn_name]]) {
       if (is.character(param)) param <- list(name = param)
       if (!(param$name %in% names(fs))) {
-        name_mismatches <- c(name_mismatches, paste0(fn_name, "::", param$name))
+        target <- unname(forwarded_formals[fn_name])
+        forwarded <- "..." %in% names(fs) && !is.na(target) &&
+          param$name %in% names(formals(find_base_function(target)))
+        label <- paste0(fn_name, "::", param$name)
+        if (forwarded) forwarded_names <- c(forwarded_names, label)
+        else name_mismatches <- c(name_mismatches, label)
         next
       }
       has_default <- param$name == "..." || !identical(fs[[param$name]], quote(expr = ))
@@ -152,20 +169,23 @@ audit_base_formals <- function(doc) {
   report("Required despite R default/dots", first_category)
   report("Default despite required R formal", reverse_category)
   report("Missing()/maybe_missing()/nargs()-optional but not default", missing_optional_not_default)
-  report("Stub params missing from R formals", name_mismatches)
+  report("Invalid formal names", name_mismatches)
+  report("Reviewed forwarded formals", forwarded_names)
   report("Primitives without formals", skipped_primitives)
   invisible(list(
     required_with_default = first_category,
     default_on_required = reverse_category,
     missing_optional_not_default = missing_optional_not_default,
     name_mismatches = name_mismatches,
+    failures = c(first_category, reverse_category, name_mismatches),
+    forwarded_names = forwarded_names,
     skipped_primitives = skipped_primitives
   ))
 }
 
 if ("--base-formals-only" %in% commandArgs(trailingOnly = TRUE)) {
-  audit_base_formals(jsonlite::read_json(file.path(stub_root, "base", "base.json")))
-  quit(status = 0)
+  report <- audit_base_formals(jsonlite::read_json(file.path(stub_root, "base", "base.json")))
+  quit(status = as.integer(length(report$failures) > 0L))
 }
 
 failures <- character()
@@ -201,4 +221,5 @@ if (length(failures)) {
   quit(status = 1)
 }
 cat("All available package names verified.\n")
-audit_base_formals(jsonlite::read_json(file.path(stub_root, "base", "base.json")))
+report <- audit_base_formals(jsonlite::read_json(file.path(stub_root, "base", "base.json")))
+if (length(report$failures)) quit(status = 1)
