@@ -1,0 +1,174 @@
+name: Prepare typeshed updates
+
+on:
+  schedule:
+    - cron: "23 6 1 * *"
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "R package to prepare (leave empty to check tracked upstream versions)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      packages: ${{ steps.plan.outputs.packages }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
+      - name: Install JSON support
+        run: Rscript -e 'install.packages("jsonlite")'
+      - name: Select packages
+        id: plan
+        env:
+          PACKAGE: ${{ inputs.package }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Rscript --vanilla scripts/update_typeshed.R plan "$PACKAGE" > candidates.json 2> plan.log
+          cat plan.log >> "$GITHUB_STEP_SUMMARY"
+          gh pr list --state open --limit 1000 --json headRefName,url > open-prs.json
+          jq -c --slurpfile prs open-prs.json 'map(.package as $p | select(any($prs[0][]; .headRefName | startswith("automation/typeshed-\($p)-")) | not))' candidates.json > packages.json
+          echo "packages=$(cat packages.json)" >> "$GITHUB_OUTPUT"
+          echo "Packages selected: $(cat packages.json). Existing drafts are kept for human edits." >> "$GITHUB_STEP_SUMMARY"
+
+  prepare:
+    needs: plan
+    if: needs.plan.outputs.packages != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+    env:
+      PACKAGE: ${{ matrix.package }}
+      PACKAGE_VERSION: ${{ matrix.version }}
+      STUB_PATH: ${{ matrix.stub }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: r-lib/actions/setup-r@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
+        with:
+          extra-repositories: ${{ matrix.package == 'cmdstanr' && 'https://stan-dev.r-universe.dev' || '' }}
+      - uses: r-lib/actions/setup-r-dependencies@d3c5be51b12e724e68f33216ca3c148b66d5f0b6 # v2.12.1
+        with:
+          packages: |
+            any::jsonlite
+            ${{ matrix.package != 'base' && format('any::{0}@{1}', matrix.package, matrix.version) || '' }}
+          dependencies: 'c("Depends", "Imports", "LinkingTo")'
+          upgrade: 'TRUE'
+      - name: Generate draft and review notes
+        run: Rscript --vanilla scripts/update_typeshed.R prepare "$PACKAGE" "$PACKAGE_VERSION" "$RUNNER_TEMP/review.md"
+      - name: Read consumer revision
+        id: consumer
+        run: echo "ref=$(cat .github/ry-consumer)" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: sims1253/ry
+          ref: ${{ steps.consumer.outputs.ref }}
+          path: ry-consumer
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c # stable
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2
+        with:
+          workspaces: ry-consumer -> target
+      - name: Validate and audit the draft
+        run: |
+          cargo build --manifest-path ry-consumer/Cargo.toml -p ry-cli --release
+          set +e
+          for check in schema names semantics; do
+            case "$check" in
+              schema) ry-consumer/target/release/ry typeshed validate stubs > "$RUNNER_TEMP/$check.log" 2>&1 ;;
+              names) Rscript --vanilla scripts/audit_typeshed.R > "$RUNNER_TEMP/$check.log" 2>&1 ;;
+              semantics) Rscript --vanilla scripts/audit_function_semantics.R > "$RUNNER_TEMP/$check.log" 2>&1 ;;
+            esac
+            status=$?
+            {
+              echo ""
+              echo "### $check (exit $status)"
+              echo '```text'
+              tail -60 "$RUNNER_TEMP/$check.log"
+              echo '```'
+            } >> "$RUNNER_TEMP/review.md"
+          done
+      - name: Collect draft
+        run: |
+          mkdir -p "$RUNNER_TEMP/typeshed-draft"
+          cp "$STUB_PATH" "$RUNNER_TEMP/typeshed-draft/stub.json"
+          printf '\nFull audit logs: https://github.com/%s/actions/runs/%s\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> "$RUNNER_TEMP/review.md"
+          cp "$RUNNER_TEMP/review.md" "$RUNNER_TEMP/typeshed-draft/review.md"
+          cp "$RUNNER_TEMP/schema.log" "$RUNNER_TEMP/names.log" "$RUNNER_TEMP/semantics.log" "$RUNNER_TEMP/typeshed-draft/"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: typeshed-${{ matrix.package }}
+          path: ${{ runner.temp }}/typeshed-draft
+          retention-days: 14
+
+  publish:
+    needs: [plan, prepare]
+    concurrency:
+      group: typeshed-pr-${{ matrix.package }}
+      cancel-in-progress: false
+    # A failed package must not prevent other packages' drafts from publishing.
+    if: ${{ !cancelled() && needs.plan.outputs.packages != '[]' && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.packages) }}
+    env:
+      PACKAGE: ${{ matrix.package }}
+      PACKAGE_VERSION: ${{ matrix.version }}
+      STUB_PATH: ${{ matrix.stub }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: typeshed-${{ matrix.package }}
+          path: prepared
+      - name: Open draft PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prefix="automation/typeshed-${PACKAGE}-"
+          existing=$(gh pr list --state open --limit 1000 --json headRefName,url | jq -r --arg prefix "$prefix" '[.[] | select(.headRefName | startswith($prefix))][0].url // empty')
+          if [ -n "$existing" ]; then
+            echo "Existing draft retained: $existing" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          jq -e --arg package "$PACKAGE" '.package == $package and .schema_version == "2"' prepared/stub.json
+          mkdir -p "$(dirname "$STUB_PATH")"
+          cp prepared/stub.json "$STUB_PATH"
+          jq -S --arg package "$PACKAGE" --arg version "$PACKAGE_VERSION" '.[$package] = $version' upstream-versions.json > versions.json
+          mv versions.json upstream-versions.json
+          git add -- "$STUB_PATH" upstream-versions.json
+          if git diff --cached --quiet; then
+            cat prepared/review.md >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          branch="automation/typeshed-${PACKAGE}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          git switch -c "$branch"
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m "Prepare typeshed for $PACKAGE"
+          gh auth setup-git
+          git push origin "$branch"
+          url=$(gh pr create --draft --head "$branch" --title "Prepare typeshed for $PACKAGE" --body-file prepared/review.md)
+          echo "Draft ready: $url" >> "$GITHUB_STEP_SUMMARY"

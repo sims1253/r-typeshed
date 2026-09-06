@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Automation
+
+- Prepare draft typeshed PRs for a named package or monthly upstream updates.
+  Preserve curated entries and report signature drift for review.
+
 ### Cleanup
 
 - Correct typed `map2_*` and `pmap_*` results to atomic vectors. Keep their

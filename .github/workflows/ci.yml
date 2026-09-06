@@ -7,22 +7,21 @@ on:
 permissions:
   contents: read
 
-# Immutable ry consumer with duplicate-definition and formal-name validation.
-env:
-  RY_SCHEMA_2_CONSUMER_COMMIT: 1b84cd247dc82025d3eda0f69c545f059feac7ed
-
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Read consumer revision
+        id: consumer
+        run: echo "ref=$(cat .github/ry-consumer)" >> "$GITHUB_OUTPUT"
       # TODO: Switch to the linux x86_64 release binary after a ry release
       # containing `typeshed validate` is published.
       - name: Check out ry source
         uses: actions/checkout@v4
         with:
           repository: sims1253/ry
-          ref: ${{ env.RY_SCHEMA_2_CONSUMER_COMMIT }}
+          ref: ${{ steps.consumer.outputs.ref }}
           path: ry
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
@@ -53,6 +52,8 @@ jobs:
             any::carrier
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
+      - name: Test package-update planning and curation preservation
+        run: Rscript --vanilla tests/updates.R
       - name: Standard globals are current
         run: Rscript scripts/gen_standard_globals.R --check
       - name: Audit allowlisted zero-argument primitives
