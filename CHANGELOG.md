@@ -9,6 +9,9 @@
 
 ### Cleanup
 
+- Update existing stub files during NSE generation even when their directories use
+  different names, and reject duplicate package stub paths before writing.
+
 - Remove unsupported callback-result refinements from `accumulate()` and
   `map_if()`. Supply both callback arguments for `imap()`.
 

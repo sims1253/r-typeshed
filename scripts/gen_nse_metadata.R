@@ -15,6 +15,8 @@ if (length(script_arg) != 1L) {
 }
 script_path <- normalizePath(sub("^--file=", "", script_arg), mustWork = TRUE)
 repo_root <- dirname(dirname(script_path))
+# Reuse the update workflow's existing-path lookup without running its CLI.
+source(file.path(repo_root, "scripts", "update_typeshed.R"))
 
 rd_text <- function(node) {
   paste(unlist(node, recursive = TRUE, use.names = FALSE), collapse = "")
@@ -119,9 +121,8 @@ derive_metadata <- function(package) {
 }
 
 merge_package <- function(package) {
-  stub_dir <- file.path(repo_root, "stubs", package)
-  stub_path <- file.path(stub_dir, paste0(package, ".json"))
-  dir.create(stub_dir, recursive = TRUE, showWarnings = FALSE)
+  stub_path <- stub_path(package, repo_root)
+  dir.create(dirname(stub_path), recursive = TRUE, showWarnings = FALSE)
 
   if (file.exists(stub_path)) {
     stub <- jsonlite::read_json(stub_path, simplifyVector = FALSE)

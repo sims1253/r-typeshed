@@ -44,7 +44,22 @@ main <- function() {
   stopifnot(identical(mutate$eval$.data, "normal"), identical(mutate$eval[["..."]], "data_mask"))
   run("gen_nse_metadata.R", "dplyr", output)
   stopifnot(identical(jsonlite::read_json(path), generated))
-  unlink(path)
+  # Existing paths need not match package capitalization (for example Rcpp).
+  alternate <- file.path(work, "stubs", "DPLYR", "dplyr.json")
+  dir.create(dirname(alternate))
+  stopifnot(file.rename(path, alternate))
+  run("gen_nse_metadata.R", "dplyr", output)
+  stopifnot(!file.exists(path), identical(jsonlite::read_json(alternate), generated))
+
+  # Ambiguous paths must fail before changing either curated file.
+  stopifnot(file.copy(alternate, path))
+  before <- lapply(c(path, alternate), readLines)
+  status <- system2(file.path(R.home("bin"), "Rscript"),
+                    c("--vanilla", shQuote(file.path(work, "scripts", "gen_nse_metadata.R")), "dplyr"),
+                    stdout = output, stderr = output)
+  stopifnot(status != 0L, any(grepl("Multiple stubs for dplyr", readLines(output), fixed = TRUE)))
+  stopifnot(identical(lapply(c(path, alternate), readLines), before))
+  unlink(c(path, alternate))
   run("gen_nse_metadata.R", "dplyr", output)
   fresh <- jsonlite::read_json(path)
   stopifnot(identical(fresh$schema_version, "2"))
