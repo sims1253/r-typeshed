@@ -12,8 +12,9 @@
   able to contain NA.
 - Replace the namespace audit's handwritten JSON readers with jsonlite.
   Resolve package names from stub headers, including Rcpp and S7.
-- Validate Rcpp and S7 explicitly in CI; the pinned consumer skips their
-  mixed-case paths when scanning the parent directory.
+- Use ry for schema validation and remove the duplicate R validator. Its
+  fixture coverage now lives in ry. The updated consumer also discovers
+  Rcpp and S7 from the parent directory, removing the extra CI paths.
 
 ### Recovered function semantics
 

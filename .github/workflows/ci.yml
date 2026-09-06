@@ -9,7 +9,7 @@ permissions:
 
 # Immutable ry consumer with schema-2 support.
 env:
-  RY_SCHEMA_2_CONSUMER_COMMIT: 55a9bac7a3a53123e6bc381fdff0f6352d0f4d34
+  RY_SCHEMA_2_CONSUMER_COMMIT: 82ed383d3d69e975c0fc210f5eb8cf91fbf46481
 
 jobs:
   validate:
@@ -31,8 +31,7 @@ jobs:
       - name: Build ry
         run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
       - name: Validate stubs
-        # The consumer skips nested filenames that differ in case from the directory.
-        run: ry/target/release/ry typeshed validate stubs/ stubs/rcpp/ stubs/s7/
+        run: ry/target/release/ry typeshed validate stubs/
 
   generators:
     runs-on: ubuntu-latest
@@ -52,8 +51,6 @@ jobs:
             any::dplyr
             any::mirai
             any::carrier
-      - name: Validate r-typeshed schema contracts
-        run: Rscript --vanilla scripts/validate_schema.R --self-test
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Standard globals are current
