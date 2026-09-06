@@ -50,6 +50,12 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
         expect(identical(result$mode, typeof(actual)), paste(label, "result mode differs from R"))
       }
     }
+    if (doc$package == "purrr" && grepl("^(map|map2|pmap)_(chr|dbl|int|lgl|vec)$", name)) {
+      value <- switch(sub(".*_", "", name), chr = NA_character_, dbl = NA_real_, int = NA_integer_, lgl = NA, vec = NA)
+      callback <- function(...) value
+      actual <- if (startsWith(name, "map2_")) fn(1L, 1L, callback) else if (startsWith(name, "pmap_")) fn(list(1L, 1L), callback) else fn(1L, callback)
+      expect(anyNA(actual) && isTRUE(sig$return$na), paste(label, "must allow missing results"))
+    }
     fn_formals <- formals(fn)
     declared <- param_names(sig)
     expect(identical(declared, names(fn_formals)), sprintf("%s parameters differ from installed R", label))

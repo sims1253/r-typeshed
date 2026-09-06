@@ -6,7 +6,8 @@
 
 - Correct typed `map2_*` and `pmap_*` results to atomic vectors. Keep their
   lengths unknown because recycling and component lengths cannot be derived
-  from one formal argument. Purrr stubs are version 0.0.3.
+  from one formal argument. Allow missing results throughout the typed map
+  family. Purrr stubs are version 0.0.3.
 
 - Complete purrr's 27 higher-order formal lists and correct seven callback
   positions and `walk2` callback arity. Bump purrr to 0.0.2 and audit both

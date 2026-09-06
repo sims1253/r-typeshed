@@ -253,7 +253,7 @@
       "return": {
         "mode": "character",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "map2_dbl": {
@@ -268,7 +268,7 @@
       "return": {
         "mode": "double",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "map2_int": {
@@ -283,7 +283,7 @@
       "return": {
         "mode": "integer",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "map2_lgl": {
@@ -298,7 +298,7 @@
       "return": {
         "mode": "logical",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "map_chr": {
@@ -312,7 +312,7 @@
       "return": {
         "mode": "character",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "map_dbl": {
@@ -326,7 +326,7 @@
       "return": {
         "mode": "double",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "map_if": {
@@ -355,7 +355,7 @@
       "return": {
         "mode": "integer",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "map_lgl": {
@@ -369,7 +369,7 @@
       "return": {
         "mode": "logical",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "map_vec": {
@@ -384,7 +384,7 @@
       "return": {
         "mode": "opaque",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "negate": {
@@ -456,7 +456,7 @@
       "return": {
         "mode": "character",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "pmap_dbl": {
@@ -470,7 +470,7 @@
       "return": {
         "mode": "double",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "pmap_int": {
@@ -484,7 +484,7 @@
       "return": {
         "mode": "integer",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "pmap_lgl": {
@@ -498,7 +498,7 @@
       "return": {
         "mode": "logical",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "pwalk": {
