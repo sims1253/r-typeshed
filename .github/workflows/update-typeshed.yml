@@ -10,10 +10,6 @@ on:
         required: false
         type: string
 
-concurrency:
-  group: typeshed-updates
-  cancel-in-progress: false
-
 permissions:
   contents: read
   pull-requests: read
@@ -117,6 +113,9 @@ jobs:
 
   publish:
     needs: [plan, prepare]
+    concurrency:
+      group: typeshed-pr-${{ matrix.package }}
+      cancel-in-progress: false
     # A failed package must not prevent other packages' drafts from publishing.
     if: ${{ !cancelled() && needs.plan.outputs.packages != '[]' && needs.plan.result == 'success' }}
     runs-on: ubuntu-latest
@@ -145,6 +144,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          prefix="automation/typeshed-${PACKAGE}-"
+          existing=$(gh pr list --state open --limit 1000 --json headRefName,url | jq -r --arg prefix "$prefix" '[.[] | select(.headRefName | startswith($prefix))][0].url // empty')
+          if [ -n "$existing" ]; then
+            echo "Existing draft retained: $existing" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           jq -e --arg package "$PACKAGE" '.package == $package and .schema_version == "2"' prepared/stub.json
           mkdir -p "stubs/$PACKAGE"
           cp prepared/stub.json "stubs/$PACKAGE/$PACKAGE.json"
