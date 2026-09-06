@@ -21,6 +21,39 @@ See [schema/SCHEMA.md](schema/SCHEMA.md) for the file format.
 
 The generators produce drafts for review. They require `jsonlite` and the package being generated. Run `Rscript --vanilla tests/generators.R` to check draft output and preservation of curated NSE metadata (also requires `dplyr`).
 
+## Package update drafts
+
+In Actions, run **Prepare typeshed updates** and enter a package name. This
+works for a new package or one with existing stubs. From the command line:
+
+```bash
+gh workflow run update-typeshed.yml --repo sims1253/r-typeshed -f package=dplyr
+```
+
+The same workflow checks upstream versions on the first day of each month.
+An empty package input runs that check immediately. CRAN supplies package
+releases; `cmdstanr` uses Stan's R-universe repository, and `base` follows the
+R release installed by CI.
+
+Each selected package gets a draft PR. The generators add missing exported
+functions with unknown return types and derive documented NSE metadata.
+Existing curated entries stay intact, including positional callback metadata.
+Formal-name and declared-requiredness changes, and entries no longer exported,
+are listed for review. Return behavior and default-value changes still need
+manual inspection. Base updates refresh only its generated inventory.
+
+The PR includes schema-validation and R-audit results, including failures that
+need cleanup. An open automation draft is left alone so reruns cannot overwrite
+reviewer edits. Approve any waiting CI workflows in GitHub, curate the draft,
+and mark it ready for review; this workflow never merges its own PRs.
+
+`upstream-versions.json` tracks observed package releases separately from stub
+data revisions. Its initial baseline records versions observed on 2026-09-06;
+it does not claim that every curated signature was verified against those
+versions. Subsequent draft PRs record the installed version used to generate
+their updates. A release with no generated code changes can therefore produce
+a version-only PR with review notes.
+
 ## Generated base inventory
 
 `stubs/base/base.json`'s ambient symbol split and dataset inventory are
@@ -32,4 +65,4 @@ silently.
 
 `schema_version` is bumped only for breaking schema changes. Tagged repository releases are immutable snapshots that ry vendors. Individual stub `version` fields describe their data revision. Schema 2 requires a ry loader that understands its semantic metadata; update ry's parser, validator, checker interpretation, and vendored snapshot together before consuming a schema-2 release.
 
-CI builds the pinned ry consumer in `.github/workflows/ci.yml`. Use that revision for local validation too; older releases can miss mixed-case stub paths. Update the pin when changes need a newer loader. Schema validation and its regression fixtures live in ry; the R audits here verify declarations against installed R packages.
+CI and the draft workflow build the pinned ry consumer in `.github/ry-consumer`. Use that revision for local validation too; older releases can miss mixed-case stub paths. Update the pin when changes need a newer loader. Schema validation and its regression fixtures live in ry; the R audits here verify declarations against installed R packages.
