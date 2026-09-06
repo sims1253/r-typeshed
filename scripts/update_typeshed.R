@@ -5,15 +5,22 @@ valid_package <- function(package) {
 }
 
 upstream_versions <- function(packages) {
-  cran <- available.packages(repos = "https://cloud.r-project.org", type = "source")
-  stan <- if ("cmdstanr" %in% packages) available.packages(repos = "https://stan-dev.r-universe.dev", type = "source") else NULL
+  index_for <- function(repository) tryCatch(
+    available.packages(repos = repository, type = "source"),
+    error = function(error) { warning(conditionMessage(error)); NULL }
+  )
+  cran <- index_for("https://cloud.r-project.org")
+  stan <- if ("cmdstanr" %in% packages) index_for("https://stan-dev.r-universe.dev") else NULL
   versions <- lapply(packages, function(package) {
     if (package == "base") return(as.character(getRversion()))
     index <- if (package == "cmdstanr") stan else cran
-    if (!(package %in% rownames(index))) stop(sprintf("%s is unavailable in its upstream repository", package))
+    if (!(package %in% rownames(index))) {
+      warning(sprintf("Skipping %s: unavailable in its upstream repository", package))
+      return(NULL)
+    }
     unname(index[package, "Version"])
   })
-  setNames(versions, packages)
+  setNames(versions, packages)[!vapply(versions, is.null, logical(1))]
 }
 
 changed_packages <- function(previous, current) {
@@ -59,11 +66,18 @@ write_json <- function(value, path) {
   writeLines(jsonlite::toJSON(value, pretty = TRUE, auto_unbox = TRUE, null = "null"), path, useBytes = TRUE)
 }
 
+stub_path <- function(package, root) {
+  paths <- list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)
+  matches <- paths[basename(paths) == paste0(package, ".json")]
+  if (length(matches) > 1L) stop(sprintf("Multiple stubs for %s", package))
+  if (length(matches)) matches[[1]] else file.path(root, "stubs", package, paste0(package, ".json"))
+}
+
 prepare_package <- function(package, root, report, expected_version = NULL) {
   if (!requireNamespace(package, quietly = TRUE)) stop(sprintf("%s is not installed", package))
   version <- as.character(packageVersion(package))
   if (!is.null(expected_version) && !identical(version, expected_version)) stop(sprintf("Expected %s %s, installed %s", package, expected_version, version))
-  stub_path <- file.path(root, "stubs", package, paste0(package, ".json"))
+  stub_path <- stub_path(package, root)
   previous <- if (file.exists(stub_path)) jsonlite::read_json(stub_path) else NULL
   lines <- c(sprintf("Prepare typeshed for `%s` %s.", package, version), "", "This is a generated draft. Review return types, evaluation modes, and semantic metadata before merging.", "")
   run <- function(script, args = character(), output = "") {
@@ -137,8 +151,9 @@ main <- function(args) {
     previous <- jsonlite::read_json(file.path(root, "upstream-versions.json"))
     packages <- if (nzchar(package)) package else names(previous)
     current <- upstream_versions(packages)
+    if (nzchar(package) && is.null(current[[package]])) stop("Requested package is unavailable")
     selected <- if (nzchar(package)) package else changed_packages(previous, current)
-    matrix <- lapply(selected, function(package) list(package = package, version = current[[package]]))
+    matrix <- lapply(selected, function(package) list(package = package, version = current[[package]], stub = substring(stub_path(package, root), nchar(root) + 2L)))
     cat(jsonlite::toJSON(unname(matrix), auto_unbox = TRUE), "\n")
   }
 }
