@@ -38,6 +38,18 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
     sig <- signatures[[name]]
     label <- paste0(doc$package, "::", name)
     fn <- getExportedValue(doc$package, name)
+    if (doc$package == "purrr" && grepl("^(map2|pmap)_(chr|dbl|int|lgl)$", name)) {
+      suffix <- sub(".*_", "", name)
+      value <- switch(suffix, chr = "x", dbl = 1, int = 1L, lgl = TRUE)
+      result <- sig$higher_order$result
+      expect(identical(result$kind, "vector_of"), paste(label, "must return an atomic vector"))
+      expect(is.null(result$length_arg), paste(label, "cannot derive length from one input"))
+      for (inputs in list(list(1L, 1:3), list(integer(), integer()))) {
+        callback <- function(...) value
+        actual <- if (startsWith(name, "map2_")) fn(inputs[[1]], inputs[[2]], callback) else fn(inputs, callback)
+        expect(identical(result$mode, typeof(actual)), paste(label, "result mode differs from R"))
+      }
+    }
     fn_formals <- formals(fn)
     declared <- param_names(sig)
     expect(identical(declared, names(fn_formals)), sprintf("%s parameters differ from installed R", label))

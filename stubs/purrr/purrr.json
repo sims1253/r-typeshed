@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "purrr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "functions": {
     "accumulate": {
       "params": [
@@ -249,7 +249,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "character"}},
       "return": {
         "mode": "character",
         "length": "unknown",
@@ -264,7 +264,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "double"}},
       "return": {
         "mode": "double",
         "length": "unknown",
@@ -279,7 +279,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "integer"}},
       "return": {
         "mode": "integer",
         "length": "unknown",
@@ -294,7 +294,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 2, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "logical"}},
       "return": {
         "mode": "logical",
         "length": "unknown",
@@ -452,7 +452,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "character"}},
       "return": {
         "mode": "character",
         "length": "unknown",
@@ -466,7 +466,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "double"}},
       "return": {
         "mode": "double",
         "length": "unknown",
@@ -480,7 +480,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "integer"}},
       "return": {
         "mode": "integer",
         "length": "unknown",
@@ -494,7 +494,7 @@
         "...",
         ".progress"
       ],
-      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "list_of_callback_return", "include_callback_schema": true}},
+      "higher_order": {"callback_param": ".f", "callback_position": 1, "callback_args": ["element_of_arg0", "element_of_arg1"], "result": {"kind": "vector_of", "mode": "logical"}},
       "return": {
         "mode": "logical",
         "length": "unknown",
