@@ -302,3 +302,28 @@ expect(identical(as_strings(purrr_stub$functions$imap$higher_order$callback_args
 expect(identical(purrr::map_if(list(1, 2), c(FALSE, TRUE), function(x) "text")[[1]], 1), "map_if preserves unmatched values")
 expect(identical(purrr::accumulate(1:3, `+`), c(1L, 3L, 6L)), "accumulate returns intermediate values")
 expect(identical(purrr::imap(list(a = 1), function(value, index) index), list(a = "a")), "imap supplies names")
+
+for (name in c("pairlist2", "dots_values", "dots_splice", "env_bind", "env", "try_fetch", "with_handlers", "chr")) {
+  expect(identical(rlang_stub$functions[[name]]$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
+}
+expect(identical(rlang::pairlist2(!!!list(x = 1)), pairlist(x = 1)), "pairlist2 splices")
+invisible(rlang::dots_values(!!!list(1, 2)))
+expect(identical(unname(suppressWarnings(rlang::dots_splice(!!!list(1, 2)))), list(1, 2)), "dots_splice splices")
+expect(identical(rlang::env(!!!list(x = 1))$x, 1), "env splices")
+e <- new.env()
+rlang::env_bind(e, !!!list(x = 1))
+expect(identical(e$x, 1), "env_bind splices")
+expect(identical(rlang::try_fetch(stop("x"), !!!list(error = function(cnd) "caught")), "caught"), "try_fetch splices handlers")
+expect(identical(suppressWarnings(rlang::with_handlers(stop("x"), !!!list(error = function(cnd) "caught"))), "caught"), "with_handlers splices")
+expect(identical(suppressWarnings(rlang::chr(!!!list("a", "b"))), c("a", "b")), "chr splices")
+expect(identical(dplyr::tibble(!!!list(x = 1))$x, 1), "tibble splices")
+expect(identical(dplyr::tibble(x = !!1)$x, 1), "tibble unquotes")
+
+expect(identical(rlang_stub$functions$call_modify$injection[["..."]], "splice"), "call_modify declares dynamic dots")
+expect(identical(rlang::call_modify(quote(f()), !!!list(x = 1)), quote(f(x = 1))), "call_modify splices")
+expect(identical(rlang_stub$functions$env_bind_lazy$injection[["..."]], "full"), "env_bind_lazy declares injection")
+e <- new.env()
+rlang::env_bind_lazy(e, x = !!1)
+expect(identical(e$x, 1), "env_bind_lazy unquotes")
+expect(identical(dplyr::bind_cols(!!"x" := 1)$x, 1), "bind_cols injects names")
+expect(identical(dplyr::bind_rows(!!!list(data.frame(x = 1)))$x, 1), "bind_rows splices")
