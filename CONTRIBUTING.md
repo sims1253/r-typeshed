@@ -22,7 +22,7 @@ you want to describe before running either generator.
    to preserve its curated entries.
 2. For packages that document NSE per argument with `<data-masking>` /
    `<tidy-select>` Rd markers (tidyverse style), run
-   `Rscript scripts/gen_nse_metadata.R <package>` to derive the `eval`
+   `Rscript --vanilla scripts/gen_nse_metadata.R <package>` to derive the `eval`
    metadata from the installed package.
 3. Hand-curate return types, remaining evaluation modes, `injects`,
    `injection`, and `scope_effect` entries, aliases, datasets, and methods.
@@ -30,7 +30,8 @@ you want to describe before running either generator.
 5. Open a pull request containing `stubs/<package>/<package>.json`.
 
 The generators produce drafts for review. Replace the generated `"draft"`
-version with a stub data revision before submitting it. NSE generation writes
+version with a stub data revision before submitting it. Record each stub data
+change under `[Unreleased]` in `CHANGELOG.md`. NSE generation writes
 to the stub file and preserves existing curated evaluation metadata.
 
 ## Local checks
