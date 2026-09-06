@@ -34,6 +34,9 @@ missing_optional_params <- function(fn, params = names(formals(fn))) {
     if (missing(node)) return(invisible())
     if (is.call(node)) {
       name <- call_name(node)
+      # missing() and nargs() inside a closure inspect that closure's call,
+      # including calls in its default arguments, not the enclosing function.
+      if (identical(name, "function")) return(invisible())
       if (identical(name, "nargs") && length(node) == 1L) has_nargs_call <<- TRUE
       if (name %in% c("missing", "maybe_missing") && length(node) >= 2L && is.symbol(node[[2L]])) {
         candidate <- as.character(node[[2L]])
