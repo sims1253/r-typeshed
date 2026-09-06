@@ -2,6 +2,25 @@
 # Exercise the audit's exit status with isolated valid and invalid declarations.
 args <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
+source(file.path(root, "scripts", "param_optionality.R"))
+
+# Inner closures have their own arguments and missingness. Their bodies and
+# defaults cannot make an enclosing function's required arguments optional.
+for (fn in list(
+  function(x) { inner <- function(x) missing(x); x },
+  function(x) { inner <- function() nargs(); x },
+  function(x) { inner <- function(x, y = missing(x)) y; x }
+)) stopifnot(!length(missing_optional_params(fn)))
+stopifnot(identical(missing_optional_params(function(x) {
+  inner <- function(y) missing(y)
+  if (missing(x)) return(NULL)
+  x
+}), "x"))
+stopifnot(identical(missing_optional_params(function(x) {
+  if (nargs() == 0L) return(NULL)
+  x
+}), "x"))
+
 fixture <- tempfile("typeshed-audit-")
 dir.create(file.path(fixture, "scripts"), recursive = TRUE)
 dir.create(file.path(fixture, "stubs", "base"), recursive = TRUE)

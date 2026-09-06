@@ -9,6 +9,9 @@
 
 ### Cleanup
 
+- Keep enclosing parameters required when only a nested function calls
+  `missing()` or `nargs()`. Apply the same scope rule in generators and audits.
+
 - Preserve curated parameter order during NSE generation so positional semantic
   metadata still refers to the same parameters.
 
