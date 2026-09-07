@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -3301,12 +3301,15 @@
     },
     "confint": {
       "params": [
-        "object"
+        "object",
+        "parm",
+        "level",
+        "..."
       ],
       "return": {
-        "mode": "double",
+        "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "constrOptim": {

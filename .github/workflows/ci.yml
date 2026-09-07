@@ -66,6 +66,8 @@ jobs:
         run: Rscript --vanilla tests/grep.R
       - name: Verify fold result controls
         run: Rscript --vanilla tests/folds.R
+      - name: Verify confidence interval dispatch controls
+        run: Rscript --vanilla tests/confint.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation

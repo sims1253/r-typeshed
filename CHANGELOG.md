@@ -18,6 +18,10 @@
 
 ### Function semantics
 
+- Complete `confint` formals and keep its dispatched result opaque with unknown
+  length and possible missingness. Methods can return lists, and ordinary linear
+  model confidence intervals can contain missing entries.
+
 - Keep base `Reduce` and purrr `reduce` results opaque with unknown length and
   possible missingness. Initializers and callbacks can return arbitrary shapes;
   empty and singleton folds can return without invoking a callback.
@@ -46,7 +50,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.12, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.13, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
