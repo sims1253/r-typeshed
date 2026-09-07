@@ -4,6 +4,10 @@
 
 ### New stubs
 
+- Add the exported `tags` value in htmltools 0.0.1 and its identical shiny
+  re-export in shiny 0.0.2. Describe the lists under namespace/import lookup;
+  keep individual tag-constructor results unspecified.
+
 - Add ggplot2 0.0.3 with all 498 exported functions, 145 exported values, and
   11 lazy datasets, verified against ggplot2 4.0.3. Keep formals inference-only
   and results unknown; preserve the verified `.pt` scalar type and curate
