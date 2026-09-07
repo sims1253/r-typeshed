@@ -45,3 +45,25 @@ run(list(head = list(params = list("x", "invented"))), 1L)
 run(list(numeric = list(params = list(list(name = "length", required = TRUE)))), 1L)
 unlink(fixture, recursive = TRUE)
 cat("Audit failures and reviewed forwarding verified.\n")
+
+# Capture metadata needs complete formals even for normally evaluated controls.
+base_doc <- jsonlite::read_json(file.path(root, "stubs", "base", "base.json"))
+for (name in c("delayedAssign", "substitute")) {
+  stub <- base_doc$functions[[name]]
+  live <- formals(args(get(name, baseenv())))
+  stopifnot(identical(unlist(stub$params, use.names = FALSE), names(live)))
+  stopifnot(all(vapply(stub$params, is.character, logical(1))))
+}
+stopifnot(identical(base_doc$functions$delayedAssign$eval, list(value = "captures_promise")))
+stopifnot(identical(base_doc$functions$substitute$eval, list(expr = "captures_promise")))
+live <- formals(args(base::delayedAssign))
+stopifnot(identical(live$eval.env, quote(parent.frame(1))))
+stopifnot(identical(live$assign.env, quote(parent.frame(1))))
+local({
+  x <- 7L
+  delayedAssign("held", x)
+  stopifnot(identical(held, 7L), identical(substitute(x), 7L))
+})
+stopifnot(identical(substitute(en = list(x = 2L), ex = x), 2L))
+stopifnot(inherits(tryCatch(substitute(e = x), error = identity), "error"))
+cat("Base capture formals and environment defaults verified.\n")
