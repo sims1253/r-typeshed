@@ -1,7 +1,9 @@
-stub <- jsonlite::fromJSON('stubs/base/base.json', simplifyVector = FALSE)$functions[['model.extract']]
+script <- sub('^--file=', '', grep('^--file=', commandArgs(FALSE), value = TRUE)[[1]])
+root <- dirname(dirname(normalizePath(script)))
+stub <- jsonlite::read_json(file.path(root, 'stubs/base/base.json'))$functions[['model.extract']]
 stopifnot(identical(unlist(stub$params), names(formals(stats::model.extract))))
-stopifnot(identical(stub$eval$component, 'quoted_symbol'), is.null(stub$eval$frame), is.null(stub$force))
-stopifnot(identical(stub$return$mode, 'opaque'), identical(stub$return$length, 'unknown'), isTRUE(stub$return$na))
+stopifnot(identical(stub$eval, list(component = 'quoted_symbol')), is.null(stub$force))
+stopifnot(identical(stub$return, list(mode = 'opaque', length = 'unknown', na = TRUE)))
 
 mf <- stats::model.frame(y ~ x, data.frame(y = 1:3, x = 4:6))
 expected <- stats::model.response(mf)
