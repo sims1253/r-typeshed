@@ -77,7 +77,6 @@ for (name in c("after_stat", "after_scale", "from_theme", "stat")) {
 stopifnot(is.null(doc$functions$stage$eval))
 error <- tryCatch(ggplot2::stage(start = stop("forced")), error = identity)
 stopifnot(inherits(error, "error"), identical(conditionMessage(error), "forced"))
-cat("Complete ggplot2 export inventory and curated capture contracts verified.\n")
 
 stopifnot(identical(doc$functions$benchplot$eval, list(x = "captures_promise")))
 local({
@@ -88,3 +87,5 @@ local({
   timings <- ggplot2::benchplot(!!plot)
   stopifnot(identical(timings$step, c("construct", "build", "render", "draw", "TOTAL")))
 })
+
+cat("Complete ggplot2 export inventory and curated capture contracts verified.\n")
