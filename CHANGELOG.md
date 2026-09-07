@@ -32,8 +32,8 @@
   `expression`, alongside the existing `alist` declaration, and for
   `rlang::expr` and `quo`. Declare `captures_promise` for `base::substitute`
   and `rlang::exprs`, which can defuse the enclosing caller's supplied promise.
-- Declare only `base::delayedAssign(value)` as `captures_promise`. The target
-  name `x` is evaluated to a string; `eval.env` and `assign.env` also evaluate
+- For `base::delayedAssign`, mark only `value` as `captures_promise`. The
+  target name `x` is evaluated to a string; `eval.env` and `assign.env` also evaluate
   normally. These changes cover the quoting helpers with existing stubs;
   they do not add stubs for `evalq`, `local`, or `makeActiveBinding`, or quoting
   metadata to rlang's `sym`, `abort`, `inform`, `new_formula`, or `new_quosure`.
