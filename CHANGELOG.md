@@ -97,6 +97,9 @@
 
 ### Validation and audits
 
+- Inspect dataset missingness only for a non-NA claim, preventing warnings for
+  opaque classed environments such as ggproto objects.
+
 - Use ry for schema validation and move duplicate validator fixture coverage
   into the consumer. Resolve stub packages from their headers, including Rcpp
   and S7, without extra CI paths. Replace handwritten audit JSON readers with
