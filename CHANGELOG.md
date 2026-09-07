@@ -18,6 +18,10 @@
 
 ### Function semantics
 
+- Describe `stats::model.extract` bare component names as quoted symbols in
+  base 0.0.15. Keep frame evaluation ordinary and results unknown; do not claim
+  arbitrary component expressions are never evaluated by coercion methods.
+
 - Complete `expand.grid` formals and keep its result opaque. Ordinary results
   are data frames with vector columns; input subsetting methods can change the
   construction result through caller-frame effects.
