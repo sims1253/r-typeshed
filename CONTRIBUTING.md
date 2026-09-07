@@ -59,6 +59,7 @@ Rscript --vanilla tests/folds.R
 Rscript --vanilla tests/confint.R
 Rscript --vanilla tests/expand_grid.R
 Rscript --vanilla tests/model_extract.R
+Rscript --vanilla tests/filter_position.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla scripts/gen_standard_globals.R --check

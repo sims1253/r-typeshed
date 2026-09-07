@@ -18,6 +18,11 @@
 
 ### Function semantics
 
+- Keep `Filter` and `Position` results unknown in base 0.0.16. Filtering can
+  change length, introduce missing values, or dispatch to an arbitrary subset
+  result; `Position` can return any supplied no-match value. Preserve callback
+  invocation metadata independently of these result contracts.
+
 - Describe `stats::model.extract` bare component names as quoted symbols in
   base 0.0.15. Keep frame evaluation ordinary and results unknown; do not claim
   arbitrary component expressions are never evaluated by coercion methods.
