@@ -43,6 +43,14 @@ invalid <- run(list(fft = list(params = list("x", "inverse"))), 1L)
 stopifnot(any(grepl("fft::x", invalid, fixed = TRUE)))
 run(list(head = list(params = list("x", "invented"))), 1L)
 run(list(numeric = list(params = list(list(name = "length", required = TRUE)))), 1L)
+# An opaque environment makes no non-NA claim and must not trigger anyNA().
+jsonlite::write_json(list(package = "base", functions = list(identity = list(params = list("x"))),
+  datasets = list(.GlobalEnv = list(mode = "opaque", length = "unknown", na = TRUE))),
+  file.path(fixture, "stubs", "base", "base.json"), auto_unbox = TRUE)
+output <- suppressWarnings(system2(file.path(R.home("bin"), "Rscript"),
+  c("--vanilla", shQuote(file.path(fixture, "scripts", "audit_typeshed.R"))),
+  stdout = TRUE, stderr = TRUE))
+stopifnot(is.null(attr(output, "status")), !any(grepl("Warning", output, fixed = TRUE)))
 unlink(fixture, recursive = TRUE)
 cat("Audit failures and reviewed forwarding verified.\n")
 
