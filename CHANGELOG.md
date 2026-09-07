@@ -18,11 +18,14 @@
 
 ### Function semantics
 
+- Complete `matrix`, `array`, and row/column summary formals so named controls
+  such as `byrow`, `dimnames`, `na.rm`, and `dims` can match their R arguments.
+
 - Complete `delayedAssign` and `substitute` environment formals for argument
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.7, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.8, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
