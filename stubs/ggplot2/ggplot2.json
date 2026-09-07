@@ -1,0 +1,46 @@
+{
+  "schema_version": "2",
+  "package": "ggplot2",
+  "version": "0.0.1",
+  "functions": {
+    "draw_key_text": {
+      "params": [
+        "data",
+        "params",
+        "size"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "margin": {
+      "params": [
+        "t",
+        "r",
+        "b",
+        "l",
+        "unit",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    }
+  },
+  "datasets": {
+    ".pt": {
+      "mode": "double",
+      "length": "1",
+      "na": false
+    },
+    "Geom": {
+      "mode": "opaque",
+      "length": "unknown",
+      "na": true
+    }
+  }
+}

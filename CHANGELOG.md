@@ -4,6 +4,9 @@
 
 ### New stubs
 
+- Add ggplot2 0.0.1 declarations for `margin`, `draw_key_text`, `Geom`, and `.pt`,
+  verified against ggplot2 4.0.3. Keep drawing results and the `Geom` object unknown.
+
 - Add grid 0.0.1 with all 248 exported function signatures and `emptyCoords`,
   inventoried from R 4.6.1. Keep returns unknown and formal lists inference-only;
   mark captured drawing expressions without claiming that they are forced.
@@ -100,6 +103,9 @@
   `missing()` or `nargs()`. Apply the same scope rule in generators and audits.
 
 ### Validation and audits
+
+- Inspect dataset missingness only for a non-NA claim, preventing warnings for
+  opaque classed environments such as ggproto objects.
 
 - Use ry for schema validation and move duplicate validator fixture coverage
   into the consumer. Resolve stub packages from their headers, including Rcpp
