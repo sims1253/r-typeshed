@@ -8,7 +8,8 @@
   inventoried from R 4.6.1. Keep returns unknown and formal lists inference-only;
   mark captured drawing expressions without claiming that they are forced.
 - Add vctrs 0.0.1 with conservative declarations for `obj_is_list`, `vec_in`,
-  `vec_set_union`, `vec_size`, and `vec_slice` used by the hermetic tidyverse audit.
+  `vec_set_union`, `vec_size`, and `vec_slice` used by the hermetic tidyverse audit,
+  plus `vec_c`, `vec_cast_common`, `vec_recycle_common`, and `vec_size_common`.
 
 ### Function semantics
 
