@@ -1,8 +1,10 @@
-base <- jsonlite::fromJSON('stubs/base/base.json', simplifyVector = FALSE)
+script <- sub('^--file=', '', grep('^--file=', commandArgs(FALSE), value = TRUE)[[1]])
+root <- dirname(dirname(normalizePath(script)))
+base <- jsonlite::read_json(file.path(root, 'stubs/base/base.json'))
 for (name in c('Filter', 'Position')) {
   sig <- base$functions[[name]]
   stopifnot(identical(vapply(sig$params, `[[`, character(1), 'name'), names(formals(get(name, baseenv())))))
-  stopifnot(identical(sig$return$mode, 'opaque'), identical(sig$return$length, 'unknown'), isTRUE(sig$return$na))
+  stopifnot(identical(sig$return, list(mode = 'opaque', length = 'unknown', na = TRUE)))
   stopifnot(identical(sig$higher_order$result, list(kind = 'vector_of', mode = 'opaque')))
   stopifnot(identical(sig$higher_order$callback_param, 'f'), identical(unlist(sig$higher_order$callback_args), 'element_of_arg1'))
 }
