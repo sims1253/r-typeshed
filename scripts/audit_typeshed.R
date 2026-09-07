@@ -27,9 +27,13 @@ check_value_spec <- function(label, value, spec) {
   if (isTRUE(grepl("^[0-9]+$", spec$length)) && !identical(length(value), as.integer(spec$length))) {
     failures <- c(failures, paste0(label, " length differs"))
   }
-  any_na <- tryCatch(anyNA(value), error = function(cnd) NA)
-  if (!is.null(spec$na) && identical(isTRUE(spec$na), FALSE) && identical(any_na, TRUE)) {
-    failures <- c(failures, paste0(label, " is declared non-NA but contains NA"))
+  # Opaque package objects may be environments, for which anyNA() warns.
+  # Inspect missingness only when the declaration makes a non-NA claim.
+  if (!is.null(spec$na) && identical(isTRUE(spec$na), FALSE)) {
+    any_na <- tryCatch(anyNA(value), error = function(cnd) NA)
+    if (identical(any_na, TRUE)) {
+      failures <- c(failures, paste0(label, " is declared non-NA but contains NA"))
+    }
   }
   if (!is.null(spec$class) && !identical(unlist(spec$class), class(value))) {
     failures <- c(failures, paste0(label, " class differs"))

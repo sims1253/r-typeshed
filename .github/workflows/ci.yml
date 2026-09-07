@@ -46,12 +46,15 @@ jobs:
             any::vctrs
             any::purrr
             any::dplyr
+            any::ggplot2
             any::mirai
             any::carrier
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions
         run: Rscript --vanilla tests/grid.R
+      - name: Verify ggplot2 drawing exports
+        run: Rscript --vanilla tests/ggplot2.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation
