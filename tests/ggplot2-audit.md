@@ -15,7 +15,11 @@ not affect the comparison. Diagnostics were compared by all JSON fields.
 | --- | ---: | ---: | ---: |
 | Embedded baseline | 2712 | 1367 | 112 |
 | Four-entry ggplot2 catalog (`edafabd`) | 2694 | 1351 | 110 |
-| Complete ggplot2 inventory | 2475 | 1135 | 107 |
+| Complete ggplot2 inventory (`426a775`) | 2475 | 1135 | 107 |
+
+The complete-inventory row was rerun after capture metadata was completed in
+`426a77544098f1bcba2b1f223e732ac496f6220d`. All 500 JSON outputs were byte-identical
+to the earlier inventory run. The later master merge changes no ggplot2 stubs.
 
 The complete inventory removes 237 diagnostics from the embedded baseline and
 adds none. Compared with the four-entry catalog, it removes another 219 and adds
