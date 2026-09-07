@@ -4,7 +4,7 @@
 
 ### New stubs
 
-- Add ggplot2 0.0.2 with all 498 exported functions, 145 exported values, and
+- Add ggplot2 0.0.3 with all 498 exported functions, 145 exported values, and
   11 lazy datasets, verified against ggplot2 4.0.3. Keep formals inference-only
   and results unknown; preserve the verified `.pt` scalar type and curate
   expression capture for aesthetic mappings, labels, `benchplot`, and rlang re-exports.
@@ -18,11 +18,13 @@
 
 ### Function semantics
 
+- Declare full tidy-evaluation injection for `ggplot2::aes` aesthetics and
+  `ggplot2::vars` dots, verified with symbol unquoting and list splicing.
+
 - Keep `rapply` returns opaque: its default `how = "unlist"` flattens recursive
   results, while `"replace"` retains input structure and `"list"` returns a list.
-  Remove the
-  input-length claim from its simplification metadata; nested leaves and
-  callback results can change output length. Runtime controls cover all modes.
+  Remove the input-length claim from its simplification metadata; nested leaves
+  and callback results can change output length. Runtime controls cover all modes.
 
 - Keep `regmatches` returns opaque because match data and `invert` select
   between a character vector and lists of variable-length character vectors.
