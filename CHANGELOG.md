@@ -22,6 +22,11 @@
 
 ### Function semantics
 
+- Keep `Filter` and `Position` results unknown in base 0.0.16. Filtering can
+  change length, introduce missing values, or dispatch to an arbitrary subset
+  result; `Position` can return any supplied no-match value. Preserve callback
+  invocation metadata independently of these result contracts.
+
 - Describe `stats::model.extract` bare component names as quoted symbols in
   base 0.0.15. Keep frame evaluation ordinary and results unknown; do not claim
   arbitrary component expressions are never evaluated by coercion methods.
@@ -62,7 +67,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.15, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.16, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.

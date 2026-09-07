@@ -76,6 +76,8 @@ jobs:
         run: Rscript --vanilla tests/html_tags.R
       - name: Verify model.extract symbol capture and coercion controls
         run: Rscript --vanilla tests/model_extract.R
+      - name: Verify Filter and Position result controls
+        run: Rscript --vanilla tests/filter_position.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation
