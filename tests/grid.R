@@ -7,6 +7,12 @@ exports <- getNamespaceExports("grid")
 functions <- exports[vapply(exports, function(name) is.function(getExportedValue("grid", name)), logical(1))]
 stopifnot(setequal(names(doc$functions), functions))
 stopifnot(setequal(names(doc$datasets), setdiff(exports, functions)))
+value <- grid::emptyCoords
+spec <- doc$datasets$emptyCoords
+stopifnot(identical(spec$mode, typeof(value)))
+stopifnot(identical(spec$length, as.character(length(value))))
+stopifnot(identical(unlist(spec$class, use.names = FALSE), class(value)))
+stopifnot(identical(spec$na, anyNA(value)))
 for (name in functions) {
   sig <- doc$functions[[name]]
   declared <- vapply(sig$params, function(param) if (is.character(param)) param else param$name, character(1))
