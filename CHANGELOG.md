@@ -13,6 +13,9 @@
 
 ### Function semantics
 
+- Complete `matrix`, `array`, and row/column summary formals so named controls
+  such as `byrow`, `dimnames`, `na.rm`, and `dims` can match their R arguments.
+
 - Complete `delayedAssign` and `substitute` environment formals for argument
   matching; preserve their existing capture modes and inference-only parameters.
 
