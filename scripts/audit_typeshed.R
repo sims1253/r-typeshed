@@ -61,7 +61,10 @@ check_value_spec <- function(label, value, spec) {
 audit_package_values <- function(doc, pkg) {
   values <- doc$datasets
   if (!length(values)) return(character())
-  exports <- getNamespaceExports(pkg)
+  # Lazy datasets are public through :: without appearing in namespace exports.
+  lazydata <- asNamespace(pkg)$.__NAMESPACE__.$lazydata
+  datasets <- if (is.environment(lazydata)) ls(lazydata, all.names = TRUE) else character()
+  exports <- union(getNamespaceExports(pkg), datasets)
   failures <- character()
   for (name in names(values)) {
     if (!(name %in% exports)) {

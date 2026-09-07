@@ -41,3 +41,12 @@ validation too; older releases can miss mixed-case stub paths. Update the pin
 when changes need a newer loader. Schema validation and its regression
 fixtures live in ry. The R audits here check declarations against installed
 R packages.
+
+## ggplot2 inventory
+
+`tests/ggplot2.R` checks the complete ggplot2 export and lazy-dataset inventory
+against the installed package. Function formals remain inference-only and returns
+remain unknown. Capture metadata is curated: documentation markers on staging
+helpers such as `after_stat` describe use inside `aes`, not their direct-call
+behavior. The tests verify this distinction and the rlang re-export identities.
+See [the corpus comparison](tests/ggplot2-audit.md) for the measured effect.
