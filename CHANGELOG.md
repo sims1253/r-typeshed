@@ -2,223 +2,116 @@
 
 ## [Unreleased]
 
-### Automation
+### New stubs
 
-- Track packages bundled with base R, including `grid`, through the installed
-  R release instead of looking for them on CRAN or installing them separately.
+- Add grid 0.0.1 with all 248 exported function signatures and `emptyCoords`,
+  inventoried from R 4.6.1. Keep returns unknown and formal lists inference-only;
+  mark captured drawing expressions without claiming that they are forced.
+- Add vctrs 0.0.1 with conservative declarations for `obj_is_list`, `vec_in`,
+  `vec_set_union`, `vec_size`, and `vec_slice` used by the hermetic tidyverse audit.
 
-- Prepare draft typeshed PRs for a named package or monthly upstream updates.
-  Preserve curated entries and report signature drift for review.
+### Function semantics
 
-### Cleanup
+- Restore completed base higher-order formals and hermetic dependency metadata.
+  Base is revision 0.0.6, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
+- Declare sole-argument forcing contracts for base `force`, `identity`,
+  `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
+  and `warning`, plus `rlang::abort`.
+- Complete public base higher-order formal lists, including controls after
+  `...`, for exact, partial, and positional argument matching. Remove the
+  phantom `...` from `Reduce` and cover `Map`'s named-callback call shape.
+- Correct purrr higher-order formal lists, seven callback positions, and
+  `walk2` callback arity. Supply both callback arguments for `imap`; remove
+  unsupported callback-result refinements from `accumulate` and `map_if`.
+- Correct typed `map2_*` and `pmap_*` results to atomic vectors. Keep their
+  lengths unknown because recycling and component sizes cannot be derived from
+  one formal argument. Allow missing results throughout the typed map family.
+- Correct constructor formals and distinguish size values from argument lengths.
+  Declare typed callback requirements and tidy-evaluation/splicing modes.
+- Declare `quoted_expression` evaluation for `base::quote`, `bquote`, and
+  `expression`, alongside the existing `alist` declaration, and for
+  `rlang::expr` and `quo`. Declare `captures_promise` for `base::substitute`
+  and `rlang::exprs`, which can defuse the enclosing caller's supplied promise.
+- Declare only `base::delayedAssign(value)` as `captures_promise`. The target
+  name `x` is evaluated to a string; `eval.env` and `assign.env` also evaluate
+  normally. These changes cover the quoting helpers with existing stubs;
+  they do not add stubs for `evalq`, `local`, or `makeActiveBinding`, or quoting
+  metadata to rlang's `sym`, `abort`, `inform`, `new_formula`, or `new_quosure`.
+- Make `rlang::quo(expr)` optional: `quo()` returns an empty quosure. Correct
+  `rlang::env_get_list(default)` optionality and add five exported typed
+  missing-value constants.
+- Correct zero-argument declarations for base coercions. `as.raw` requires `x`;
+  `as.character`, `as.double`, `as.integer`, `as.logical`, `as.numeric`, and
+  `rep` accept omitted `x`, recorded explicitly as `required: false`.
+  Add missing `...` formals to `as.double` and `as.logical`; `as.numeric`
+  and `as.double` now agree. Keep `data`'s polymorphic return opaque.
+- Record syntactic defaults separately from omittability. `Reduce(init)`,
+  `exists(frame)`, `sample(size)`, `source(file)`, and `source(exprs)` can be
+  omitted through `missing()` handling without having a default expression.
+- Keep `base::rep` return length unknown; the retired `x_times` symbolic
+  length is no longer supported by the consumer schema.
+- Keep `vctrs::vec_in` NA-capable because `na_equal = FALSE` can produce
+  missing results. Make its length unknown: it follows vector size rather than
+  R length, so a three-row, two-column data frame produces three results.
 
+### Dataset declarations
+
+- Correct lengths and columns for `OrchardSprays` and `Theoph`; remove two
+  phantom factor columns from `OrchardSprays`. Declare `rivers`, `discoveries`,
+  and `WorldPhones` as double, and `pressure` as a 19-row, two-column data frame.
+- Remove the nonexistent `USAccdeaths` alias in favor of `USAccDeaths`.
+  Keep `.Options` opaque and NA-capable, and `sunspot.month`'s length unknown.
+- Correct ordered-factor class order to `c("ordered", "factor")` for
+  `CO2$Plant`, the three ordered `esoph` columns, `Loblolly$Seed`,
+  `ChickWeight$Chick`, `DNase$Run`, `Indometh$Subject`, `Orange$Tree`, and
+  `Theoph$Subject`.
+- Declare `npk$N`, `npk$P`, and `npk$K` as integer factors, and `rock$area`
+  as integer rather than double.
+- Preserve complete grouped-data class vectors for `CO2`, `Theoph`,
+  `ChickWeight`, `Loblolly`, `DNase`, `Indometh`, and `Orange`. Add the missing
+  `ts` class for `freeny$y` and `c("matrix", "array")` for `WorldPhones`.
+  Class order remains available to the consumer's S3 dispatch walk.
+
+### Generators and update automation
+
+- Prepare draft PRs for named packages or monthly upstream updates, preserving
+  curated entries and reporting signature drift. Track packages bundled with
+  base R, including grid, through the installed R release rather than CRAN;
+  do not try to install those packages separately.
+- Generate schema-2 drafts with exported re-exports and unknown returns that
+  permit NA. Preserve structured parameters and curated formal order during NSE
+  generation so positional callback metadata keeps its meaning.
+- Update existing stub files even when directory names differ from package
+  names. Reject duplicate package stub paths before writing.
 - Keep enclosing parameters required when only a nested function calls
   `missing()` or `nargs()`. Apply the same scope rule in generators and audits.
 
-- Declare sole-argument forcing contracts for base `force()`, `identity()`,
-  `invisible()`, `is.function()`, `is.null()`, `length()`, `message()`, `stop()`,
-  `typeof()`, and `warning()`, plus `rlang::abort()`. Base is revision 0.0.6
-  and rlang is revision 0.1.4.
-
-- Preserve curated parameter order during NSE generation so positional semantic
-  metadata still refers to the same parameters.
-
-- Update existing stub files during NSE generation even when their directories use
-  different names, and reject duplicate package stub paths before writing.
-
-- Remove unsupported callback-result refinements from `accumulate()` and
-  `map_if()`. Supply both callback arguments for `imap()`.
-
-- Correct constructor formals and model size values separately from argument
-  lengths. Declare typed callback requirements and tidy-evaluation/splicing modes.
-- Make the namespace audit fail on invalid formal names. Distinguish reviewed
-  forwarding from misspelled parameters and test audit failure detection.
-
-- Correct typed `map2_*` and `pmap_*` results to atomic vectors. Keep their
-  lengths unknown because recycling and component lengths cannot be derived
-  from one formal argument. Allow missing results throughout the typed map
-  family. Purrr stubs are version 0.0.3.
-
-- Complete purrr's 27 higher-order formal lists and correct seven callback
-  positions and `walk2` callback arity. Bump purrr to 0.0.2 and audit both
-  base and purrr against installed packages.
-- Preserve structured parameters when generating NSE metadata. Generate
-  schema-2 drafts, include function re-exports, and leave unknown returns
-  able to contain NA.
-- Replace the namespace audit's handwritten JSON readers with jsonlite.
-  Resolve package names from stub headers, including Rcpp and S7.
-- Use ry for schema validation and remove the duplicate R validator. Its
-  fixture coverage now lives in ry. The updated consumer also discovers
-  Rcpp and S7 from the parent directory, removing the extra CI paths.
-
-### Recovered function semantics
-
-- Restore the completed base higher-order formals and hermetic dependency
-  metadata. Base is version 0.0.5, rlang is 0.1.2, and vctrs is 0.0.1.
-- Keep `base::rep` return length `unknown`; the recovered `x_times` value
-  is no longer supported by ry.
-
-### Declarative semantics
-
-- Declared defusing `eval` metadata for the base and rlang quoting helpers
-  that ship stubs (ry issues #41 and #49): `base::quote`, `base::bquote`,
-  and `base::expression` quote their argument as `quoted_expression`,
-  matching the existing `alist` declaration (verified correct, unchanged),
-  while `base::substitute` and `rlang::exprs` are `captures_promise`
-  because they defuse the promise supplied by the caller of the enclosing
-  function. `rlang::expr` and `rlang::quo` are `quoted_expression`; rlang
-  documents `expr()` as equivalent to `bquote()`. `base::delayedAssign`
-  declares only its `value` as `captures_promise`: installed R forces `x`
-  as an ordinary argument to obtain the target name string (a bare symbol
-  is an error), and `eval.env`/`assign.env` also evaluate normally, so all
-  three are omitted. That enumeration is the complete scope within
-  base/rlang: `base::evalq`, `base::local`, and `base::makeActiveBinding`
-  ship no stubs, and rlang's `sym`, `abort`, `inform`, `new_formula`, and
-  `new_quosure` are outside the quoting family, so none of them gained
-  `eval` metadata here. Downstream note: once this is vendored, ry's
-  `nse_symbol_fallback_does_not_overlap_stub_eval_modes` guard test will
-  fail until the corresponding NSE list retirement (ry issues #41 and #49)
-  lands in the same vendor bump — `ry typeshed validate` alone stays
-  green, so vendor-without-retire is a silent trap for ry's test suite.
-  Base stub revision 0.0.3, rlang stub revision 0.1.1.
-
-### Fixed stub data
-
-- Mark `rlang::quo(expr)` optional: `quo()` returns an empty quosure, as used
-  by lazyeval compatibility helpers. Bump the rlang stub to 0.1.3 and audit
-  both the empty result and the parameter declaration.
-
-- `base::rep` return length is now `unknown`: current ry's validator
-  retired the `x_times` symbolic length, which SCHEMA.md no longer
-  documents. This keeps current ry and its `scripts/sync_typeshed.sh` able
-  to validate and vendor this branch.
-
-### Corrected stub data
-
-- Completed the public formal sequences for every `base` higher-order
-  signature, including `...` and controls after it, and opted them into exact,
-  partial, and positional argument matching. This corrects the phantom `...`
-  previously declared for `Reduce` and covers `Map`'s named-callback call shape.
-- Corrected zero-argument optionality: `base::as.raw` now requires `x`
-  (it rejects zero-argument calls), and the polymorphic `base::data`
-  returns opaque. For `base::as.character`, `as.double`, `as.integer`,
-  `as.logical`, `as.numeric`, and `rep`, R accepts the degenerate
-  zero-argument calls (`as.character()` is `character(0)`, `rep()` is
-  NULL`), so their `x` formals now record `required: false`. The object
-  form keeps the flag as explicit schema metadata — ry decodes
-  `required: false` and a bare string identically, and its exact-argument
-  check is unreachable for signatures declaring `...` either way — so this
-  avoids upstream d445345's bare-string downgrade without asserting that
-  calls must bind `x`; `as.double` and `as.logical`
-  also gained their missing `...` formal, so `as.numeric` and `as.double`
-  (one and the same primitive) no longer carry opposite required-ness. The
-  zero-argument primitive audit pins this decision per entry and derives
-  it: a pinned primitive that accepts zero-argument calls must not have
-  its first formal required.
-- Corrected `rlang::env_get_list(default)` optionality and added rlang's five
-  exported typed missing-value constants.
-- Corrected `default` metadata to SCHEMA.md's syntactic meaning (`default`
-  records whether the formal has a default expression): `base::Reduce(init)`,
-  `base::exists(frame)`, `base::sample(size)`, `base::source(file)`, and
-  `base::source(exprs)` are omittable through `missing()` handling without a
-  syntactic default, so they now record `required: false` instead of
-  `default: true`.
-- Re-audited `vctrs::vec_in` against the vctrs 0.6.5 source and installed
-  vctrs 0.7.3: its `na: true` return flag stands. The result is NA-free under the
-  default `na_equal = TRUE`, but `na_equal = FALSE` propagates missing
-  needles into NA results, and the stub convention records NA possibility
-  under any admissible arguments (`base::rank` follows the same rule for
-  `na.last = "keep"`).
-- Corrected `vctrs::vec_in` return length from `arg0` to `unknown`: the
-  result holds one element per size unit, not per R length, so
-  `vec_in(df, df)` on a 3-by-2 data frame has length 3 while `arg0` has
-  length 2. The length vocabulary has no size-based symbolic length, so
-  `unknown` takes the conservative route already used by `vec_slice`.
-- Corrected nine stale entries in the base stub's datasets block, found by
-  extending the typeshed audit to cover it with correct attribution (base
-  namespace or the `datasets` package): `OrchardSprays` and `Theoph` had
-  wrong lengths and `OrchardSprays` two phantom factor columns; `rivers`,
-  `discoveries`, and `WorldPhones` are double, not integer; `pressure` is
-  a 19-row two-column data frame, not a length-19 double vector; the
-  `USAccdeaths` entry named a binding that no longer exists (removed in
-  favor of the already-correct `USAccDeaths`); `.Options` is a pairlist
-  that can hold NA options and is now `opaque`/`na: true`;
-  `sunspot.month` is a drifting series whose exact length now only R knows
-  (`unknown`).
-- Corrected the class order of the nine remaining ordered-factor columns
-  that still declared the reversed `["factor", "ordered"]` — R reports
-  `class()` as `c("ordered", "factor")`: `CO2$Plant`, `esoph$agegp`,
-  `esoph$alcgp`, `esoph$tobgp`, `Loblolly$Seed`, `ChickWeight$Chick`,
-  `DNase$Run`, `Indometh$Subject`, and `Orange$Tree` (joining the
-  `Theoph$Subject` entry corrected above). `class` is consumer-visible
-  vocabulary (ry's `JsonRType.class`) and is now audited (see below).
-- Corrected four column-level modes surfaced by the new column checks:
-  `npk$N`, `npk$P`, and `npk$K` are integer factors (they also gained the
-  missing `class: ["factor"]`, matching sibling `npk$block`), and
-  `rock$area` is integer, not double.
-- Recorded the full class vectors of the seven nlme-style groupedData
-  frames — `CO2`, `Theoph`, `ChickWeight`, `Loblolly`, `DNase`,
-  `Indometh`, and `Orange` declared only the `["data.frame"]` tail while
-  the stored objects carry
-  `c("nfnGroupedData", "nfGroupedData", "groupedData", "data.frame")` —
-  and added the two missing special-class declarations surfaced by the
-  same sweep: `freeny$y` is `"ts"` and `WorldPhones` is
-  `c("matrix", "array")`. Verified ry consumes class vectors
-  order-sensitively only through its S3 dispatch walk, which tries every
-  class in order, and through membership checks (`contains`,
-  `classes_overlap`), so a non-`data.frame` vector head changes no
-  consumer outcome while making dispatch-eligible classes truthful.
-
-### New stubs
-
-- Add grid 0.0.1 with 248 exported function signatures and `emptyCoords`,
-  inventoried from R 4.6.1. Keep returns unknown and parameter lists
-  inference-only; mark captured drawing expressions without forcing claims.
-
-- Added a conservative vctrs stub for `obj_is_list`, `vec_in`, `vec_set_union`,
-  `vec_size`, and `vec_slice`, covering the hermetic tidyverse audit findings
-  without guessing uncertain set-operation return types.
-
 ### Validation and audits
 
-- The function-semantics provenance audit now witnesses the
-  `quoted_expression` versus `captures_promise` distinction against
-  installed R and rlang: the quoting helpers stay literal inside a
-  forwarding function, while `substitute()` and `rlang::exprs()` defuse
-  the caller's expression. `delayedAssign` witnesses pin both halves of
-  its declaration: `x` is forced for the target name while the forwarded
-  `value` promise is captured and deferred.
-- The function-semantics audit discovers higher-order declarations in installed
-  packages and verifies their formal sequences and callback positions. It
-  covers 12 base and 27 purrr signatures, and checks structured parameters'
-  `default` and `required` metadata against installed formals and reviewed
-  omittability conventions.
-- Added an allowlisted zero-argument primitive audit for base coercion and
-  vector-constructor families. It checks runtime outcomes and formal sequences;
-  successful zero-argument calls must have an optional first formal, while
-  `as.raw` requires its first argument. An empty reviewed inventory is an error.
-- The typeshed audit now covers the base stub's 119-entry `datasets` block,
-  attributing each entry to the environment that provides it (base's own
-  constants, or the `datasets` package's lazy-data environment, reached
-  through `.__NAMESPACE__.$lazydata` with `inherits = FALSE` so the lookup
-  cannot resolve foreign names such as `lm` or `read.csv` through the
-  namespace's parent chain) before checking existence, mode, length, and
-  NA; SCHEMA.md now documents that base's dataset entries name values from
-  the default search path rather than base-only bindings. Value checks
-  recurse into declared `columns` against the value's elements under the
-  same rules, covering the 214 column type objects across the 46
-  column-carrying entries. A declared `class` vector must equal the live
-  `class()` exactly and in order (an absent field is skipped, since the
-  corpus convention declares `class` only when it differs from the
-  typeof's implicit class); this check would have caught all nine
-  ordered-factor reversals and every groupedData tail truncation. Value
-  failures name the entry, a missing
-  `mode` or `length` is a named failure instead of an opaque error, and
-  the `na` check is one-directional and skips an absent field: `na: true`
-  stays a conservative upper bound, and only `na: false` contradicted by
-  an actual missing value fails. The rlang assertion witnesses are invoked
-  under each assertion's declared `subject_param`, and a check without a
-  witness value fails loudly instead of probing `NULL`.
+- Use ry for schema validation and move duplicate validator fixture coverage
+  into the consumer. Resolve stub packages from their headers, including Rcpp
+  and S7, without extra CI paths. Replace handwritten audit JSON readers with
+  jsonlite.
+- Fail the namespace audit on invalid formal names, while distinguishing
+  reviewed forwarding. Add tests that prove audit failures are detected.
+- Discover higher-order declarations in installed packages and verify formal
+  order, callback positions, and structured `default`/`required` metadata
+  against installed formals and reviewed omittability. The current inventory
+  has 12 base and 25 purrr higher-order declarations.
+- Witness quoted-expression and captured-promise behavior in R and rlang,
+  including both the forced target name and deferred value of `delayedAssign`.
+  Probe assertions through their declared `subject_param`; reject missing
+  witness values rather than substituting `NULL`.
+- Audit allowlisted zero-argument primitives against runtime behavior and
+  formal sequences. A successful zero-argument call requires an optional first
+  formal; `as.raw` rejects omission. Fail on an empty reviewed inventory.
+- Audit all 119 base dataset declarations against the base namespace or the
+  datasets lazy-data environment without inherited lookups. Check existence,
+  mode, length, exact class order, and declared NA restrictions, including
+  214 column declarations in 46 entries. Diagnose missing mode/length fields
+  and named value failures; allow absent class/NA claims and treat `na: true`
+  as a conservative upper bound. Document the default-search-path provenance
+  of base dataset entries in the schema reference.
 
 ## [0.4.0] - 2026-07-24
 
