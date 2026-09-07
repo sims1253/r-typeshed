@@ -10,6 +10,7 @@ stopifnot(setequal(names(doc$datasets), setdiff(exports, functions)))
 for (name in functions) {
   sig <- doc$functions[[name]]
   declared <- vapply(sig$params, function(param) if (is.character(param)) param else param$name, character(1))
+  stopifnot(all(vapply(sig$params, is.character, logical(1))))
   actual <- names(formals(getExportedValue("grid", name)))
   if (is.null(actual)) actual <- character()
   stopifnot(identical(unname(declared), actual))
@@ -30,3 +31,7 @@ for (constructor in list(grid::delayGrob, grid::recordGrob)) {
 grid.draw.inventory_probe <- function(x, recording) "custom"
 stopifnot(identical(grid::grid.draw(structure(list(), class = "inventory_probe")), "custom"))
 cat("grid export/formal inventory and capture controls passed\n")
+
+# Dispatch may leave a syntactically missing formal unused in the method.
+grobX.inventory_probe <- function(x, theta) "custom"
+stopifnot(identical(grid::grobX(structure(list(), class = "inventory_probe")), "custom"))
