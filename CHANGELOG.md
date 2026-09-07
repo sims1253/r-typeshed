@@ -13,6 +13,12 @@
 
 ### Function semantics
 
+- Keep `regmatches` returns opaque because match data and `invert` select
+  between a character vector and lists of variable-length character vectors.
+  Include the `invert` formal. Base is revision 0.0.9.
+- Keep `sort.int` returns opaque because `index.return = TRUE` produces a
+  list instead of the input vector type. Complete its six verified formals.
+
 - Complete `matrix`, `array`, and row/column summary formals so named controls
   such as `byrow`, `dimnames`, `na.rm`, and `dims` can match their R arguments.
 

@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -6249,12 +6249,13 @@
     "regmatches": {
       "params": [
         "x",
-        "m"
+        "m",
+        "invert"
       ],
       "return": {
-        "mode": "character",
+        "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "remove": {
@@ -6737,9 +6738,18 @@
     },
     "sort.int": {
       "params": [
-        "x"
+        "x",
+        "partial",
+        "na.last",
+        "decreasing",
+        "method",
+        "index.return"
       ],
-      "return": "arg0"
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "source": {
       "params": [
