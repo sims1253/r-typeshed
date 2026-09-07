@@ -58,6 +58,7 @@ Rscript --vanilla tests/grep.R
 Rscript --vanilla tests/folds.R
 Rscript --vanilla tests/confint.R
 Rscript --vanilla tests/expand_grid.R
+Rscript --vanilla tests/html_tags.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla scripts/gen_standard_globals.R --check
