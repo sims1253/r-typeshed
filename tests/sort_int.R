@@ -14,3 +14,10 @@ stopifnot(identical(indexed, list(x = c(1, 2), ix = c(2L, 1L))))
 radix <- sort.int(c(3, NA, 1, 3), method = "radix", index.return = TRUE)
 stopifnot(identical(radix, list(x = c(1, 3, 3), ix = c(2L, 1L, 3L))))
 cat("sort.int atomic and indexed list return controls passed\n")
+
+spec <- doc$functions$sort
+stopifnot(identical(spec$return, list(mode = "opaque", length = "unknown", na = TRUE)))
+stopifnot(identical(unlist(spec$params), names(formals(base::sort))))
+stopifnot(identical(sort(c(2L, NA_integer_, 1L)), c(1L, 2L)))
+stopifnot(identical(sort(c(2, 1), method = "quick", index.return = TRUE), indexed))
+cat("sort generic forwards indexed-return controls\n")
