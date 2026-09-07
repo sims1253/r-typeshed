@@ -47,6 +47,8 @@ jobs:
             any::purrr
             any::dplyr
             any::ggplot2
+            any::htmltools
+            any::shiny
             any::mirai
             any::carrier
       - name: Test audit failure detection
@@ -70,6 +72,8 @@ jobs:
         run: Rscript --vanilla tests/confint.R
       - name: Verify expand.grid columns and dispatch controls
         run: Rscript --vanilla tests/expand_grid.R
+      - name: Verify exported HTML tag lists
+        run: Rscript --vanilla tests/html_tags.R
       - name: Verify model.extract symbol capture and coercion controls
         run: Rscript --vanilla tests/model_extract.R
       - name: Verify Filter and Position result controls
