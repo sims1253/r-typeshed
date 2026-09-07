@@ -22,6 +22,10 @@
 
 ### Function semantics
 
+- Describe `stats::model.extract` bare component names as quoted symbols in
+  base 0.0.15. Keep frame evaluation ordinary and results unknown; do not claim
+  arbitrary component expressions are never evaluated by coercion methods.
+
 - Complete `expand.grid` formals and keep its result opaque. Ordinary results
   are data frames with vector columns; input subsetting methods can change the
   construction result through caller-frame effects.
@@ -58,7 +62,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.14, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.15, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
