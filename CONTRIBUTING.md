@@ -61,6 +61,7 @@ Rscript --vanilla tests/expand_grid.R
 Rscript --vanilla tests/html_tags.R
 Rscript --vanilla tests/model_extract.R
 Rscript --vanilla tests/filter_position.R
+Rscript --vanilla tests/find.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla scripts/gen_standard_globals.R --check
