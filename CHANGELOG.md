@@ -18,6 +18,9 @@
 
 ### Function semantics
 
+- Complete `grep` formals and keep its result opaque: `value` selects matching
+  strings or indices, long-vector indices can be double, and missing patterns
+  can produce missing results. Verify modes, argument matching, and coercion in R.
 - Declare full tidy-evaluation injection for `ggplot2::aes` aesthetics and
   `ggplot2::vars` dots, verified with symbol unquoting and list splicing.
 
@@ -39,7 +42,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.10, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.11, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
