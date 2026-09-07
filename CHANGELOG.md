@@ -18,9 +18,14 @@
 
 ### Function semantics
 
+- Keep `rapply` returns opaque: its default `how = "unlist"` flattens recursive
+  results, while `"replace"` and `"list"` retain list structure. Remove the
+  input-length claim from its simplification metadata; nested leaves and
+  callback results can change output length. Runtime controls cover all modes.
+
 - Keep `regmatches` returns opaque because match data and `invert` select
   between a character vector and lists of variable-length character vectors.
-  Include the `invert` formal. Base is revision 0.0.9.
+  Include the `invert` formal.
 - Keep `sort` and `sort.int` returns opaque because `index.return = TRUE` produces a
   list instead of the input vector type. Complete their verified formals.
 
@@ -31,7 +36,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.9, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.10, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.

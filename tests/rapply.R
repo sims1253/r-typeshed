@@ -1,0 +1,25 @@
+#!/usr/bin/env Rscript
+script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
+root <- dirname(dirname(normalizePath(script)))
+doc <- jsonlite::read_json(file.path(root, "stubs/base/base.json"))
+spec <- doc$functions$rapply
+stopifnot(identical(spec$return, list(mode = "opaque", length = "unknown", na = TRUE)))
+stopifnot(identical(spec$higher_order$result, list(kind = "simplify")))
+declared <- vapply(spec$params, function(param) if (is.character(param)) param else param$name, character(1))
+stopifnot(identical(unname(declared), names(formals(base::rapply))))
+
+x <- list(a = 1L, b = list(2L, 3L))
+twice <- function(value) value * 2L
+flat <- c(a = 2L, b1 = 4L, b2 = 6L)
+nested <- list(a = 2L, b = list(4L, 6L))
+stopifnot(identical(rapply(x, twice), flat))
+stopifnot(identical(rapply(x, twice, how = "unlist"), flat))
+stopifnot(identical(rapply(x, twice, "ANY", NULL, "unlist"), flat))
+stopifnot(identical(rapply(x, twice, how = "replace"), nested))
+stopifnot(identical(rapply(x, twice, how = "list"), nested))
+stopifnot(identical(rapply(x, function(value) NULL), NULL))
+stopifnot(length(rapply(x, function(value) rep(value, 2))) == 6L)
+stopifnot(anyNA(rapply(x, function(value) NA_integer_)))
+stopifnot(identical(rapply(list(1L, "x"), identity, classes = "integer", deflt = FALSE), c(1L, 0L)))
+stopifnot(identical(rapply(list(1L, "x"), identity, classes = "integer", how = "replace"), list(1L, "x")))
+cat("rapply default, explicit modes, filtering, and variable result lengths verified.\n")
