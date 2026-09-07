@@ -26,6 +26,7 @@ for (nomatch in list(NULL, c('a', 'b'), list(value = NA_real_))) {
 }
 stopifnot(identical(Position(function(x) TRUE, 1:3), 1L))
 stopifnot(identical(Position(function(x) TRUE, 1:3, right = TRUE), 3L))
+# The right-to-left search matches 1L first, so the erroring 'a' is never visited.
 stopifnot(identical(Position(function(x) x + 1L > 0L, list('a', 1L), right = TRUE), 2L))
 # Result uncertainty must not remove ordinary callback errors.
 expect_error <- function(expr) stopifnot(inherits(tryCatch(force(expr), error = identity), 'error'))
