@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+### Added
+
+- Add grid 0.0.1 with 248 exported function signatures and `emptyCoords`,
+  inventoried from R 4.6.1. Keep returns unknown and mark captured drawing
+  expressions without claiming that they are forced.
+
 ### Automation
 
 - Prepare draft typeshed PRs for a named package or monthly upstream updates.
