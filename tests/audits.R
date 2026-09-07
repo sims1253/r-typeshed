@@ -67,3 +67,25 @@ local({
 stopifnot(identical(substitute(en = list(x = 2L), ex = x), 2L))
 stopifnot(inherits(tryCatch(substitute(e = x), error = identity), "error"))
 cat("Base capture formals and environment defaults verified.\n")
+
+# Match the complete public formals, including optional array controls.
+for (name in c("matrix", "array", "rowSums", "colSums", "rowMeans", "colMeans")) {
+  stopifnot(name %in% getNamespaceExports("base"))
+  live <- formals(getExportedValue("base", name))
+  stub <- base_doc$functions[[name]]
+  stopifnot(identical(unlist(stub$params, use.names = FALSE), names(live)))
+  stopifnot(all(vapply(stub$params, is.character, logical(1))))
+}
+labels <- list(c("a", "b"), c("c", "d"))
+m <- matrix(1:4, nrow = 2L, byrow = TRUE, dimnames = labels)
+stopifnot(identical(m[1L, ], c(c = 1L, d = 2L)), identical(dimnames(m), labels))
+a <- array(c(1, NA, 3, 4, 5, 6, 7, 8), dim = c(2L, 2L, 2L),
+  dimnames = c(labels, list(c("e", "f"))))
+stopifnot(identical(dimnames(a), c(labels, list(c("e", "f")))))
+stopifnot(identical(unname(rowSums(a, na.rm = TRUE, dims = 2L)),
+  matrix(c(6, 6, 10, 12), nrow = 2L)))
+stopifnot(identical(unname(rowMeans(a, na.rm = TRUE, dims = 2L)),
+  matrix(c(3, 6, 5, 6), nrow = 2L)))
+stopifnot(identical(unname(colSums(a, na.rm = TRUE, dims = 2L)), c(8, 26)))
+stopifnot(identical(unname(colMeans(a, na.rm = TRUE, dims = 2L)), c(8 / 3, 6.5)))
+cat("Array construction and summary controls verified.\n")
