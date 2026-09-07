@@ -4,6 +4,12 @@ valid_package <- function(package) {
   length(package) == 1L && !is.na(package) && grepl("^[A-Za-z][A-Za-z0-9.]*$", package) && !endsWith(package, ".")
 }
 
+base_package_versions <- function() {
+  installed <- installed.packages(lib.loc = .Library, fields = "Priority")
+  bundled <- installed[!is.na(installed[, "Priority"]) & installed[, "Priority"] == "base", , drop = FALSE]
+  as.list(setNames(bundled[, "Version"], bundled[, "Package"]))
+}
+
 upstream_versions <- function(packages) {
   index_for <- function(repository) tryCatch(
     available.packages(repos = repository, type = "source"),
@@ -11,8 +17,9 @@ upstream_versions <- function(packages) {
   )
   cran <- index_for("https://cloud.r-project.org")
   stan <- if ("cmdstanr" %in% packages) index_for("https://stan-dev.r-universe.dev") else NULL
+  bundled <- base_package_versions()
   versions <- lapply(packages, function(package) {
-    if (package == "base") return(as.character(getRversion()))
+    if (package %in% names(bundled)) return(bundled[[package]])
     index <- if (package == "cmdstanr") stan else cran
     if (!(package %in% rownames(index))) {
       warning(sprintf("Skipping %s: unavailable in its upstream repository", package))
@@ -153,7 +160,8 @@ main <- function(args) {
     current <- upstream_versions(packages)
     if (nzchar(package) && is.null(current[[package]])) stop("Requested package is unavailable")
     selected <- if (nzchar(package)) package else changed_packages(previous, current)
-    matrix <- lapply(selected, function(package) list(package = package, version = current[[package]], stub = substring(stub_path(package, root), nchar(root) + 2L)))
+    bundled <- names(base_package_versions())
+    matrix <- lapply(selected, function(package) list(package = package, version = current[[package]], bundled = package %in% bundled, stub = substring(stub_path(package, root), nchar(root) + 2L)))
     cat(jsonlite::toJSON(unname(matrix), auto_unbox = TRUE), "\n")
   }
 }

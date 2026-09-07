@@ -74,8 +74,9 @@ gh workflow run update-typeshed.yml --repo sims1253/r-typeshed -f package=dplyr
 
 The same workflow checks upstream versions on the first day of each month.
 An empty package input runs that check immediately. CRAN supplies package
-releases; `cmdstanr` uses Stan's R-universe repository, and `base` follows the
-R release installed by CI.
+releases; `cmdstanr` uses Stan's R-universe repository. Base-priority packages
+such as `base` and `grid` follow the R installation used by CI and do not need
+a separate package install.
 
 Each selected package gets a draft PR. The generators add missing exported
 functions with unknown return types and derive documented NSE metadata.

@@ -4,6 +4,9 @@
 
 ### Automation
 
+- Track packages bundled with base R, including `grid`, through the installed
+  R release instead of looking for them on CRAN or installing them separately.
+
 - Prepare draft typeshed PRs for a named package or monthly upstream updates.
   Preserve curated entries and report signature drift for review.
 

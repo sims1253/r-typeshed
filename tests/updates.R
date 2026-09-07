@@ -8,6 +8,9 @@ for (bad in c("", "../base", "-e", "pkg; touch x", "pkg/name", "pkg\nother", "a.
 stopifnot(identical(changed_packages(list(a = "1.0", b = "2.0"), list(a = "1.0", b = "2.1", c = "1.0")), c("b", "c")))
 stopifnot(!length(changed_packages(list(a = "1.0"), list(a = "1.0"))))
 stopifnot(identical(bump_version("0.0.9"), "0.0.10"), identical(bump_version("draft"), "draft"))
+bundled <- base_package_versions()
+stopifnot(identical(bundled$base, as.character(getRversion())), identical(bundled$grid, as.character(packageVersion("grid"))))
+stopifnot(!("survival" %in% names(bundled))) # Recommended packages still track CRAN.
 curated <- list(version = "0.0.1", functions = list(kept = list(params = list(list(name = "x", required = TRUE)), return = list(mode = "integer", length = "1"), higher_order = list(callback_position = 0L))))
 draft <- list(functions = list(kept = list(params = list("renamed")), added = list(params = list("x"))))
 merged <- merge_draft(curated, draft)
@@ -25,12 +28,23 @@ local({
   }
   lookup <- upstream_versions
   environment(lookup) <- environment()
+  base_package_versions <- function() list(base = "4.6.1", grid = "4.6.1")
   warnings <- character()
-  versions <- withCallingHandlers(lookup(c("archived", "cmdstanr", "dplyr")), warning = function(w) {
+  versions <- withCallingHandlers(lookup(c("archived", "cmdstanr", "dplyr", "base", "grid")), warning = function(w) {
     warnings <<- c(warnings, conditionMessage(w))
     invokeRestart("muffleWarning")
   })
-  stopifnot(identical(versions, list(dplyr = "1.2.3")), any(grepl("archived", warnings)), any(grepl("cmdstanr", warnings)))
+  stopifnot(identical(versions, list(dplyr = "1.2.3", base = "4.6.1", grid = "4.6.1")), any(grepl("archived", warnings)), any(grepl("cmdstanr", warnings)))
+  stopifnot(!any(grepl("Skipping (base|grid)", warnings)))
+  upstream_versions <- lookup
+  plan <- main
+  environment(plan) <- environment()
+  for (package in c("base", "grid", "dplyr")) {
+    output <- capture.output(plan(c("plan", package)))
+    entry <- jsonlite::fromJSON(paste(output, collapse = "\n"), simplifyVector = FALSE)[[1]]
+    stopifnot(identical(entry$package, package), identical(entry$bundled, package != "dplyr"))
+    stopifnot(identical(entry$version, versions[[package]]))
+  }
 })
 
 main <- function() {

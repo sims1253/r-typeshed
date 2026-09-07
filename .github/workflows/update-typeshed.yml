@@ -65,7 +65,7 @@ jobs:
         with:
           packages: |
             any::jsonlite
-            ${{ matrix.package != 'base' && format('any::{0}@{1}', matrix.package, matrix.version) || '' }}
+            ${{ !matrix.bundled && format('any::{0}@{1}', matrix.package, matrix.version) || '' }}
           dependencies: 'c("Depends", "Imports", "LinkingTo")'
           upgrade: 'TRUE'
       - name: Generate draft and review notes
