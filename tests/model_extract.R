@@ -31,7 +31,9 @@ stopifnot(inherits(err, 'error'), identical(conditionMessage(err), 'frame forced
 
 # Classed language is different from a bare symbol: coercion dispatch can run
 # the expression. This prevents an unconditional quoted-expression contract.
-as.character.ry_component <- function(x, ...) eval(x, envir = .GlobalEnv)
+as.character.ry_component <- function(x, ...) {
+  get('component', envir = parent.frame(), inherits = FALSE)
+}
 expression <- structure(quote(stop('component forced')), class = 'ry_component')
 call <- as.call(list(quote(stats::model.extract), quote(mf), expression))
 err <- tryCatch(eval(call), error = identity)
