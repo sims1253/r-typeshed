@@ -47,6 +47,13 @@ run(list(numeric = list(params = list(list(name = "length", required = TRUE)))),
 jsonlite::write_json(list(package = "base", functions = list(identity = list(params = list("x"))),
   datasets = list(.GlobalEnv = list(mode = "opaque", length = "unknown", na = TRUE))),
   file.path(fixture, "stubs", "base", "base.json"), auto_unbox = TRUE)
+# Unlike .GlobalEnv, classed environments dispatch through is.na() and warn.
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  dir.create(file.path(fixture, "stubs", "ggplot2"))
+  jsonlite::write_json(list(package = "ggplot2", functions = list(),
+    datasets = list(Geom = list(mode = "opaque", length = "unknown", na = TRUE))),
+    file.path(fixture, "stubs", "ggplot2", "ggplot2.json"), auto_unbox = TRUE)
+}
 output <- suppressWarnings(system2(file.path(R.home("bin"), "Rscript"),
   c("--vanilla", shQuote(file.path(fixture, "scripts", "audit_typeshed.R"))),
   stdout = TRUE, stderr = TRUE))
