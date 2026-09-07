@@ -88,4 +88,29 @@ local({
   stopifnot(identical(timings$step, c("construct", "build", "render", "draw", "TOTAL")))
 })
 
+# Capturing aesthetic expressions supports injection, not ordinary negation.
+stopifnot(identical(doc$functions$aes$injection,
+  list(x = "full", y = "full", "..." = "full")))
+stopifnot(identical(doc$functions$vars$injection, list("..." = "full")))
+local({
+  x <- rlang::sym("mpg")
+  y <- rlang::sym("wt")
+  dots <- list(colour = rlang::sym("cyl"))
+  mapping <- ggplot2::aes(x = !!x, y = !!y, !!!dots)
+  stopifnot(identical(rlang::quo_get_expr(mapping$x), x))
+  stopifnot(identical(rlang::quo_get_expr(mapping$y), y))
+  stopifnot(identical(rlang::quo_get_expr(mapping$colour), dots$colour))
+  facets <- ggplot2::vars(!!x, !!!dots)
+  stopifnot(identical(rlang::quo_get_expr(facets[[1L]]), x))
+  stopifnot(identical(rlang::quo_get_expr(facets$colour), dots$colour))
+  # The audit's setNames/lapply splice is accepted without forcing symbols.
+  mapping <- ggplot2::aes(!!!stats::setNames(lapply(c("mpg", "wt"), as.name), c("x", "y")))
+  stopifnot(identical(rlang::quo_get_expr(mapping$x), x))
+  stopifnot(identical(rlang::quo_get_expr(mapping$y), y))
+  # A helper used inside aes does not itself establish an injection boundary.
+  stopifnot(is.null(doc$functions$from_theme$injection))
+  error <- tryCatch(ggplot2::from_theme(!!x), error = identity)
+  stopifnot(inherits(error, "error"))
+})
+
 cat("Complete ggplot2 export inventory and curated capture contracts verified.\n")
