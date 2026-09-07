@@ -64,6 +64,8 @@ jobs:
 
       - name: Verify grep result controls
         run: Rscript --vanilla tests/grep.R
+      - name: Verify fold result controls
+        run: Rscript --vanilla tests/folds.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation

@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2623,13 +2623,13 @@
           "accumulator_and_element"
         ],
         "result": {
-          "kind": "callback_return",
-          "source_arg": 1
+          "kind": "callback_return"
         }
       },
       "return": {
         "mode": "opaque",
-        "length": "1"
+        "length": "unknown",
+        "na": true
       }
     },
     "Sys.Date": {
