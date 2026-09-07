@@ -39,6 +39,29 @@ for (name in c("integer", "numeric", "double", "logical", "character", "raw")) {
 for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursive = TRUE, full.names = TRUE)) {
   doc <- jsonlite::read_json(path)
   expect(identical(doc$schema_version, "2"), sprintf("%s must use schema_version 2", path))
+  force_signatures <- Filter(function(sig) !is.null(sig$force), doc$functions)
+  if (length(force_signatures) && requireNamespace(doc$package, quietly = TRUE)) {
+    for (name in names(force_signatures)) {
+      contract <- force_signatures[[name]]$force
+      label <- paste0(doc$package, "::", name)
+      expect(identical(contract$kind, "sole_argument"), paste(label, "unknown force contract"))
+      fn <- getExportedValue(doc$package, name)
+      for (named in c(FALSE, if (isTRUE(contract$allow_named)) TRUE)) {
+        # Supply a promise binding so replacing the caller's binding before
+        # forcing the actual would fail this witness too.
+        invoke <- function(witness = stop("typeshed-force-witness")) {
+          args <- list(quote(witness))
+          if (named) names(args) <- contract$param
+          eval(as.call(c(list(fn), args)))
+        }
+        result <- tryCatch(invoke(), error = conditionMessage)
+        expect(identical(result, "typeshed-force-witness"), paste(label, "did not force its sole argument"))
+      }
+    }
+    cat(sprintf("Verified %d %s sole-argument forcing contracts.\n", length(force_signatures), doc$package))
+  } else if (length(force_signatures)) {
+    cat(sprintf("SKIP: %s sole-argument forcing contracts (package not installed)\n", doc$package))
+  }
   signatures <- Filter(function(sig) !is.null(sig$higher_order), doc$functions)
   if (identical(doc$package, "base")) expect(length(signatures) > 0L, "base stub must declare higher-order functions")
   if (!length(signatures)) next

@@ -14,7 +14,7 @@ The required header fields are `schema_version`, `package`, and `version`. `func
 
 Function names map to signatures. A signature requires `params`, an ordered array of parameters, and `return`.
 
-Optional signature fields are `aliases`, `eval`, `no_return`, `schema_effect`, `scope_effect`, `conditional_scope_effect`, `predicate`, `assertion`, `return_length`, `higher_order`, `injects`, `injection`, and `source_relative_path_arg`. The last field is the zero-based index of a literal argument containing a path relative to the current source file. `no_return` defaults to false and marks a function that never returns to its caller.
+Optional signature fields are `aliases`, `eval`, `force`, `no_return`, `schema_effect`, `scope_effect`, `conditional_scope_effect`, `predicate`, `assertion`, `return_length`, `higher_order`, `injects`, `injection`, and `source_relative_path_arg`. The last field is the zero-based index of a literal argument containing a path relative to the current source file. `no_return` defaults to false and marks a function that never returns to its caller.
 
 ### Parameters
 
@@ -52,6 +52,22 @@ Lengths may be a decimal string from the curated vocabulary accepted by `ry type
 ### Evaluation and result schemas
 
 The `eval` map assigns parameter names one of `normal`, `quoted_symbol`, `quoted_expression`, `captures_promise`, `data_mask`, or `tidy_select`. These describe R's non-standard evaluation behavior. `captures_promise` records a promise captured without evaluation, including a variadic `...` promise capture.
+
+`force: {"kind": "sole_argument", "param": "x", "allow_named": true}`
+records a reviewed guarantee for calls with exactly one supplied, non-missing
+argument. That argument must be unnamed, or use the exact formal name when
+`allow_named` is true. The call starts evaluating this argument before it can
+alter caller bindings, run other user code, return, signal, or dispatch. This
+is an entry guarantee, not merely forcing on normal return.
+It does not describe multiple arguments, forwarded `...`, partial names, or
+later evaluation of captured code. `eval: "normal"` alone makes no forcing
+guarantee, and an absent `force` contract means unknown.
+
+`param` must identify the first formal. Other formals must not be required.
+The selected formal must use normal evaluation (explicitly or by default), and
+`allow_named` must be false for `...`. Consumers must preserve lazy behavior
+inside the argument expression and require known callee provenance. Audit each
+contract against the installed package; the schema cannot prove runtime forcing.
 
 `schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. The `join` and `pivot` values dispatch to the checker's join-union and pivot implementations while keeping the triggering function names in stub data.
 
