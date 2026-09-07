@@ -53,6 +53,10 @@ jobs:
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions
         run: Rscript --vanilla tests/grid.R
+      - name: Verify regmatches container and element shapes
+        run: Rscript --vanilla tests/regmatches.R
+      - name: Verify sort.int atomic and indexed returns
+        run: Rscript --vanilla tests/sort_int.R
       - name: Verify ggplot2 drawing exports
         run: Rscript --vanilla tests/ggplot2.R
       - name: Test generators

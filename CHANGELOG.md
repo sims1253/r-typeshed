@@ -18,6 +18,12 @@
 
 ### Function semantics
 
+- Keep `regmatches` returns opaque because match data and `invert` select
+  between a character vector and lists of variable-length character vectors.
+  Include the `invert` formal. Base is revision 0.0.9.
+- Keep `sort` and `sort.int` returns opaque because `index.return = TRUE` produces a
+  list instead of the input vector type. Complete their verified formals.
+
 - Complete `matrix`, `array`, and row/column summary formals so named controls
   such as `byrow`, `dimnames`, `na.rm`, and `dims` can match their R arguments.
 
@@ -25,7 +31,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.8, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.9, purrr is 0.0.3, and rlang is 0.1.4 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
