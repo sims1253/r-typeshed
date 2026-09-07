@@ -171,6 +171,10 @@
 
 ### New stubs
 
+- Add grid 0.0.1 with 248 exported function signatures and `emptyCoords`,
+  inventoried from R 4.6.1. Keep returns unknown and parameter lists
+  inference-only; mark captured drawing expressions without forcing claims.
+
 - Added a conservative vctrs stub for `obj_is_list`, `vec_in`, `vec_set_union`,
   `vec_size`, and `vec_slice`, covering the hermetic tidyverse audit findings
   without guessing uncertain set-operation return types.
