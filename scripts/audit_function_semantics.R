@@ -59,6 +59,8 @@ for (path in list.files(file.path(root, "stubs"), pattern = "[.]json$", recursiv
       }
     }
     cat(sprintf("Verified %d %s sole-argument forcing contracts.\n", length(force_signatures), doc$package))
+  } else if (length(force_signatures)) {
+    cat(sprintf("SKIP: %s sole-argument forcing contracts (package not installed)\n", doc$package))
   }
   signatures <- Filter(function(sig) !is.null(sig$higher_order), doc$functions)
   if (identical(doc$package, "base")) expect(length(signatures) > 0L, "base stub must declare higher-order functions")

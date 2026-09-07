@@ -12,8 +12,10 @@
 - Keep enclosing parameters required when only a nested function calls
   `missing()` or `nargs()`. Apply the same scope rule in generators and audits.
 
-- Declare sole-argument forcing contracts for reviewed base helpers and
-  `rlang::abort()`. Base is revision 0.0.6 and rlang is revision 0.1.4.
+- Declare sole-argument forcing contracts for base `force()`, `identity()`,
+  `invisible()`, `is.function()`, `is.null()`, `length()`, `message()`, `stop()`,
+  `typeof()`, and `warning()`, plus `rlang::abort()`. Base is revision 0.0.6
+  and rlang is revision 0.1.4.
 
 - Preserve curated parameter order during NSE generation so positional semantic
   metadata still refers to the same parameters.
