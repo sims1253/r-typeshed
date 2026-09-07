@@ -7,7 +7,7 @@
 - Add ggplot2 0.0.2 with all 498 exported functions, 145 exported values, and
   11 lazy datasets, verified against ggplot2 4.0.3. Keep formals inference-only
   and results unknown; preserve the verified `.pt` scalar type and curate
-  expression capture for aesthetic mappings, labels, and rlang re-exports.
+  expression capture for aesthetic mappings, labels, `benchplot`, and rlang re-exports.
 
 - Add grid 0.0.1 with all 248 exported function signatures and `emptyCoords`,
   inventoried from R 4.6.1. Keep returns unknown and formal lists inference-only;

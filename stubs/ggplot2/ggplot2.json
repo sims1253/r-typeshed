@@ -325,6 +325,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "eval": {
+        "x": "captures_promise"
       }
     },
     "binned_scale": {
@@ -1221,6 +1224,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "eval": {
+        "...": "captures_promise"
       }
     },
     "enquo": {
@@ -3929,6 +3935,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "eval": {
+        "...": "captures_promise"
       }
     },
     "register_theme_elements": {

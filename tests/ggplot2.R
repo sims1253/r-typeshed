@@ -4,7 +4,7 @@ args <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
 doc <- jsonlite::read_json(file.path(root, "stubs", "ggplot2", "ggplot2.json"))
 exports <- getNamespaceExports("ggplot2")
-lazydata <- ls(asNamespace("ggplot2")$.__NAMESPACE__.$lazydata)
+lazydata <- ls(asNamespace("ggplot2")$.__NAMESPACE__.$lazydata, all.names = TRUE)
 stopifnot(all(c(names(doc$functions), names(doc$datasets)) %in% union(exports, lazydata)))
 for (name in names(doc$functions)) {
   fn <- getExportedValue("ggplot2", name)
@@ -51,7 +51,7 @@ for (name in setdiff(names(doc$datasets), ".pt")) {
 }
 # These rlang exports are the same callable, so their capture metadata applies.
 rlang_doc <- jsonlite::read_json(file.path(root, "stubs", "rlang", "rlang.json"))
-for (name in c("enexpr", "enquo", "enquos", "ensym", "ensyms", "expr", "quo")) {
+for (name in c("enexpr", "enexprs", "enquo", "enquos", "ensym", "ensyms", "expr", "quo", "quos")) {
   stopifnot(identical(getExportedValue("ggplot2", name), getExportedValue("rlang", name)))
   stopifnot(identical(doc$functions[[name]]$eval, rlang_doc$functions[[name]]$eval))
 }
@@ -78,3 +78,13 @@ stopifnot(is.null(doc$functions$stage$eval))
 error <- tryCatch(ggplot2::stage(start = stop("forced")), error = identity)
 stopifnot(inherits(error, "error"), identical(conditionMessage(error), "forced"))
 cat("Complete ggplot2 export inventory and curated capture contracts verified.\n")
+
+stopifnot(identical(doc$functions$benchplot$eval, list(x = "captures_promise")))
+local({
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off())
+  plot <- ggplot2::ggplot(data.frame(x = 1, y = 2), ggplot2::aes(x, y)) + ggplot2::geom_point()
+  # Injection requires enquo() capture; ordinary evaluation of !!plot fails.
+  timings <- ggplot2::benchplot(!!plot)
+  stopifnot(identical(timings$step, c("construct", "build", "render", "draw", "TOTAL")))
+})
