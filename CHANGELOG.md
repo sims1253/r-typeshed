@@ -19,7 +19,8 @@
 ### Function semantics
 
 - Keep `rapply` returns opaque: its default `how = "unlist"` flattens recursive
-  results, while `"replace"` and `"list"` retain list structure. Remove the
+  results, while `"replace"` retains input structure and `"list"` returns a list.
+  Remove the
   input-length claim from its simplification metadata; nested leaves and
   callback results can change output length. Runtime controls cover all modes.
 
