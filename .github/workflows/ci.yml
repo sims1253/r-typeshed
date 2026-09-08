@@ -80,6 +80,8 @@ jobs:
         run: Rscript --vanilla tests/filter_position.R
       - name: Verify Find result and evaluation controls
         run: Rscript --vanilla tests/find.R
+      - name: Verify mirai status contract
+        run: Rscript --vanilla tests/mirai.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation
