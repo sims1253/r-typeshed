@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "mirai",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     "call_mirai": {
       "params": [

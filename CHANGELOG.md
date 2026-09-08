@@ -44,6 +44,14 @@
   length and possible missingness. Methods can return lists, and ordinary linear
   model confidence intervals can contain missing entries.
 
+- Correct `mirai::status` in mirai 0.0.2: the formal is `.compute` (character,
+  miraiCluster, or NULL), not `.x`, and the return is a named list. `connections`
+  (integer) and `daemons` (character URL or `0L`) are always present; `mirai`
+  (named integer) and `memory` (named numeric) appear only under a dispatcher, so
+  no `columns` schema is declared. Verified against mirai 2.7.2 `R/daemons.R`
+  source and runtime on R 4.6.1 with mirai 2.7.1; removes ry's false RY061 on
+  `status()$mirai` and `status()$connections`.
+
 - Keep base `Reduce` and purrr `reduce` results opaque with unknown length and
   possible missingness. Initializers and callbacks can return arbitrary shapes;
   empty and singleton folds can return without invoking a callback.
@@ -72,7 +80,8 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.17, purrr is 0.0.4, and rlang is 0.1.4 after the changes below.
+  Base is revision 0.0.17, purrr is 0.0.4, rlang is 0.1.4, and mirai is
+  0.0.2 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
   and `warning`, plus `rlang::abort`.
