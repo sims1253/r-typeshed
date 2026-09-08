@@ -13,8 +13,8 @@ stopifnot(identical(sig$return$mode, 'list'))
 # Runtime shape: named list; connections/daemons always present.
 daemons(1, sync = TRUE)
 status_value <- status()
-on.exit(daemons(0), add = TRUE)
 stopifnot(is.list(status_value), identical(names(status_value)[1], 'connections'))
 stopifnot(is.integer(status_value$connections), is.character(status_value$daemons))
 # A dollar access on the result must be valid R.
 stopifnot(is.integer(status_value$connections))
+daemons(0)
