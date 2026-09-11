@@ -63,6 +63,7 @@ Rscript --vanilla tests/model_extract.R
 Rscript --vanilla tests/filter_position.R
 Rscript --vanilla tests/find.R
 Rscript --vanilla tests/mirai.R
+Rscript --vanilla tests/set6.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla scripts/gen_standard_globals.R --check
@@ -75,6 +76,11 @@ ry typeshed validate stubs/
 The namespace audit skips packages that are not installed. Install the package
 you changed to check its declarations. Schema validation checks every stub,
 but does not verify its behavior against R.
+
+The set6 and dictionar6 inventories use archived CRAN releases. Install `R6`,
+`Rcpp`, and `checkmate`, then run `Rscript --vanilla tests/install_set6_deps.R`
+before their runtime checks. The installer uses ooplah 0.2.0, dictionar6 0.1.3,
+and set6 0.2.4, matching the package versions in the corpus investigation.
 
 ## Package update drafts
 
