@@ -4,6 +4,10 @@
 
 ### New stubs
 
+- Add set6 0.0.1 and dictionar6 0.0.1 with complete export inventories from
+  set6 0.2.4 and dictionar6 0.1.3. Record R6 generators as opaque values,
+  keep function formals inference-only, and leave return types unknown.
+
 - Add the exported `tags` value in htmltools 0.0.1 and its identical shiny
   re-export in shiny 0.0.2. Describe the lists under namespace/import lookup;
   keep individual tag-constructor results unspecified.
