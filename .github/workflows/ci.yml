@@ -55,12 +55,15 @@ jobs:
             any::Rcpp
             any::checkmate
             any::magrittr
+            any::glue
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Verify set6 and dictionar6 exports
         run: Rscript --vanilla tests/set6.R
       - name: Verify magrittr inventory
         run: Rscript --vanilla tests/magrittr.R
+      - name: Verify glue inventory
+        run: Rscript --vanilla tests/glue.R
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions

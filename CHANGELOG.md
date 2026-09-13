@@ -4,6 +4,12 @@
 
 ### New stubs
 
+- Add glue 0.0.1 with its complete 16-function export inventory from
+  glue 1.8.1. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(glue)` for its 975 CRAN reverse dependencies. Part
+  of the prioritized backlog in #43.
+
 - Add magrittr 0.0.1 with its complete 42-function export inventory from
   magrittr 2.0.5. Keep formal lists inference-only and returns uniformly
   `{opaque, unknown, na: true}` per the documented inventory convention,
