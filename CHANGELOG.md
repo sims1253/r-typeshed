@@ -4,6 +4,12 @@
 
 ### New stubs
 
+- Add stringr 0.0.1 with its complete 63-function export inventory from
+  stringr 1.6.0. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(stringr)` for its 2,259 CRAN reverse dependencies.
+  Part of the prioritized backlog in #43.
+
 - Add glue 0.0.1 with its complete 16-function export inventory from
   glue 1.8.1. Keep formal lists inference-only and returns uniformly
   `{opaque, unknown, na: true}` per the documented inventory convention,
