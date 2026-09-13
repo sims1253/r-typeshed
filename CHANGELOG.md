@@ -4,6 +4,11 @@
 
 ### New stubs
 
+- Add checkmate 0.0.1 with its complete 370-function export inventory from
+  checkmate 2.3.4. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(checkmate)`. Part of the prioritized backlog in #43.
+
 - Add httr 0.0.1 with its complete export inventory from httr 1.4.8:
   87 functions plus the exported `Token`, `Token1.0`, `Token2.0`, and
   `TokenServiceAccount` R6 generators recorded as opaque dataset values.
