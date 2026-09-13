@@ -17,6 +17,7 @@
   "grid": "4.6.1",
   "igraph": "2.3.3",
   "loo": "2.10.1",
+  "magrittr": "2.0.5",
   "mirai": "2.7.2",
   "patrick": "0.3.1",
   "posterior": "1.7.0",
