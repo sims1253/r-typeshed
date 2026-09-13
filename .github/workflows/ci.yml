@@ -59,6 +59,7 @@ jobs:
             any::stringr
             any::tibble
             any::lifecycle
+            any::httr
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Verify set6 and dictionar6 exports
@@ -75,6 +76,9 @@ jobs:
         run: Rscript --vanilla tests/lifecycle.R
       - name: Verify jsonlite inventory
         run: Rscript --vanilla tests/jsonlite.R
+      - name: Verify httr inventory
+        run: Rscript --vanilla tests/httr.R
+
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions
