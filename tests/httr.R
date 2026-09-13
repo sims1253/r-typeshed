@@ -3,7 +3,7 @@
 args <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
 pkg <- "httr"
-version <- "1.4.8"
+version <- "1.4.9"
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
 
 stopifnot(identical(as.character(packageVersion(pkg)), version))
