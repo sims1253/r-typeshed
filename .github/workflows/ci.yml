@@ -61,6 +61,7 @@ jobs:
             any::lifecycle
             any::httr
             any::readr
+            any::scales
 
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
@@ -84,6 +85,8 @@ jobs:
         run: Rscript --vanilla tests/checkmate.R
       - name: Verify readr inventory
         run: Rscript --vanilla tests/readr.R
+      - name: Verify scales inventory
+        run: Rscript --vanilla tests/scales.R
 
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
