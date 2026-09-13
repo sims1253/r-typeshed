@@ -60,6 +60,8 @@ jobs:
             any::tibble
             any::lifecycle
             any::httr
+            any::readr
+
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Verify set6 and dictionar6 exports
@@ -80,6 +82,8 @@ jobs:
         run: Rscript --vanilla tests/httr.R
       - name: Verify checkmate inventory
         run: Rscript --vanilla tests/checkmate.R
+      - name: Verify readr inventory
+        run: Rscript --vanilla tests/readr.R
 
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
