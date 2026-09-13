@@ -53,6 +53,7 @@ Rscript --vanilla tests/audits.R
 Rscript --vanilla tests/grid.R
 Rscript --vanilla tests/regmatches.R
 Rscript --vanilla tests/sort_int.R
+Rscript --vanilla tests/ggplot2.R
 Rscript --vanilla tests/rapply.R
 Rscript --vanilla tests/grep.R
 Rscript --vanilla tests/folds.R
@@ -64,6 +65,11 @@ Rscript --vanilla tests/filter_position.R
 Rscript --vanilla tests/find.R
 Rscript --vanilla tests/mirai.R
 Rscript --vanilla tests/set6.R
+Rscript --vanilla tests/magrittr.R
+Rscript --vanilla tests/glue.R
+Rscript --vanilla tests/stringr.R
+Rscript --vanilla tests/tibble.R
+Rscript --vanilla tests/lifecycle.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla scripts/gen_standard_globals.R --check
