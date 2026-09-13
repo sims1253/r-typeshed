@@ -4,6 +4,13 @@
 
 ### New stubs
 
+- Add scales 0.0.1 with its complete export inventory from scales 1.4.0:
+  210 functions plus the exported `Range`/`DiscreteRange`/`ContinuousRange`
+  R6 generators recorded as opaque dataset values. Keep formal lists
+  inference-only and returns uniformly `{opaque, unknown, na: true}` per
+  the documented inventory convention, resolving `import(scales)`. Part
+  of the prioritized backlog in #43.
+
 - Add readr 0.0.1 with its complete export inventory from readr 2.2.0:
   98 functions plus the five exported ChunkCallback-family R6 generators
   recorded as opaque dataset values. Keep formal lists inference-only and
