@@ -4,6 +4,12 @@
 
 ### New stubs
 
+- Add magrittr 0.0.1 with its complete 42-function export inventory from
+  magrittr 2.0.5. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(magrittr)` for its 2,255 CRAN reverse dependencies.
+  Part of the prioritized backlog in #43.
+
 - Add set6 0.0.1 and dictionar6 0.0.1 with complete export inventories from
   set6 0.2.4 and dictionar6 0.1.3. Record R6 generators as opaque values,
   keep function formals inference-only, and leave return types unknown.
