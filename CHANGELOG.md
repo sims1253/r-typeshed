@@ -188,6 +188,15 @@
   as a conservative upper bound. Document the default-search-path provenance
   of base dataset entries in the schema reference.
 
+### Schema documentation
+
+- Document `na` semantics in the schema reference: `true` claims
+  NA-capability, `false` claims never-NA, and an absent field declares
+  neither way and is not a non-NA guarantee. Record the inventory convention
+  of uniform `na: true` on opaque entries with unknown missingness
+  (ggplot2, grid, vctrs, set6, dictionar6), reserving `na: false` for values
+  known never to be NA such as the htmltools/shiny `tags` lists.
+
 ## [0.4.0] - 2026-07-24
 
 Schema 2 release for ry 0.7.0 function-semantics debt. This is a deliberate
