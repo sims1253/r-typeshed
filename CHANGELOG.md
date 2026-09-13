@@ -4,6 +4,11 @@
 
 ### New stubs
 
+- Add lifecycle 0.0.1 with its complete 16-function export inventory from
+  lifecycle 1.0.5. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(lifecycle)`. Part of the prioritized backlog in #43.
+
 - Add tibble 0.0.1 with its complete export inventory from tibble 3.3.1:
   45 functions plus the exported `.__C__tbl_df` S4 class object recorded
   as an opaque dataset value. Keep formal lists inference-only and returns
