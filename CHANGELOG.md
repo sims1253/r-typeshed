@@ -4,6 +4,13 @@
 
 ### New stubs
 
+- Add tibble 0.0.1 with its complete export inventory from tibble 3.3.1:
+  45 functions plus the exported `.__C__tbl_df` S4 class object recorded
+  as an opaque dataset value. Keep formal lists inference-only and returns
+  uniformly `{opaque, unknown, na: true}` per the documented inventory
+  convention, resolving `import(tibble)`. Part of the prioritized backlog
+  in #43.
+
 - Add stringr 0.0.1 with its complete 63-function export inventory from
   stringr 1.6.0. Keep formal lists inference-only and returns uniformly
   `{opaque, unknown, na: true}` per the documented inventory convention,
