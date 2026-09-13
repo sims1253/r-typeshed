@@ -51,6 +51,13 @@ jobs:
             any::shiny
             any::mirai
             any::carrier
+            any::R6
+            any::Rcpp
+            any::checkmate
+      - name: Install archived inventory test packages
+        run: Rscript --vanilla tests/install_set6_deps.R
+      - name: Verify set6 and dictionar6 exports
+        run: Rscript --vanilla tests/set6.R
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions
