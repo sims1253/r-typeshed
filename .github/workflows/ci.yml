@@ -57,6 +57,7 @@ jobs:
             any::magrittr
             any::glue
             any::stringr
+            any::tibble
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Verify set6 and dictionar6 exports
@@ -67,6 +68,8 @@ jobs:
         run: Rscript --vanilla tests/glue.R
       - name: Verify stringr inventory
         run: Rscript --vanilla tests/stringr.R
+      - name: Verify tibble inventory
+        run: Rscript --vanilla tests/tibble.R
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
       - name: Verify grid inventory and captured expressions
