@@ -4,6 +4,13 @@
 
 ### New stubs
 
+- Add readr 0.0.1 with its complete export inventory from readr 2.2.0:
+  98 functions plus the five exported ChunkCallback-family R6 generators
+  recorded as opaque dataset values. Keep formal lists inference-only and
+  returns uniformly `{opaque, unknown, na: true}` per the documented
+  inventory convention, resolving `import(readr)`. Part of the backlog
+  in #43.
+
 - Add checkmate 0.0.1 with its complete 370-function export inventory from
   checkmate 2.3.4. Keep formal lists inference-only and returns uniformly
   `{opaque, unknown, na: true}` per the documented inventory convention,
