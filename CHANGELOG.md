@@ -89,6 +89,19 @@
 
 ### Function semantics
 
+- Correct `file.path` recycling in base 0.0.18: the return length is
+  `longest_arg_or_zero`, not `1`. ?file.path produces a path for every
+  element only when every argument has positive length; any zero-length
+  argument yields an empty character vector (unlike `paste`, which
+  recycles `""` for zeros). Removes ry's false RY105 dead-guard claims on
+  `length(file.path(...)) > 0` shapes (learnr, blogdown, pkgload).
+- Correct `seq_len` in base 0.0.18: the result length is the *value* of
+  `length.out` (`1:n`), not the argument's vector length. Expressed with
+  the documented `return_length: param_value` mechanism — a literal count
+  keeps the exact length, anything dynamic stays unknown — so
+  `seq_len(nrow(df))` no longer claims length 1. Removes ry's false RY105
+  claims on the brulee shape.
+
 - Correct `mirai::status` in mirai 0.0.2: the formal is `.compute` (character,
   miraiCluster, or NULL), not `.x`, and the return is a named list. `connections`
   (integer) and `daemons` (character URL or `0L`) are always present; `mirai`
@@ -252,6 +265,12 @@
   of base dataset entries in the schema reference.
 
 ### Schema documentation
+
+- Document the `longest_arg_or_zero` symbolic length in the schema
+  reference: the recycling rule whose result is empty when any argument is
+  empty, the ?file.path behavior that distinguishes it from `paste`'s
+  `longest_arg`. Accepted by `ry typeshed validate` alongside the existing
+  symbolic lengths.
 
 - Document `na` semantics in the schema reference: `true` claims
   NA-capability, `false` claims never-NA, and an absent field declares
