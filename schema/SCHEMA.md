@@ -41,7 +41,7 @@ Legacy all-string `params` arrays remain inference-only because older stubs may 
 
 The supported modes are `arg0`, `arg2`, `character`, `complex`, `double`, `double_or_int`, `function`, `integer`, `list`, `logical`, `null`, `opaque`, `raw`, `union`, and `yes_or_no`. Concrete modes mirror R values. `opaque` is unknown. The remaining values are checker-resolved symbolic modes derived from arguments or call behavior. A `union` type also requires a non-empty `members` array of concrete mode names; for example `{"mode": "union", "length": "unknown", "members": ["logical", "integer", "double"]}` describes numeric-like values accepted through R's ordinary coercion ladder.
 
-Lengths may be a decimal string from the curated vocabulary accepted by `ry typeshed validate`. Symbolic lengths are `arg0`, `arg1`, `arg2`, `longest_arg`, `n_args`, `test`, and `unknown`; the checker resolves these from call arguments or operation semantics.
+Lengths may be a decimal string from the curated vocabulary accepted by `ry typeshed validate`. Symbolic lengths are `arg0`, `arg1`, `arg2`, `longest_arg`, `longest_arg_or_zero`, `n_args`, `test`, and `unknown`; the checker resolves these from call arguments or operation semantics. `longest_arg_or_zero` is the recycling rule whose result is empty when any argument is empty (`file.path`, per ?file.path: a path for every element only when every argument has positive length, unlike `paste`).
 
 ### Return-length rules
 
