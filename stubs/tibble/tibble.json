@@ -145,7 +145,7 @@
         "length": "unknown",
         "na": true
       },
-      "injection": {"...": "splice"}
+      "injection": {"...": "full"}
     },
     "data_frame_": {
       "params": [
@@ -260,7 +260,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "lst_": {
       "params": [
@@ -431,7 +432,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "tibble_": {
       "params": [
@@ -452,7 +454,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "tidy_names": {
       "params": [

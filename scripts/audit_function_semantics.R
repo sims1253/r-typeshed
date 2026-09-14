@@ -309,7 +309,7 @@ expect(identical(rlang::list2(!!!list(1)), list(1)), "dynamic dots splice lists"
 expect(inherits(tryCatch(rlang::list2(!!list(1)), error = identity), "error"), "dynamic dots reject unquoting")
 
 vctrs_stub <- jsonlite::fromJSON(file.path(root, "stubs", "vctrs", "vctrs.json"), simplifyVector = FALSE)
-for (name in c("vec_c", "vec_size_common", "vec_recycle_common", "vec_cast_common")) {
+for (name in c("vec_c", "vec_size_common", "vec_recycle_common", "vec_cast_common", "data_frame")) {
   sig <- vctrs_stub$functions[[name]]
   fn <- getExportedValue("vctrs", name)
   expect(identical(param_names(sig), names(formals(fn))), paste(name, "formals differ"))
