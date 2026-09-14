@@ -9,6 +9,9 @@ root <- dirname(dirname(normalizePath(script)))
 # the audit_function_semantics.R loop.
 tibble <- jsonlite::read_json(file.path(root, 'stubs/tibble/tibble.json'))$functions
 expected_params <- list(
+  add_case = list('.data', '...', '.before', '.after'),
+  add_column = list('.data', '...', '.before', '.after', '.name_repair'),
+  add_row = list('.data', '...', '.before', '.after'),
   data_frame = list('...'),
   tibble = list('...', '.rows', '.name_repair'),
   tibble_row = list('...', '.name_repair'),

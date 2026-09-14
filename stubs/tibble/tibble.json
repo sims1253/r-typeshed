@@ -25,7 +25,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "add_column": {
       "params": [
@@ -39,7 +40,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "add_row": {
       "params": [
@@ -52,7 +54,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "as_data_frame": {
       "params": [

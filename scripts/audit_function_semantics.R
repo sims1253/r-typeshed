@@ -314,7 +314,9 @@ for (name in c("vec_c", "vec_size_common", "vec_recycle_common", "vec_cast_commo
   fn <- getExportedValue("vctrs", name)
   expect(identical(param_names(sig), names(formals(fn))), paste(name, "formals differ"))
   expect(identical(sig$injection[["..."]], "splice"), paste(name, "must declare dynamic dots"))
-  expect(identical(fn(!!!list(1, 2)), fn(1, 2)), paste(name, "splicing differs from positional arguments"))
+  # data_frame rejects unnamed columns under its default check_unique
+  # repair, so the probe compares named columns instead of bare values.
+  expect(identical(fn(!!!list(x = 1, y = 2)), fn(x = 1, y = 2)), paste(name, "splicing differs from positional arguments"))
 }
 
 purrr_stub <- jsonlite::fromJSON(file.path(root, "stubs", "purrr", "purrr.json"), simplifyVector = FALSE)
@@ -341,6 +343,15 @@ expect(identical(suppressWarnings(rlang::with_handlers(stop("x"), !!!list(error 
 expect(identical(suppressWarnings(rlang::chr(!!!list("a", "b"))), c("a", "b")), "chr splices")
 expect(identical(dplyr::tibble(!!!list(x = 1))$x, 1), "tibble splices")
 expect(identical(dplyr::tibble(x = !!1)$x, 1), "tibble unquotes")
+
+tibble_stub <- jsonlite::fromJSON(file.path(root, "stubs", "tibble", "tibble.json"), simplifyVector = FALSE)
+for (name in c("data_frame", "tibble", "tibble_row", "lst", "add_case", "add_column", "add_row")) {
+  expect(identical(tibble_stub$functions[[name]]$injection[["..."]], "full"), paste(name, "must declare quos-based dynamic dots"))
+}
+expect(identical(tibble::add_row(data.frame(x = 1), !!!list(x = 2))$x[[2]], 2), "add_row splices")
+expect(identical(tibble::add_row(data.frame(x = 1), x = !!2)$x[[2]], 2), "add_row unquotes")
+expect(identical(tibble::add_column(data.frame(x = 1), !!!list(y = 2))$y, 2), "add_column splices")
+expect(identical(tibble::add_column(data.frame(x = 1), y = !!2)$y, 2), "add_column unquotes")
 
 expect(identical(rlang_stub$functions$call_modify$injection[["..."]], "splice"), "call_modify declares dynamic dots")
 expect(identical(rlang::call_modify(quote(f()), !!!list(x = 1)), quote(f(x = 1))), "call_modify splices")

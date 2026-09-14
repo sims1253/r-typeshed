@@ -9,9 +9,15 @@
   constructors whose dots defuse `!!` on the right-hand side as well as
   `!!!` splice and `!!name :=`, so they declare
   `"injection": {"...": "full"}`, matching the existing `dplyr::tibble`
-  re-export. `tribble` and `frame_matrix` stay undeclared for now: their
-  arguments are formulas, not dynamic dots, and no corpus site splices
-  into them.
+  re-export. `add_row`, `add_column`, and their deprecated alias
+  `add_case` declare the same mode: they forward `...` straight into
+  `tibble()` (tibble 3.3.1 `R/add.R`), so their dots are quos-defused
+  too. `tribble`, `frame_data`, and `frame_matrix` stay undeclared for
+  now: their arguments are formulas, not dynamic dots, and no corpus
+  site splices into them. The remaining `...` entries in the inventory
+  take ordinary dots — S3 generic forwarders such as `as_tibble` and
+  `glimpse`, and `num`/`char`, whose dots must be empty
+  (`check_dots_empty()`).
 - Add `vctrs::data_frame` with the same contract (vctrs 0.0.2): a
   dynamic-dots constructor with its real control formals (`.size`,
   `.name_repair`, `.error_call`) and `"injection": {"...": "splice"}`
