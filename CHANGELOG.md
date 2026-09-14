@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-14
+
+Inventory release paired with ry 0.10.0: new export inventories for scales,
+readr, checkmate, and httr, plus corrected base length semantics. base 0.0.18
+introduces the `longest_arg_or_zero` symbolic length, so consumers must
+vendor against a ry that accepts it (ry #459, in 0.10.0) before validating
+this release's stubs.
+
 ### New stubs
 
 - Add scales 0.0.1 with its complete export inventory from scales 1.4.0:
