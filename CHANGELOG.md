@@ -160,7 +160,7 @@
   matching; preserve their existing capture modes and inference-only parameters.
 
 - Restore completed base higher-order formals and hermetic dependency metadata.
-  Base is revision 0.0.17, purrr is 0.0.4, rlang is 0.1.4, and mirai is
+  Base is revision 0.0.18, purrr is 0.0.4, rlang is 0.1.4, and mirai is
   0.0.2 after the changes below.
 - Declare sole-argument forcing contracts for base `force`, `identity`,
   `invisible`, `is.function`, `is.null`, `length`, `message`, `stop`, `typeof`,
