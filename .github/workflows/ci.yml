@@ -92,6 +92,8 @@ jobs:
         run: Rscript --vanilla tests/audits.R
       - name: Verify file.path and seq_len length semantics
         run: Rscript --vanilla tests/base_lengths.R
+      - name: Verify dynamic-dots constructor contracts
+        run: Rscript --vanilla tests/dynamic_dots.R
       - name: Verify grid inventory and captured expressions
         run: Rscript --vanilla tests/grid.R
       - name: Verify regmatches container and element shapes

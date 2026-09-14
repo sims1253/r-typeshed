@@ -97,6 +97,18 @@ this release's stubs.
 
 ### Function semantics
 
+- Declare dynamic-dots injection for `tibble::data_frame` (tibble 0.0.2)
+  and add the `vctrs::data_frame` entry with the same contract (vctrs
+  0.0.2). Both are dynamic-dots constructors — `!!!` splice and
+  `!!name :=` are consumed before evaluation — so the metadata is
+  `"injection": {"...": "splice"}`, the shape `rlang::list2` established.
+  Without it, a resolvable-but-metadata-less entry is worse than no
+  entry: ggplot2's `data_frame0 <- function(...) data_frame(...)`
+  forwarding stopped inheriting the unresolved-callee injection fallback
+  once tibble's inventory resolved the name, and `data_frame0(!!!x)` /
+  `data_frame0(!!aes := v)` emitted false RY021 on the splice sites
+  (found in the ry 0.10.0 vendor-sync corpus run).
+
 - Correct `file.path` recycling in base 0.0.18: the return length is
   `longest_arg_or_zero`, not `1`. ?file.path produces a path for every
   element only when every argument has positive length; any zero-length

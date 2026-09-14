@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "tibble",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     "%>%": {
       "params": [
@@ -144,7 +144,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "splice"}
     },
     "data_frame_": {
       "params": [
