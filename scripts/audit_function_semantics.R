@@ -348,6 +348,11 @@ tibble_stub <- jsonlite::fromJSON(file.path(root, "stubs", "tibble", "tibble.jso
 for (name in c("data_frame", "tibble", "tibble_row", "lst", "add_case", "add_column", "add_row")) {
   expect(identical(tibble_stub$functions[[name]]$injection[["..."]], "full"), paste(name, "must declare quos-based dynamic dots"))
 }
+# new_tibble sets named attributes from its dots via pairlist2(), the
+# list2 family: it splices but rejects bare-RHS !!, so it is "splice".
+expect(identical(tibble_stub$functions$new_tibble$injection[["..."]], "splice"), "new_tibble must declare pairlist2-based dynamic dots")
+expect(identical(attr(tibble::new_tibble(list(x = 1), nrow = 1, !!!list(foo = "bar")), "foo"), "bar"), "new_tibble splices attributes")
+expect(identical(attr(tibble::new_tibble(list(x = 1), nrow = 1, !!"foo" := "bar"), "foo"), "bar"), "new_tibble injects attribute names")
 expect(identical(tibble::add_row(data.frame(x = 1), !!!list(x = 2))$x[[2]], 2), "add_row splices")
 expect(identical(tibble::add_row(data.frame(x = 1), x = !!2)$x[[2]], 2), "add_row unquotes")
 expect(identical(tibble::add_column(data.frame(x = 1), !!!list(y = 2))$y, 2), "add_column splices")

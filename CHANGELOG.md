@@ -12,12 +12,16 @@
   re-export. `add_row`, `add_column`, and their deprecated alias
   `add_case` declare the same mode: they forward `...` straight into
   `tibble()` (tibble 3.3.1 `R/add.R`), so their dots are quos-defused
-  too. `tribble`, `frame_data`, and `frame_matrix` stay undeclared for
-  now: their arguments are formulas, not dynamic dots, and no corpus
-  site splices into them. The remaining `...` entries in the inventory
-  take ordinary dots — S3 generic forwarders such as `as_tibble` and
-  `glimpse`, and `num`/`char`, whose dots must be empty
-  (`check_dots_empty()`).
+  too. `new_tibble` declares `"injection": {"...": "splice"}`: its dots
+  go through `pairlist2()` to set named attributes (tibble 3.3.1
+  `R/new.R`), so — unlike the quos-based constructors — it splices but
+  rejects bare-RHS `!!`. `tribble`, `frame_data`, and `frame_matrix`
+  stay undeclared for now: their arguments are formulas, not dynamic
+  dots, and no corpus site splices into them. The remaining `...`
+  entries in the inventory take ordinary dots: the
+  `as_tibble`/`as.tibble`/`as_data_frame`/`glimpse` S3 forwarders, and
+  `num`, `char`, `view`, `set_num_opts`, and `set_char_opts`, whose
+  dots must be empty (`check_dots_empty()`).
 - Add `vctrs::data_frame` with the same contract (vctrs 0.0.2): a
   dynamic-dots constructor with its real control formals (`.size`,
   `.name_repair`, `.error_call`) and `"injection": {"...": "splice"}`

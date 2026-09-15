@@ -23,6 +23,12 @@ for (name in names(expected_params)) {
   stopifnot(identical(sig$injection, list('...' = 'full')))
 }
 
+# new_tibble defuses its dots through pairlist2() to set named attributes,
+# so unlike the quos-based constructors it splices but rejects bare-RHS !!.
+new_tibble <- tibble$new_tibble
+stopifnot(identical(new_tibble$params, list('x', '...', 'nrow', 'class', 'subclass')))
+stopifnot(identical(new_tibble$injection, list('...' = 'splice')))
+
 vctrs <- jsonlite::read_json(file.path(root, 'stubs/vctrs/vctrs.json'))$functions$data_frame
 stopifnot(identical(
   vctrs$params,
