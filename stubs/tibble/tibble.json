@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "tibble",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     "%>%": {
       "params": [
@@ -25,7 +25,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "add_column": {
       "params": [
@@ -39,7 +40,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "add_row": {
       "params": [
@@ -52,7 +54,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "as_data_frame": {
       "params": [
@@ -144,7 +147,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "data_frame_": {
       "params": [
@@ -259,7 +263,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "lst_": {
       "params": [
@@ -283,7 +288,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "splice"}
     },
     "num": {
       "params": [
@@ -430,7 +436,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "tibble_": {
       "params": [
@@ -451,7 +458,8 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
-      }
+      },
+      "injection": {"...": "full"}
     },
     "tidy_names": {
       "params": [

@@ -2,6 +2,39 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Declare dynamic-dots injection for the tibble constructors (tibble
+  0.0.2): `data_frame`, `tibble`, `tibble_row`, and `lst` are quos-based
+  constructors whose dots defuse `!!` on the right-hand side as well as
+  `!!!` splice and `!!name :=`, so they declare
+  `"injection": {"...": "full"}`, matching the existing `dplyr::tibble`
+  re-export. `add_row`, `add_column`, and their deprecated alias
+  `add_case` declare the same mode: they forward `...` straight into
+  `tibble()` (tibble 3.3.1 `R/add.R`), so their dots are quos-defused
+  too. `new_tibble` declares `"injection": {"...": "splice"}`: its dots
+  go through `pairlist2()` to set named attributes (tibble 3.3.1
+  `R/new.R`), so — unlike the quos-based constructors — it splices but
+  rejects bare-RHS `!!`. `tribble`, `frame_data`, and `frame_matrix`
+  stay undeclared for now: their arguments are formulas, not dynamic
+  dots, and no corpus site splices into them. The remaining `...`
+  entries in the inventory take ordinary dots: the
+  `as_tibble`/`as.tibble`/`as_data_frame`/`glimpse` S3 forwarders, and
+  `num`, `char`, `view`, `set_num_opts`, and `set_char_opts`, whose
+  dots must be empty (`check_dots_empty()`).
+- Add `vctrs::data_frame` with the same contract (vctrs 0.0.2): a
+  dynamic-dots constructor with its real control formals (`.size`,
+  `.name_repair`, `.error_call`) and `"injection": {"...": "splice"}`
+  (its dots go through `list2()`). Pinned live by the
+  `audit_function_semantics.R` formals loop and statically by
+  `tests/dynamic_dots.R`.
+- Without these declarations, a resolvable-but-metadata-less entry is
+  worse than no entry: ggplot2's `data_frame0 <- function(...)`
+  forwarding stopped inheriting the unresolved-callee injection fallback
+  once tibble's inventory resolved the name, and `data_frame0(!!!x)` /
+  `data_frame0(!!aes := v)` emitted false RY021 on the splice sites
+  (found in the ry 0.10.0 vendor-sync corpus run).
+
 ## [0.5.0] - 2026-09-14
 
 Inventory release paired with ry 0.10.0: new export inventories for scales,
