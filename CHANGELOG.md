@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-09-15
+
+Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots
+injection metadata for the tibble and vctrs constructors, fixing the false
+RY021 that appeared once the tibble inventory resolved previously-unresolved
+callees. No schema or inventory changes; consumers on ry 0.10.0 can update
+in place.
+
 ### Function semantics
 
 - Declare dynamic-dots injection for the tibble constructors (tibble
