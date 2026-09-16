@@ -51,6 +51,7 @@ Run the regression checks and audits:
 ```bash
 Rscript --vanilla tests/audits.R
 Rscript --vanilla tests/base_lengths.R
+Rscript --vanilla tests/ifelse_mode.R
 Rscript --vanilla tests/dynamic_dots.R
 Rscript --vanilla tests/grid.R
 Rscript --vanilla tests/regmatches.R

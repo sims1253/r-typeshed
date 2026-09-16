@@ -19,7 +19,7 @@ expect <- function(ok, message) if (!isTRUE(ok)) stop(message, call. = FALSE)
 # These are real public formals, including controls that must not be mistaken
 # for recycled paste values. Semantic parameter names are formal names and are
 # interpreted only after ordinary R argument binding.
-verified_base_functions <- c("paste", "paste0", "source", "intersect", "integer", "numeric", "double", "logical", "character", "raw", "complex", "vector")
+verified_base_functions <- c("paste", "paste0", "source", "intersect", "ifelse", "integer", "numeric", "double", "logical", "character", "raw", "complex", "vector")
 for (name in verified_base_functions) {
   actual <- names(formals(get(name, envir = baseenv())))
   expect(identical(param_names(base$functions[[name]]), actual), sprintf("base::%s parameters differ from installed R", name))
@@ -141,6 +141,11 @@ for (name in c("paste", "paste0")) {
   expect(identical(rule$collapse$param, "collapse") && identical(rule$collapse$when, "non_null") && identical(rule$collapse$length, "1"), sprintf("%s collapse provenance is incomplete", name))
   expect(identical(rule$recycle0$param, "recycle0") && identical(rule$recycle0$when, "true") && identical(rule$recycle0$any_value_zero, "zero"), sprintf("%s recycle0 provenance is incomplete", name))
 }
+ifelse_sig <- base$functions$ifelse
+ifelse_rule <- ifelse_sig$return_mode
+expect(identical(ifelse_rule$kind, "test_template"), "ifelse must declare a test-template return mode")
+expect(identical(ifelse_rule$test, "test"), "ifelse test-template test parameter is incomplete")
+expect(identical(as_strings(ifelse_rule$values), c("yes", "no")), "ifelse test-template value parameters are incomplete")
 source_sig <- base$functions$source
 source_file_param <- source_sig$params[[match("file", param_names(source_sig))]]
 source_exprs_param <- source_sig$params[[match("exprs", param_names(source_sig))]]
@@ -155,6 +160,14 @@ expect(identical(source_rule$default_current_scope, "top_level"), "source defaul
 # intersect's non-empty result is merely bounded, not exactly shortest.
 expect(identical(intersect(integer(0), 1:3), integer(0)), "intersect empty input must be empty")
 expect(length(intersect(1:3, 3:5)) == 1L, "intersect may be shorter than both non-empty inputs")
+# ifelse seeds its result from the test vector itself: a zero-length or
+# entirely-NA test overwrites nothing, so the result stays logical even
+# when both branches agree on another mode, while a mixed test coerces
+# back to the branch mode.
+expect(identical(base::ifelse(logical(0), 1L, 2L), logical(0)), "ifelse empty test must collapse to logical")
+expect(identical(base::ifelse(c(NA, NA), 1L, 2L), c(NA, NA)), "ifelse all-NA test must collapse to logical")
+expect(identical(typeof(base::ifelse(c(TRUE, NA), 1L, 2L)), "integer"), "ifelse mixed test must keep the branch mode")
+expect(identical(typeof(base::ifelse(c(TRUE, FALSE), 1L, 2L)), "integer"), "ifelse selected branches must keep their mode")
 for (name in c("paste", "paste0")) {
   fn <- get(name, envir = baseenv())
   expect(identical(fn(character(0)), character(0)), sprintf("%s all-empty values must be empty", name))
