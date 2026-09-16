@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Declare `ifelse`'s test-template return mode in base 0.0.19:
+  `ifelse(test, yes, no)` builds its result from the `test` vector itself
+  and overwrites only the selected positions, so the result mode is
+  `logical` whenever the test is zero-length or entirely `NA` — even when
+  the branches agree on another mode — and otherwise the mode join of the
+  branches. Expressed with the new `return_mode` rule
+  `{"kind": "test_template", "test": "test", "values": ["yes", "no"]}`,
+  the mode-dimension analog of `seq_len`'s `return_length` mechanism, so
+  checkers can flag mode collapses (ry's RY106) instead of trusting the
+  plain `yes_or_no` join. Mirrors the spec ry has been carrying in its
+  local typeshed overlay; a vendor sync from this release is a no-op for
+  this entry and lets ry drop the overlay.
+
+### Schema documentation
+
+- Document the `return_mode` rule in the schema reference:
+  `test_template` names the test formal and the value-contributing
+  formals of a result seeded from the test's storage, with the `logical`
+  collapse on zero-length or all-`NA` tests. Accepted by
+  `ry typeshed validate` alongside the `return_length` rules; consumers
+  must vendor against a ry that accepts it (ry #472, ahead of 0.10.0 at
+  the pinned consumer) before validating this revision's stubs.
+
 ## [0.5.1] - 2026-09-15
 
 Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots

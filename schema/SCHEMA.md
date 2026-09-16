@@ -7,14 +7,15 @@ The required header fields are `schema_version`, `package`, and `version`. `func
 ## Functions
 
 [Parameters](#parameters) · [Return types](#return-types) ·
-[Return lengths](#return-length-rules) · [Evaluation](#evaluation-and-result-schemas) ·
-[Scope changes](#scope-changes) · [Predicates and assertions](#predicates-and-assertions) ·
+[Return lengths](#return-length-rules) · [Return modes](#return-mode-rules) ·
+[Evaluation](#evaluation-and-result-schemas) · [Scope changes](#scope-changes) ·
+[Predicates and assertions](#predicates-and-assertions) ·
 [Callbacks](#callbacks) · [Injected bindings](#injected-bindings) ·
 [Tidy-evaluation injection](#tidy-evaluation-injection)
 
 Function names map to signatures. A signature requires `params`, an ordered array of parameters, and `return`.
 
-Optional signature fields are `aliases`, `eval`, `force`, `no_return`, `schema_effect`, `scope_effect`, `conditional_scope_effect`, `predicate`, `assertion`, `return_length`, `higher_order`, `injects`, `injection`, and `source_relative_path_arg`. The last field is the zero-based index of a literal argument containing a path relative to the current source file. `no_return` defaults to false and marks a function that never returns to its caller.
+Optional signature fields are `aliases`, `eval`, `force`, `no_return`, `schema_effect`, `scope_effect`, `conditional_scope_effect`, `predicate`, `assertion`, `return_length`, `return_mode`, `higher_order`, `injects`, `injection`, and `source_relative_path_arg`. The last field is the zero-based index of a literal argument containing a path relative to the current source file. `no_return` defaults to false and marks a function that never returns to its caller.
 
 ### Parameters
 
@@ -50,6 +51,10 @@ Lengths may be a decimal string from the curated vocabulary accepted by `ry type
 `{"kind": "recycled_values", ...}` describes vector recycling without treating controls as values. `value_params` must not be empty. It and `control_params` contain disjoint, individually unique formal-parameter names, resolved with R's normal exact, partial, and positional argument matching. A `...` value parameter denotes every argument captured by that formal; it does not include arguments bound to a named control. All non-`...` value parameters and every control must be explicit, so a consumer can determine the value set without relying on an argument's source position. `collapse.param` and `recycle0.param` must each be a member of `control_params`. `all_values_zero: "zero"` preserves the all-empty result, `collapse` requires `when: "non_null"` and `length: "1"`, and `recycle0` requires `when: "true"` and `any_value_zero: "zero"`. Each control rejects fields belonging to the other. This models the real `paste`/`paste0` contract, including `collapse` and `recycle0`, without special-casing function names.
 
 `return_length: {"kind": "param_value", "param": "length", "default_length": 0}` uses a numeric parameter's value as the result length. Numeric sizes truncate towards zero. Dynamic or invalid sizes remain unknown. The named parameter must exist. This differs from `return.length: "arg0"`, which copies the length of the argument itself.
+
+### Return-mode rules
+
+`return_mode` records a named, reusable result-mode rule keyed on argument facts — the mode-dimension analog of the `return_length` rules above, and used the same way in place of a plain `return` mode join. `{"kind": "test_template", "test": "test", "values": ["yes", "no"]}` describes a function that seeds its result from the `test` argument's own storage and only overwrites the positions the test selects (`base::ifelse`, per ?ifelse). The result mode is `logical` whenever the test is zero-length or entirely `NA` — nothing is overwritten — and otherwise the mode join of `values`; a merely mixed test coerces back to the branch mode. `test` and every member of `values` must be formal names in the signature, `values` must be non-empty, and `test` must not also appear in `values`.
 
 ### Evaluation and result schemas
 
