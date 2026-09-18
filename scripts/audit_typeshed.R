@@ -105,15 +105,19 @@ audit_base_values <- function(doc) {
   failures
 }
 
-find_base_function <- function(name) {
+find_base_value <- function(name) {
   for (pkg in c("base", "stats", "utils", "graphics", "grDevices", "methods")) {
     ns <- asNamespace(pkg)
     if (exists(name, envir = ns, inherits = FALSE)) {
-      value <- get(name, envir = ns, inherits = FALSE)
-      if (is.function(value)) return(value)
+      return(get(name, envir = ns, inherits = FALSE))
     }
   }
   NULL
+}
+
+find_base_function <- function(name) {
+  value <- find_base_value(name)
+  if (is.function(value)) value else NULL
 }
 
 # These wrappers and generics forward dots to the named implementation.
@@ -134,10 +138,20 @@ audit_base_formals <- function(doc) {
   forwarded_names <- character()
   skipped_primitives <- character()
   missing_optional_not_default <- character()
+  non_callable <- character()
   stub_params <- lapply(doc$functions, function(sig) sig$params)
   for (fn_name in names(stub_params)) {
     fn <- find_base_function(fn_name)
-    if (is.null(fn)) next
+    if (is.null(fn)) {
+      # Missing names are reported by the base name pass below. Report an
+      # existing-but-not-callable declaration here instead of silently
+      # skipping it: R.version is a list value, not a function, and only
+      # R.Version() is callable.
+      if (!is.null(find_base_value(fn_name))) {
+        non_callable <- c(non_callable, paste0("base::", fn_name, " is not callable but declared as a function"))
+      }
+      next
+    }
     fs <- formals(fn)
     if (is.null(fs)) {
       skipped_primitives <- c(skipped_primitives, fn_name)
@@ -179,12 +193,14 @@ audit_base_formals <- function(doc) {
   report("Invalid formal names", name_mismatches)
   report("Reviewed forwarded formals", forwarded_names)
   report("Primitives without formals", skipped_primitives)
+  report("Declared as a function but not callable", non_callable)
   invisible(list(
     required_with_default = first_category,
     default_on_required = reverse_category,
     missing_optional_not_default = missing_optional_not_default,
     name_mismatches = name_mismatches,
-    failures = c(first_category, reverse_category, name_mismatches),
+    non_callable = non_callable,
+    failures = c(first_category, reverse_category, name_mismatches, non_callable),
     forwarded_names = forwarded_names,
     skipped_primitives = skipped_primitives
   ))
@@ -213,11 +229,25 @@ for (path in list.files(stub_root, pattern = "[.]json$", recursive = TRUE, full.
   } else {
     ns <- asNamespace(pkg)
     # Re-exports (dplyr::tibble, purrr::set_names) live in the package's
-    # export list but not in its namespace environment itself.
+    # export list but not in its namespace environment itself. Resolve either
+    # spelling to a value so an exported-but-not-callable declaration fails
+    # instead of passing as an unchecked name.
     exported <- getNamespaceExports(pkg)
     for (name in names) {
-      if (!exists(name, ns, inherits = FALSE) && !(name %in% exported)) {
+      if (exists(name, ns, inherits = FALSE)) {
+        value <- get(name, envir = ns, inherits = FALSE)
+      } else if (name %in% exported) {
+        value <- tryCatch(getExportedValue(pkg, name), error = function(cnd) cnd)
+        if (inherits(value, "error")) {
+          failures <- c(failures, paste0(pkg, "::", name))
+          next
+        }
+      } else {
         failures <- c(failures, paste0(pkg, "::", name))
+        next
+      }
+      if (!is.function(value)) {
+        failures <- c(failures, paste0(pkg, "::", name, " is not callable but declared as a function"))
       }
     }
     failures <- c(failures, audit_package_values(doc, pkg))

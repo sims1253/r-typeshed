@@ -4,6 +4,27 @@
 
 ### Function semantics
 
+- Correct the base `R.version` family in base 0.0.24: `R.version` is a
+  list value, not a function — only `R.Version()` is callable — so the
+  phantom zero-argument `functions` entries for `R.version` and its alias
+  `version` are removed and `R.Version` gains the conservative signature
+  `{"params": [], "return": {"mode": "list", "length": "unknown",
+  "na": false}}`. The lowercase spellings stay inventoried where values
+  belong (`R.version`, `R.version.string`, and `version` in ambient
+  globals; `pi` remains the model: typed in `datasets`, absent from both
+  `functions` and the ambient lists).
+- Harden the namespace audit against the same class of mistake: entries in
+  `functions` that resolve to an existing but non-callable object now fail
+  with a contextual `is not callable but declared as a function`
+  diagnostic — in the base pass (the `is.null(fn)` formal-audit skip no
+  longer stands in for validation) and in the non-base passes (existence
+  and export membership additionally establish callability) — while
+  legitimate callable re-exports and registered S3 methods still pass.
+  Covered by isolated fixtures in `tests/audits.R`: phantom `R.version`
+  and `pi` fail, correct `R.Version` passes, a non-base
+  exported-value-as-function fails, and a callable re-export plus a
+  registered S3 method pass.
+
 - Correct the return lengths and missingness of the normal, Poisson, and
   uniform density/CDF/quantile entries in base 0.0.23: `dnorm`, `dpois`,
   and `dunif` no longer claim `length: "arg0"` with `na: false`, and the
