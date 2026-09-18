@@ -38,8 +38,16 @@ script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(script)))
 
 read_pins <- function(path = file.path(root, "upstream-versions.json")) {
-  if (!requireNamespace("jsonlite", quietly = TRUE)) stop("jsonlite is required")
-  jsonlite::read_json(path)
+  if (requireNamespace("jsonlite", quietly = TRUE)) {
+    return(jsonlite::read_json(path))
+  }
+  # Bootstrap fallback: upstream-versions.json is a flat name -> version
+  # string map, so CI steps that run before any package is installed can
+  # read it without jsonlite.
+  lines <- readLines(path, warn = FALSE)
+  m <- regmatches(lines, regexec('^\\s*"([^"]+)"\\s*:\\s*"([^"]+)"\\s*,?\\s*$', lines))
+  m <- m[vapply(m, length, integer(1)) == 3L]
+  setNames(vapply(m, `[[`, character(1), 3L), vapply(m, `[[`, character(1), 2L))
 }
 
 render_pinned <- function(pins) {
