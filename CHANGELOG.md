@@ -16,14 +16,14 @@
   drop the false `length: "arg0"` and `na: false` claims for
   `{"mode": "double", "length": "unknown", "na": true}`, with the formal
   lists completed (`log` on the densities; `lower.tail`/`log.p` on the
-  CDF/quantile entries). Five previously-missing inventory entries join
+  CDF/quantile entries). Six previously-missing inventory entries join
   the stub with verified formals and the corrected shape: `qpois`,
-  `dgeom`, `pgeom`, and `qgeom` (removed from the ambient-function list
-  as typed entries), plus `dmultinom`, which is verified separately as a
-  scalar density — one value per call regardless of input lengths — and
-  therefore declares `length: "1"` with `na: true`. The `r*` generators
-  stay untouched: their `n` semantics differ. Pinned live by the extended
-  `tests/density_lengths.R`.
+  `qbinom`, `dgeom`, `pgeom`, and `qgeom` (all removed from the
+  ambient-function list as typed entries), plus `dmultinom`, which is
+  verified separately as a scalar density — one value per call regardless
+  of input lengths — and therefore declares `length: "1"` with `na: true`.
+  The `r*` generators stay untouched: their `n` semantics differ. Pinned
+  live by the extended `tests/density_lengths.R`.
 - Declare the complex-capable math returns as double/complex unions in
   base 0.0.25: `exp`, `log`, `log10`, `log2`, `sqrt`, `sin`, `cos`, `tan`,
   `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`, and `signif` each

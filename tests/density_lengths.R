@@ -37,21 +37,26 @@ stopifnot(identical(unlist(base$dt$params), c('x', 'df', 'ncp', 'log')))
 stopifnot(identical(unlist(base$dgamma$params), c('x', 'shape', 'rate', 'scale', 'log')))
 stopifnot(identical(unlist(base$dlnorm$params), c('x', 'meanlog', 'sdlog', 'log')))
 stopifnot(identical(unlist(base$dexp$params), c('x', 'rate', 'log')))
-for (name in family_p) {
+stopifnot(identical(unlist(base$dbinom$params), c('x', 'size', 'prob', 'log')))
+stopifnot(identical(unlist(base$df$params), c('x', 'df1', 'df2', 'ncp', 'log')))
+for (name in c(family_p, family_q)) {
   stopifnot(identical(tail(unlist(base[[name]]$params), 2L),
                       c('lower.tail', 'log.p')))
 }
 
-# Previously-missing inventory entries (#72): the Poisson quantile and the
-# geometric family join the corrected shape; dmultinom is a scalar density
-# (one value per call, log-controlled), verified separately from the
-# recycling families.
-for (name in c('qpois', 'dgeom', 'pgeom', 'qgeom')) {
+# Previously-missing inventory entries (#72): the Poisson quantile, the
+# geometric family, and the binomial quantile join the corrected shape;
+# dmultinom is a scalar density (one value per call, log-controlled),
+# verified separately from the recycling families.
+for (name in c('qpois', 'dgeom', 'pgeom', 'qgeom', 'qbinom')) {
   stopifnot(identical(base[[name]]$return,
                       list(mode = 'double', length = 'unknown', na = TRUE)))
 }
 stopifnot(identical(unlist(base$qpois$params), c('p', 'lambda', 'lower.tail', 'log.p')))
 stopifnot(identical(unlist(base$dgeom$params), c('x', 'prob', 'log')))
+stopifnot(identical(unlist(base$pgeom$params), c('q', 'prob', 'lower.tail', 'log.p')))
+stopifnot(identical(unlist(base$qgeom$params), c('p', 'prob', 'lower.tail', 'log.p')))
+stopifnot(identical(unlist(base$qbinom$params), c('p', 'size', 'prob', 'lower.tail', 'log.p')))
 stopifnot(identical(base$dmultinom$return,
                     list(mode = 'double', length = '1', na = TRUE)))
 stopifnot(identical(unlist(base$dmultinom$params), c('x', 'size', 'prob', 'log')))
@@ -125,8 +130,9 @@ err <- tryCatch({ if (dnorm(0, mean = c(0, 1))) 1L; NULL },
                 error = conditionMessage)
 stopifnot(identical(err, 'the condition has length > 1'))
 
-# New-family witnesses: one recycling, NA, and any-empty case per family
-# (shape parameters and ncp recycle like any other value argument).
+# New-family witnesses: a recycling witness per family, plus NA and
+# any-empty spot checks (shape parameters and ncp recycle like any other
+# value argument).
 stopifnot(identical(length(dbeta(0.5, c(1, 2), 1)), 2L))
 stopifnot(identical(length(dbinom(c(1, 2), 10, 0.5)), 2L))
 stopifnot(identical(length(dchisq(c(1, 2), 3, ncp = c(0, 1))), 2L))
