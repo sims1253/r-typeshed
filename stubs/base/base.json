@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2680,8 +2680,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -2996,8 +3000,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -3017,8 +3025,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -3377,8 +3389,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -3387,8 +3403,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -3916,8 +3936,12 @@
         }
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -4975,8 +4999,12 @@
         }
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -4985,8 +5013,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -5005,8 +5037,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -6751,9 +6787,13 @@
         "digits"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
-        "na": false
+        "members": [
+          "double",
+          "complex"
+        ],
+        "na": true
       }
     },
     "sin": {
@@ -6761,8 +6801,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -6771,8 +6815,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -6939,8 +6987,12 @@
         }
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -7285,8 +7337,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -7295,8 +7351,12 @@
         "x"
       ],
       "return": {
-        "mode": "double",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },

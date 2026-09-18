@@ -4,6 +4,31 @@
 
 ### Function semantics
 
+- Declare the complex-capable math returns as double/complex unions in
+  base 0.0.25: `exp`, `log`, `log10`, `log2`, `sqrt`, `sin`, `cos`, `tan`,
+  `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`, and `signif` each
+  produced complex results for complex input on R 4.6.1 while promising a
+  real-only double, so `exp(complex(...))` inferred as double. Each entry
+  now returns `{"mode": "union", "members": ["double", "complex"]}`,
+  keeping `length: "arg0"` and the existing NA claim; integer inputs
+  still give double, hence double stays in the union. `signif` also
+  moves from `na: false` to `na: true`: `signif(NA_real_)` is `NA` on
+  live R, so the old claim was false. Bare-string params stay
+  inference-only; only the return contracts changed. Deliberately
+  unchanged: `log1p`, `expm1`, `gamma`, `lgamma`, `digamma`, `trigamma`,
+  `floor`, `ceiling`, and `trunc` keep their double returns because
+  complex input errors (`unimplemented complex function`) on this R, and
+  the `*pi` variants carry no stub entry and reject complex input the
+  same way. The `double_or_int` family (`round`, `abs`, `sign`, `sum`,
+  `prod`, `mean`, `cumsum`, `cumprod`) is untouched: its declared mode is
+  not concrete double and its integer contract needs its own audit.
+  Encoded as a union rather than opaque because the pinned consumer
+  (ry 0.10.0 at b97cc653) resolves union returns member-wise — probed
+  `base::exp(base::complex(real = 1, imaginary = 1))` infers
+  `union[double, complex]` instead of the false `double`, with no new
+  diagnostics. Pinned by `tests/complex_math.R`, which flips red on any
+  reverted return and witnesses the exclusions' live-R errors.
+
 - Correct the base `R.version` family in base 0.0.24: `R.version` is a
   list value, not a function — only `R.Version()` is callable — so the
   phantom zero-argument `functions` entries for `R.version` and its alias
