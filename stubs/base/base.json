@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2394,22 +2394,25 @@
     },
     "AIC": {
       "params": [
-        "object"
+        "object",
+        "...",
+        "k"
       ],
       "return": {
-        "mode": "double",
-        "length": "1",
-        "na": false
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
       }
     },
     "BIC": {
       "params": [
-        "object"
+        "object",
+        "..."
       ],
       "return": {
-        "mode": "double",
-        "length": "1",
-        "na": false
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
       }
     },
     "Filter": {

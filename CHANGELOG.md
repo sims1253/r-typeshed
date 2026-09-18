@@ -4,6 +4,20 @@
 
 ### Function semantics
 
+- Correct `AIC` and `BIC` in base 0.0.22: complete the public formal
+  sequences (`AIC(object, ..., k = 2)`, `BIC(object, ...)`, verified
+  against the installed stats generics) and keep the conservative
+  opaque, unknown-length, possibly-missing return. Multi-model calls
+  return data frames with `df`/`AIC` and `df`/`BIC` columns, so the old
+  scalar-double contract was wrong for a common supported API shape and
+  turned legitimate `a$AIC` / `b$BIC` column accesses into false RY061
+  atomic-vector errors; `BIC` can additionally return `NA` when the
+  observation count cannot be established. A data-frame return would
+  break the single-model case and overclaim method behavior, so the
+  result stays unknown pending a sound overload/dispatch model. Any
+  consumer precision must account for S3 methods and unknown dots, not
+  just count syntactic arguments.
+
 - Keep `append` results opaque in base 0.0.20: restore the complete
   inference-only formals `x`, `values`, `after` and replace the
   `concat_of_args` return with `{opaque, unknown, na: true}`. The old
