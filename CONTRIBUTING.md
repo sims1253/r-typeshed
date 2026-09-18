@@ -80,6 +80,7 @@ Rscript --vanilla tests/tibble.R
 Rscript --vanilla tests/lifecycle.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
+Rscript --vanilla tests/pinned_versions.R
 Rscript --vanilla scripts/gen_standard_globals.R --check
 Rscript --vanilla scripts/audit_zero_arg_primitives.R
 Rscript --vanilla scripts/audit_typeshed.R

@@ -153,6 +153,8 @@
 
 ### Validation and audits
 
+### Validation and audits
+
 - Gate candidate stubs through ry inference, not just schema validation: a
   new `inference` CI job builds the pinned ry and runs the bounded
   `tests/inference/` corpus through the checker with the candidate stubs,
@@ -163,6 +165,28 @@
   eval/injection pairs. A mutation self-test reverts one schema-valid
   contract per run and proves the gate fails with useful expected/actual
   output, so a green run means the checker agrees, not just the parser.
+
+- Make the reference-oracle CI reproducible and split upstream drift out
+  of it: the generators job now pins the R release to the recorded
+  reference (4.6.1, tied to the `base`/`grid` entries in
+  `upstream-versions.json`) and installs exact package versions rendered
+  at job runtime from that single file
+  (`scripts/render_ci_packages.R pinned`), so no version literal lives in
+  the workflow and re-running a fixed catalog revision selects the same
+  packages. The CI-only packages that previously floated
+  (ggplot2, htmltools, carrier) are recorded in the version source, which
+  the renderer validates for coverage and well-formedness. A new
+  informational `drift` job (`continue-on-error`) installs latest CRAN
+  releases, reports every changed version against the recorded pins in
+  its step summary (`scripts/report_drift.R`), and re-runs the inventory
+  oracles as non-failing probes — a new upstream release can no longer
+  break unrelated PRs, and true export/formal/semantic changes stay
+  visible. `tests/pinned_versions.R` locks the single source with mocked
+  version metadata: a bump must flow to the installer verbatim, a missing
+  or malformed entry must fail loudly, pinned and drift must cover the
+  same package set, and every inventory oracle's version assertion must
+  equal the recorded reference, so the version source, installer, oracle
+  expectations, and update planner cannot silently disagree.
 
 ## [0.5.1] - 2026-09-15
 
