@@ -131,6 +131,19 @@
   must vendor against a ry that accepts it (ry #472, ahead of 0.10.0 at
   the pinned consumer) before validating this revision's stubs.
 
+### Validation and audits
+
+- Gate candidate stubs through ry inference, not just schema validation: a
+  new `inference` CI job builds the pinned ry and runs the bounded
+  `tests/inference/` corpus through the checker with the candidate stubs,
+  asserting inferred types and diagnostic identities for the `append`,
+  `as.vector`, `AIC`, density-length, `R.Version`, and complex-math
+  corrections — each former false fact must stay absent while a neighboring
+  true-error control still fires — plus known-safe, higher-order, and
+  eval/injection pairs. A mutation self-test reverts one schema-valid
+  contract per run and proves the gate fails with useful expected/actual
+  output, so a green run means the checker agrees, not just the parser.
+
 ## [0.5.1] - 2026-09-15
 
 Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots
@@ -441,16 +454,6 @@ this release's stubs.
   and named value failures; allow absent class/NA claims and treat `na: true`
   as a conservative upper bound. Document the default-search-path provenance
   of base dataset entries in the schema reference.
-- Gate candidate stubs through ry inference, not just schema validation: a
-  new `inference` CI job builds the pinned ry and runs the bounded
-  `tests/inference/` corpus through the checker with the candidate stubs,
-  asserting inferred types and diagnostic identities for the `append`,
-  `as.vector`, `AIC`, density-length, `R.Version`, and complex-math
-  corrections — each former false fact must stay absent while a neighboring
-  true-error control still fires — plus known-safe, higher-order, and
-  eval/injection pairs. A mutation self-test reverts one schema-valid
-  contract per run and proves the gate fails with useful expected/actual
-  output, so a green run means the checker agrees, not just the parser.
 
 ### Schema documentation
 
