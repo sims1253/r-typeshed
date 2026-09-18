@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2774,9 +2774,14 @@
     "append": {
       "params": [
         "x",
-        "values"
+        "values",
+        "after"
       ],
-      "return": "concat_of_args"
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "apply": {
       "params": [

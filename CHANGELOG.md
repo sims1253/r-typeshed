@@ -4,6 +4,18 @@
 
 ### Function semantics
 
+- Keep `append` results opaque in base 0.0.20: restore the complete
+  inference-only formals `x`, `values`, `after` and replace the
+  `concat_of_args` return with `{opaque, unknown, na: true}`. The old
+  contract folded the insertion-position control into the result, so an
+  explicit `after` manufactured a spurious element: `append(1L, 2L,
+  after = 0)` claimed `double` of length 3 where R gives an integer of
+  length 2, and `if (append(logical(0), TRUE, after = 0L)) 1L` drew a
+  false RY001. Precise inference needs a value-contributor consumer rule
+  that excludes `after` from mode and length aggregation; until then the
+  conservative unknown keeps the checker honest while the genuine
+  length-2 error `if (append(FALSE, TRUE)) 1L` stands as the qualifying
+  control. Pinned live by `tests/append.R`.
 - Declare `ifelse`'s test-template return mode in base 0.0.19:
   `ifelse(test, yes, no)` builds its result from the `test` vector itself
   and overwrites only the selected positions, so the result mode is
