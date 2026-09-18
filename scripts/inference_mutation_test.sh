@@ -72,6 +72,15 @@ esac
 # validate job instead of proving the inference gate bites.
 "$RY_BIN" typeshed validate "$mutated" >/dev/null
 
+# Each mutation must be caught by a specific fixture failing with an
+# expected/actual mismatch; a bare nonzero exit could also mean a harness
+# crash (missing binary, malformed JSON), which would prove nothing.
+case "$MUTATION" in
+  density-length)   required_failure='inference-gate FAIL: dump density' ;;
+  as-vector-arg0)   required_failure='inference-gate FAIL: dump as-vector' ;;
+  append-concat)    required_failure='inference-gate FAIL: dump append' ;;
+esac
+
 set +e
 gate_output=$("$repo_root/scripts/inference_gate.sh" "$RY_BIN" "$mutated" 2>&1)
 gate_status=$?
@@ -82,4 +91,9 @@ if [ "$gate_status" -eq 0 ]; then
   printf 'mutation self-test FAIL: gate passed on the %s mutant; it must fail.\n' "$MUTATION" >&2
   exit 1
 fi
-printf 'mutation self-test ok: gate failed on the %s mutant as required.\n' "$MUTATION"
+if ! grep -qF "$required_failure" <<<"$gate_output"; then
+  printf 'mutation self-test FAIL: gate exited nonzero on the %s mutant without the expected %s mismatch; a harness failure proves nothing.\n' \
+    "$MUTATION" "$required_failure" >&2
+  exit 1
+fi
+printf 'mutation self-test ok: gate failed on the %s mutant with the expected %s mismatch.\n' "$MUTATION" "$required_failure"
