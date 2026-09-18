@@ -102,6 +102,8 @@ jobs:
         run: Rscript --vanilla tests/aic_bic.R
       - name: Verify density length and missingness semantics
         run: Rscript --vanilla tests/density_lengths.R
+      - name: Verify complex-capable math return modes
+        run: Rscript --vanilla tests/complex_math.R
       - name: Verify dynamic-dots constructor contracts
         run: Rscript --vanilla tests/dynamic_dots.R
       - name: Verify grid inventory and captured expressions
