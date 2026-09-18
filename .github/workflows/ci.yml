@@ -100,6 +100,8 @@ jobs:
         run: Rscript --vanilla tests/as_vector.R
       - name: Verify AIC/BIC single-model, multi-model, and BIC-NA controls
         run: Rscript --vanilla tests/aic_bic.R
+      - name: Verify density length and missingness semantics
+        run: Rscript --vanilla tests/density_lengths.R
       - name: Verify dynamic-dots constructor contracts
         run: Rscript --vanilla tests/dynamic_dots.R
       - name: Verify grid inventory and captured expressions
