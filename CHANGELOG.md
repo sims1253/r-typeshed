@@ -153,8 +153,6 @@
 
 ### Validation and audits
 
-### Validation and audits
-
 - Gate candidate stubs through ry inference, not just schema validation: a
   new `inference` CI job builds the pinned ry and runs the bounded
   `tests/inference/` corpus through the checker with the candidate stubs,
