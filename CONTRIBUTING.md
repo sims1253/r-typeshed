@@ -87,9 +87,69 @@ Rscript --vanilla scripts/audit_function_semantics.R
 ry typeshed validate stubs/
 ```
 
+Run the inference gate (needs a pinned-ry build; see below):
+
+```bash
+scripts/inference_gate.sh <ry-binary> stubs/
+scripts/inference_mutation_test.sh <ry-binary>
+```
+
 The namespace audit skips packages that are not installed. Install the package
 you changed to check its declarations. Schema validation checks every stub,
 but does not verify its behavior against R.
+
+## Inference gate
+
+Schema validation agrees on JSON vocabulary; it cannot tell whether the
+checker reads a declaration the way R behaves. The `inference` CI job
+closes that gap for a bounded, representative corpus: it builds the pinned
+ry from `.github/ry-consumer`, runs `tests/inference/` through the
+checker's inference with the candidate stubs, and asserts inferred types
+and diagnostic identities — not just counts.
+
+- `tests/inference/*-clean.R` must check with zero diagnostics;
+  `*-diag.R` must produce exactly the diagnostics in
+  `tests/inference/expectations.json` (rule code, severity, line, column).
+- `tests/inference/dump-*.R` pin inferred binding types in
+  `tests/inference/dump-expectations.json`. `dump-types` has no
+  `--typeshed` flag at the pin, so the gate stages the fixtures in a
+  scratch project whose `ry.toml` points at the candidate stubs.
+- The corpus covers the semantic fixes one family per fixture pair:
+  `append` (PR #68), `as.vector` (PR #67), `AIC` (PR #69), density
+  lengths (PR #70), the `R.Version` callable (PR #71), and the
+  complex-math union returns (PR #73) — each false fact that used to be
+  inferred must now be absent, with a neighboring true-error control that
+  must still fire. Two known-safe fixtures, one higher-order
+  (`vapply` FUN.VALUE templating) case, and one eval/injection
+  (`data()` unknown bindings) pair round it out.
+- `scripts/inference_mutation_test.sh` is the self-test: it copies
+  `stubs/`, applies a deliberate schema-valid semantic mutation (for
+  example reverting `dnorm`'s length to `"arg0"`), and asserts the gate
+  fails with useful expected/actual output. A green gate run means
+  little without it — run the self-test after touching the corpus.
+- The gate proves the candidate stubs supplied each fact two ways: the
+  `--typeshed` override (plus the `ry.toml` override for `dump-types`)
+  selects the candidate tree, and a stale-embedded cross-check re-runs
+  the dump fixtures with no override, where the release binary's older
+  embedded snapshot must still show the pre-fix facts. If a future pin
+  refreshes the embedded catalog past these fixes, that cross-check
+  degrades to a warning rather than failing the job.
+
+How a schema change lands in ry first: the checker and its schema
+vocabulary live in the ry repository, so new return kinds, metadata, or
+inference rules are implemented and released there. This repo then
+adopts the new vocabulary in stubs, and the pin in
+`.github/ry-consumer` advances to the ry revision whose release notes
+cover the change. The inference corpus only uses vocabulary the pinned
+ry understands; when the pin advances, extend the fixtures to the newly
+supported semantics and refresh any stale-embedded expectations.
+
+Intentionally uncovered: precise recycling rules the schema cannot
+express (densities stay `unknown` rather than claiming a rule), S3
+dispatch precision beyond the conservative opaque returns, overloads
+that depend on argument counts (multi-model `AIC`), and the remaining
+distribution families noted in PR #70. The corpus is representative by
+design — a changed stub with no fixture is a changed stub with no net.
 
 The set6 and dictionar6 inventories use archived CRAN releases. Install `R6`,
 `Rcpp`, and `checkmate`, then run `Rscript --vanilla tests/install_set6_deps.R`

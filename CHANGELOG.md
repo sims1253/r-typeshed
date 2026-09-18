@@ -441,6 +441,16 @@ this release's stubs.
   and named value failures; allow absent class/NA claims and treat `na: true`
   as a conservative upper bound. Document the default-search-path provenance
   of base dataset entries in the schema reference.
+- Gate candidate stubs through ry inference, not just schema validation: a
+  new `inference` CI job builds the pinned ry and runs the bounded
+  `tests/inference/` corpus through the checker with the candidate stubs,
+  asserting inferred types and diagnostic identities for the `append`,
+  `as.vector`, `AIC`, density-length, `R.Version`, and complex-math
+  corrections — each former false fact must stay absent while a neighboring
+  true-error control still fires — plus known-safe, higher-order, and
+  eval/injection pairs. A mutation self-test reverts one schema-valid
+  contract per run and proves the gate fails with useful expected/actual
+  output, so a green run means the checker agrees, not just the parser.
 
 ### Schema documentation
 
