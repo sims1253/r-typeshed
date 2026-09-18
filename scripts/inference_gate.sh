@@ -31,6 +31,14 @@ set -euo pipefail
 RY_BIN="${1:-ry}"
 STUBS_DIR="${2:-stubs}"
 
+# The dump and stale-embedded steps run the binary from scratch directories,
+# so a relative RY_BIN (CI passes ry/target/release/ry) must be resolved
+# against the invocation directory before any cd.
+case "$RY_BIN" in
+  /*) ;;
+  *) RY_BIN="$PWD/$RY_BIN" ;;
+esac
+
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 fixture_dir="$repo_root/tests/inference"
 expectations="$fixture_dir/expectations.json"
