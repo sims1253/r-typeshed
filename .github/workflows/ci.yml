@@ -191,8 +191,6 @@ jobs:
             cat drift.txt
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
-          Rscript --vanilla scripts/render_ci_packages.R drift-json > pins.json
-          echo "pins=$(cat pins.json)" >> "$GITHUB_OUTPUT"
       - name: Install latest upstream packages
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -200,7 +198,7 @@ jobs:
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Record installed versions
-        run: Rscript --vanilla scripts/report_drift.R "${{ steps.drift.outputs.pins }}" > drift-report.md
+        run: Rscript --vanilla scripts/report_drift.R > drift-report.md
       - name: Probe inventory oracles against latest upstream
         run: |
           set +e

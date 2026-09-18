@@ -4,13 +4,15 @@
 # Usage (from the repository root):
 #   Rscript --vanilla scripts/render_ci_packages.R pinned   # reference oracle (pkg@version)
 #   Rscript --vanilla scripts/render_ci_packages.R drift    # upstream drift (any::pkg)
-#   Rscript --vanilla scripts/render_ci_packages.R drift-json  # JSON pin table for the drift report
 #
 # `pinned` renders the exact reference versions recorded in
-# upstream-versions.json so re-running a fixed catalog revision selects the
-# same packages. `drift` renders unversioned specs so the drift job always
-# probes latest CRAN. Both read the same install list in the same order, so
-# the two jobs can only disagree on versions, never on coverage. Transitive
+# upstream-versions.json (`pkg@version`, pak's documented pin form --
+# `any::` cannot carry a version constraint) so re-running a fixed catalog
+# revision selects the same packages. `drift` renders unversioned `any::`
+# specs so the drift job always probes latest CRAN. Both read the same
+# install list in the same order, so the two jobs can only disagree on
+# versions, never on coverage. Neither mode requires any R package: the
+# drift job renders its list before jsonlite is installed. Transitive
 # dependencies are resolved by setup-r-dependencies in CI and are
 # deliberately not pinned here: only the oracle packages are asserted
 # against installed versions, so recording transitives would add churn
@@ -50,7 +52,7 @@ render_pinned <- function(pins) {
     if (!is.character(version) || length(version) != 1L || is.na(version) || !nzchar(version)) {
       stop(sprintf("invalid recorded version for %s", package))
     }
-    sprintf("any::%s@%s", package, version)
+    sprintf("%s@%s", package, version)
   }, character(1))
 }
 
@@ -58,22 +60,12 @@ render_drift <- function() {
   sprintf("any::%s", ci_packages)
 }
 
-render_drift_json <- function(pins) {
-  if (!requireNamespace("jsonlite", quietly = TRUE)) stop("jsonlite is required")
-  jsonlite::toJSON(
-    lapply(ci_packages, function(package) list(package = package, pinned = pins[[package]])),
-    auto_unbox = TRUE
-  )
-}
-
 if (sys.nframe() == 0L) {
   if (mode == "pinned") {
     cat(render_pinned(read_pins()), sep = "\n")
   } else if (mode == "drift") {
     cat(render_drift(), sep = "\n")
-  } else if (mode == "drift-json") {
-    cat(render_drift_json(read_pins()), "\n")
   } else {
-    stop("Usage: render_ci_packages.R [pinned|drift|drift-json]")
+    stop("Usage: render_ci_packages.R [pinned|drift]")
   }
 }

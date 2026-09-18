@@ -3,15 +3,22 @@
 # pins: a compact table showing exactly which packages moved upstream.
 #
 # Usage (from the repository root):
-#   Rscript --vanilla scripts/report_drift.R '<drift-json>' > drift-report.md
+#   Rscript --vanilla scripts/report_drift.R > drift-report.md
 #
-# The JSON argument is the `drift-json` output of scripts/render_ci_packages.R.
+# Reads the recorded reference pins from upstream-versions.json and the
+# installed versions from the live library. Runs after the drift job's
+# package install step, so jsonlite is available.
 
-args <- commandArgs(trailingOnly = TRUE)
-if (!length(args)) stop("Usage: report_drift.R '<drift-json>'")
 if (!requireNamespace("jsonlite", quietly = TRUE)) stop("jsonlite is required")
-
-pins <- jsonlite::fromJSON(args[[1L]], simplifyVector = FALSE)
+script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
+root <- dirname(dirname(normalizePath(script)))
+recorded <- jsonlite::read_json(file.path(root, "upstream-versions.json"))
+ci_packages <- c(
+  "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
+  "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
+  "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales"
+)
+pins <- lapply(ci_packages, function(package) list(package = package, pinned = recorded[[package]]))
 lines <- c(
   "## Upstream drift report",
   "",

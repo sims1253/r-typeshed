@@ -19,17 +19,15 @@ jsonlite::write_json(mock, mock_file, auto_unbox = TRUE)
 # 1. The rendered pinned list carries every CI package at its recorded
 #    version -- a bump in the source must flow to the installer verbatim.
 rendered <- env$render_pinned(jsonlite::read_json(mock_file))
-stopifnot(identical(unname(rendered[env$ci_packages == 'httr']), 'any::httr@9.9.9'))
-stopifnot(identical(unname(rendered[env$ci_packages == 'jsonlite']), 'any::jsonlite@2.0.0'))
+stopifnot(identical(unname(rendered[env$ci_packages == 'httr']), 'httr@9.9.9'))
+stopifnot(identical(unname(rendered[env$ci_packages == 'jsonlite']), 'jsonlite@2.0.0'))
 stopifnot(identical(length(rendered), length(env$ci_packages)),
           identical(names(rendered), env$ci_packages))
 
 # 2. Coverage cannot drift between the two jobs: pinned and drift render
 #    the same package set, differing only in version pinning.
-stopifnot(identical(unname(sub('@.*$', '', sub('^any::', '', rendered))),
-                    unname(sub('^any::', '', env$render_drift()))) ||
-          identical(sub('@.*$', '', sub('^any::', '', rendered)),
-                    sub('^any::', '', env$render_drift())))
+stopifnot(identical(unname(sub('@.*$', '', rendered)),
+                    unname(sub('^any::', '', env$render_drift()))))
 
 # 3. A package missing from the version source fails loudly instead of
 #    installing floating latest into the reference job.
