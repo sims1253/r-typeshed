@@ -4,6 +4,26 @@
 
 ### Function semantics
 
+- Complete the distribution-family length/missingness sweep in base
+  0.0.26: the remaining eight families' density/CDF/quantile entries
+  (`dbeta`/`pbeta`/`qbeta`, `dbinom`/`pbinom`/`qbinom`,
+  `dchisq`/`pchisq`/`qchisq`, `dexp`/`pexp`/`qexp`, `df`/`pf`/`qf`,
+  `dgamma`/`pgamma`/`qgamma`, `dlnorm`/`plnorm`/`qlnorm`, `dt`/`pt`/`qt`)
+  receive the same verified correction as the normal, Poisson, and uniform
+  families in 0.0.23 — recycling across all numerical value arguments
+  (including family shape parameters and `ncp`), any empty value argument
+  emptying the result, and missing numerics propagating — so the returns
+  drop the false `length: "arg0"` and `na: false` claims for
+  `{"mode": "double", "length": "unknown", "na": true}`, with the formal
+  lists completed (`log` on the densities; `lower.tail`/`log.p` on the
+  CDF/quantile entries). Six previously-missing inventory entries join
+  the stub with verified formals and the corrected shape: `qpois`,
+  `qbinom`, `dgeom`, `pgeom`, and `qgeom` (all removed from the
+  ambient-function list as typed entries), plus `dmultinom`, which is
+  verified separately as a scalar density — one value per call regardless
+  of input lengths — and therefore declares `length: "1"` with `na: true`.
+  The `r*` generators stay untouched: their `n` semantics differ. Pinned
+  live by the extended `tests/density_lengths.R`.
 - Declare the complex-capable math returns as double/complex unions in
   base 0.0.25: `exp`, `log`, `log10`, `log2`, `sqrt`, `sin`, `cos`, `tan`,
   `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`, and `signif` each

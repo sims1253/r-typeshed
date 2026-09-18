@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -1035,7 +1035,6 @@
       "dfbeta",
       "dfbetas",
       "dffits",
-      "dgeom",
       "dget",
       "dhyper",
       "diag<-",
@@ -1055,7 +1054,6 @@
       "dir.create",
       "dir.exists",
       "dlogis",
-      "dmultinom",
       "dnbinom",
       "doPrimitiveMethod",
       "dontCheck",
@@ -1685,7 +1683,6 @@
       "person",
       "personList",
       "persp",
-      "pgeom",
       "phyper",
       "pico",
       "pictex",
@@ -1796,14 +1793,11 @@
       "pushBackLength",
       "pweibull",
       "pwilcox",
-      "qbinom",
       "qbirthday",
       "qcauchy",
-      "qgeom",
       "qhyper",
       "qlogis",
       "qnbinom",
-      "qpois",
       "qqline",
       "qqnorm",
       "qqplot",
@@ -3507,35 +3501,40 @@
       "params": [
         "x",
         "shape1",
-        "shape2"
+        "shape2",
+        "ncp",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "dbinom": {
       "params": [
         "x",
         "size",
-        "prob"
+        "prob",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "dchisq": {
       "params": [
         "x",
-        "df"
+        "df",
+        "ncp",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "debug": {
@@ -3607,36 +3606,53 @@
     "dexp": {
       "params": [
         "x",
-        "rate"
+        "rate",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "df": {
       "params": [
         "x",
         "df1",
-        "df2"
+        "df2",
+        "ncp",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "dgamma": {
       "params": [
         "x",
         "shape",
-        "rate"
+        "rate",
+        "scale",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "dgeom": {
+      "params": [
+        "x",
+        "prob",
+        "log"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "na": true
       }
     },
     "diag": {
@@ -3713,12 +3729,26 @@
       "params": [
         "x",
         "meanlog",
-        "sdlog"
+        "sdlog",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "dmultinom": {
+      "params": [
+        "x",
+        "size",
+        "prob",
+        "log"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "1",
+        "na": true
       }
     },
     "dnorm": {
@@ -3802,12 +3832,14 @@
     "dt": {
       "params": [
         "x",
-        "df"
+        "df",
+        "ncp",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "dunif": {
@@ -5744,82 +5776,113 @@
       "params": [
         "q",
         "shape1",
-        "shape2"
+        "shape2",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pbinom": {
       "params": [
         "q",
         "size",
-        "prob"
+        "prob",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pchisq": {
       "params": [
         "q",
-        "df"
+        "df",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pexp": {
       "params": [
         "q",
-        "rate"
+        "rate",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pf": {
       "params": [
         "q",
         "df1",
-        "df2"
+        "df2",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pgamma": {
       "params": [
         "q",
         "shape",
-        "rate"
+        "rate",
+        "scale",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "pgeom": {
+      "params": [
+        "q",
+        "prob",
+        "lower.tail",
+        "log.p"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "na": true
       }
     },
     "plnorm": {
       "params": [
         "q",
         "meanlog",
-        "sdlog"
+        "sdlog",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "pmatch": {
@@ -5982,12 +6045,15 @@
     "pt": {
       "params": [
         "q",
-        "df"
+        "df",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "punif": {
@@ -6008,70 +6074,113 @@
       "params": [
         "p",
         "shape1",
-        "shape2"
+        "shape2",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "qbinom": {
+      "params": [
+        "p",
+        "size",
+        "prob",
+        "lower.tail",
+        "log.p"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "na": true
       }
     },
     "qchisq": {
       "params": [
         "p",
-        "df"
+        "df",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qexp": {
       "params": [
         "p",
-        "rate"
+        "rate",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qf": {
       "params": [
         "p",
         "df1",
-        "df2"
+        "df2",
+        "ncp",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qgamma": {
       "params": [
         "p",
         "shape",
-        "rate"
+        "rate",
+        "scale",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "qgeom": {
+      "params": [
+        "p",
+        "prob",
+        "lower.tail",
+        "log.p"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "na": true
       }
     },
     "qlnorm": {
       "params": [
         "p",
         "meanlog",
-        "sdlog"
+        "sdlog",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qnorm": {
@@ -6088,15 +6197,31 @@
         "na": true
       }
     },
-    "qt": {
+    "qpois": {
       "params": [
         "p",
-        "df"
+        "lambda",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "qt": {
+      "params": [
+        "p",
+        "df",
+        "ncp",
+        "lower.tail",
+        "log.p"
+      ],
+      "return": {
+        "mode": "double",
+        "length": "unknown",
+        "na": true
       }
     },
     "quade.test": {
