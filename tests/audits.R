@@ -43,6 +43,16 @@ invalid <- run(list(fft = list(params = list("x", "inverse"))), 1L)
 stopifnot(any(grepl("fft::x", invalid, fixed = TRUE)))
 run(list(head = list(params = list("x", "invented"))), 1L)
 run(list(numeric = list(params = list(list(name = "length", required = TRUE)))), 1L)
+# A base value declared under `functions` must fail with a non-callable
+# diagnostic instead of being silently skipped: R.version is a list value
+# and only R.Version() is callable.
+phantom <- run(list(R.version = list(params = list())), 1L)
+stopifnot(any(grepl("base::R.version is not callable but declared as a function", phantom, fixed = TRUE)))
+run(list(pi = list(params = list())), 1L)
+# The correctly capitalized callable has no formals, so it passes as a
+# reviewed primitive without formals rather than as a skipped entry.
+correct <- run(list(R.Version = list(params = list())), 0L)
+stopifnot(any(grepl("R.Version", correct, fixed = TRUE)))
 # An opaque environment makes no non-NA claim and must not trigger anyNA().
 jsonlite::write_json(list(package = "base", functions = list(identity = list(params = list("x"))),
   datasets = list(.GlobalEnv = list(mode = "opaque", length = "unknown", na = TRUE))),
@@ -58,6 +68,51 @@ output <- suppressWarnings(system2(file.path(R.home("bin"), "Rscript"),
   c("--vanilla", shQuote(file.path(fixture, "scripts", "audit_typeshed.R"))),
   stdout = TRUE, stderr = TRUE))
 stopifnot(is.null(attr(output, "status")), !any(grepl("Warning", output, fixed = TRUE)))
+
+# A non-base exported value declared under `functions` must fail with the
+# same non-callable diagnostic. utils::osVersion is a character value; a
+# callable re-export (dplyr::tibble) and a registered S3 method
+# (stats::diff.ts) must still pass.
+if (requireNamespace("utils", quietly = TRUE) &&
+    requireNamespace("dplyr", quietly = TRUE) &&
+    requireNamespace("stats", quietly = TRUE)) {
+  fixture_functions <- tempfile("typeshed-audit-functions-")
+  dir.create(file.path(fixture_functions, "scripts"), recursive = TRUE)
+  dir.create(file.path(fixture_functions, "stubs", "base"), recursive = TRUE)
+  for (script in c("audit_typeshed.R", "param_optionality.R")) {
+    stopifnot(file.copy(file.path(root, "scripts", script),
+      file.path(fixture_functions, "scripts", script)))
+  }
+  # The audit always closes over stubs/base/base.json, so every fixture
+  # carries a minimal valid base stub.
+  jsonlite::write_json(list(package = "base", functions = list(head = list(params = list("x", "n")))),
+    file.path(fixture_functions, "stubs", "base", "base.json"), auto_unbox = TRUE)
+  check_functions <- function(entries, status, pattern = NULL) {
+    for (stub in c("utils", "dplyr", "stats")) {
+      target <- file.path(fixture_functions, "stubs", stub)
+      if (dir.exists(target)) unlink(target, recursive = TRUE)
+    }
+    for (stub in names(entries)) {
+      dir.create(file.path(fixture_functions, "stubs", stub), recursive = TRUE)
+      jsonlite::write_json(list(package = stub, functions = entries[[stub]]),
+        file.path(fixture_functions, "stubs", stub, paste0(stub, ".json")), auto_unbox = TRUE)
+    }
+    result <- suppressWarnings(system2(file.path(R.home("bin"), "Rscript"),
+      c("--vanilla", shQuote(file.path(fixture_functions, "scripts", "audit_typeshed.R"))),
+      stdout = TRUE, stderr = TRUE))
+    actual <- attr(result, "status")
+    if (is.null(actual)) actual <- 0L
+    stopifnot(actual == status)
+    if (!is.null(pattern)) stopifnot(any(grepl(pattern, result, fixed = TRUE)))
+    invisible(result)
+  }
+  check_functions(list(utils = list(osVersion = list(params = list()))), 1L,
+    "utils::osVersion is not callable but declared as a function")
+  check_functions(list(dplyr = list(tibble = list(params = list("...")))), 0L)
+  check_functions(list(stats = list(diff.ts = list(params = list("x", "lag", "differences", "...")))), 0L)
+  unlink(fixture_functions, recursive = TRUE)
+  cat("Non-callable function declarations rejected; callable re-exports and registered S3 methods verified.\n")
+}
 unlink(fixture, recursive = TRUE)
 cat("Audit failures and reviewed forwarding verified.\n")
 
