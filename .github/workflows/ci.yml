@@ -172,11 +172,16 @@ jobs:
   drift:
     # Informational upstream-drift signal: installs latest CRAN releases and
     # re-runs the oracle comparisons as non-failing probes. Never required;
-    # a new upstream release must not break unrelated PRs. Monthly update
-    # drafting stays in .github/workflows/update-typeshed.yml — this job is
-    # the per-PR early-warning view, not a second planner.
+    # a new upstream release must not break unrelated PRs. RT_TYPESHED_DRIFT
+    # skips the oracles' recorded-version gates so a harmless version bump
+    # cannot fail a probe before its behavioral export/formal checks run —
+    # version movement belongs to the report table, not the probe verdicts.
+    # Monthly update drafting stays in .github/workflows/update-typeshed.yml
+    # — this job is the per-PR early-warning view, not a second planner.
     runs-on: ubuntu-latest
     continue-on-error: true
+    env:
+      RT_TYPESHED_DRIFT: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2

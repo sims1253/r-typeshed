@@ -51,19 +51,37 @@ stopifnot(is.character(err2), grepl('invalid recorded version for glue', err2, f
 # 5. Oracle expectations agree with the source: every inventory test that
 #    pins an installed version must pin the recorded reference version, so
 #    a reference bump without an oracle update (or vice versa) fails here.
-oracle_tests <- list.files(file.path(root, 'tests'), pattern = '[.]R$', full.names = TRUE)
+# install_set6_deps.R pins the archived-set installer tooling (ooplah),
+# which is not an audited namespace, so it is out of this agreement check.
+oracle_tests <- setdiff(
+  list.files(file.path(root, 'tests'), pattern = '[.]R$', full.names = TRUE),
+  file.path(root, 'tests', 'install_set6_deps.R'))
 pins <- jsonlite::read_json(file.path(root, 'upstream-versions.json'))
 checked <- 0L
 for (test in oracle_tests) {
   lines <- readLines(test, warn = FALSE)
-  m <- regmatches(lines, regexec('^version <- "([^"]+)"$', lines))
-  m <- m[vapply(m, length, integer(1)) > 0L]
-  if (!length(m)) next
-  package <- sub('[.]R$', '', basename(test))
-  stopifnot(package %in% names(pins),
-            identical(m[[1L]][[2L]], pins[[package]]))
-  checked <- checked + 1L
+  # Single-package oracles declare `version <- "x.y.z"`; the archived-set
+  # oracle declares a named vector `versions <- c(set6 = "a", ... = "b")`.
+  single <- regmatches(lines, regexec('^version <- "([^"]+)"$', lines))
+  single <- single[vapply(single, length, integer(1)) > 0L]
+  multi <- regmatches(lines, regexec('^versions <- c[(](.+)[)]$', lines))
+  multi <- multi[vapply(multi, length, integer(1)) > 0L]
+  if (length(single)) {
+    package <- sub('[.]R$', '', basename(test))
+    stopifnot(package %in% names(pins),
+              identical(single[[1L]][[2L]], pins[[package]]))
+    checked <- checked + 1L
+  }
+  if (length(multi)) {
+    pairs <- regmatches(multi[[1L]][[2L]],
+                        gregexpr('[A-Za-z0-9.]+ = "[^"]+"', multi[[1L]][[2L]]))
+    for (pair in pairs[[1L]]) {
+      kv <- regmatches(pair, regexec('([A-Za-z0-9.]+) = "([^"]+)"', pair))[[1L]]
+      stopifnot(kv[[2L]] %in% names(pins), identical(kv[[3L]], pins[[kv[[2L]]]]))
+      checked <- checked + 1L
+    }
+  }
 }
-stopifnot(checked >= 10L)  # the inventory oracle tests all pin versions
+stopifnot(checked >= 12L)  # single-package + archived-set pins all covered
 
 cat(sprintf('pinned-version source, renderer, and %d oracle expectations agree\n', checked))

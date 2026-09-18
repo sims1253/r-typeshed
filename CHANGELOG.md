@@ -186,6 +186,20 @@
   equal the recorded reference, so the version source, installer, oracle
   expectations, and update planner cannot silently disagree.
 
+- Keep the drift signal behavioral and the oracle assertions robust
+  (review follow-ups on #68, #70, #73, #76): the drift job sets
+  `RT_TYPESHED_DRIFT`, which skips the inventory oracles' recorded-version
+  gates so a harmless upstream version bump can no longer fail a probe
+  before its export/formal checks run — version movement belongs to the
+  report table, not the probe verdicts. The expected-error pins in
+  `tests/density_lengths.R` and the complex-math exclusion pins in
+  `tests/complex_math.R` assert the error class (`length > 1`, mentions
+  `complex`) instead of exact base-R wording, surviving upstream message
+  rewording across R bumps. `tests/pinned_versions.R` additionally covers
+  the archived-set oracle's named-vector pins (`set6`, `dictionar6`) and
+  excludes the archived-set installer's tooling pin (`ooplah`), which is
+  not an audited namespace.
+
 ## [0.5.1] - 2026-09-15
 
 Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots

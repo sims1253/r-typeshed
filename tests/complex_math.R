@@ -70,7 +70,7 @@ for (entry in excluded) {
   stopifnot(identical(base[[entry]]$return$mode, 'double'))
   msg <- tryCatch({ get(entry, envir = baseenv())(z); NULL },
                   error = function(e) conditionMessage(e))
-  stopifnot(identical(msg, 'unimplemented complex function'))
+  stopifnot(is.character(msg), grepl('complex', msg))
 }
 
 # The *pi variants have no stub entry and likewise reject complex input.
@@ -78,7 +78,7 @@ stopifnot(is.null(base$sinpi), is.null(base$cospi), is.null(base$tanpi))
 for (entry in c('sinpi', 'cospi', 'tanpi')) {
   msg <- tryCatch({ get(entry, envir = baseenv())(z); NULL },
                   error = function(e) conditionMessage(e))
-  stopifnot(identical(msg, 'unimplemented complex function'))
+  stopifnot(is.character(msg), grepl('complex', msg))
 }
 
 cat('complex-capable math return modes passed\n')

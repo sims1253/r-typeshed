@@ -128,7 +128,7 @@ stopifnot(identical(length(qunif(0.5, lower.tail = c(TRUE, FALSE))), 1L))
 # scalar condition.
 err <- tryCatch({ if (dnorm(0, mean = c(0, 1))) 1L; NULL },
                 error = conditionMessage)
-stopifnot(identical(err, 'the condition has length > 1'))
+stopifnot(is.character(err), grepl('length > 1', err))
 
 # New-family witnesses: a recycling witness per family, plus NA and
 # any-empty spot checks (shape parameters and ncp recycle like any other
@@ -164,6 +164,6 @@ stopifnot(is.numeric(dmultinom(c(1, 1), prob = c(.5, .5), log = TRUE)))
 # result is not a valid scalar condition.
 err2 <- tryCatch({ if (dbeta(0.5, c(1, 2), 1)) 1L; NULL },
                  error = conditionMessage)
-stopifnot(identical(err2, 'the condition has length > 1'))
+stopifnot(is.character(err2), grepl('length > 1', err2))
 
 cat('density/CDF/quantile recycling, NA, and empty-input semantics passed\n')
