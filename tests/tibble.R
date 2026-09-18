@@ -6,7 +6,12 @@ pkg <- "tibble"
 version <- "3.3.1"
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
 
-stopifnot(identical(as.character(packageVersion(pkg)), version))
+# The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
+# behavioral export/formal checks even when CRAN has moved past this
+# recorded reference version; the required generators job never sets it.
+if (Sys.getenv("RT_TYPESHED_DRIFT") == "") {
+  stopifnot(identical(as.character(packageVersion(pkg)), version))
+}
 doc <- jsonlite::read_json(file.path(root, "stubs", pkg, paste0(pkg, ".json")))
 exports <- getNamespaceExports(pkg)
 functions <- exports[vapply(exports, function(name) {

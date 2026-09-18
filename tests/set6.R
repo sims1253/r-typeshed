@@ -6,7 +6,11 @@ versions <- c(set6 = "0.2.4", dictionar6 = "0.1.3")
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
 
 for (pkg in names(versions)) {
-  stopifnot(identical(as.character(packageVersion(pkg)), versions[[pkg]]))
+  # See the RT_TYPESHED_DRIFT note in the single-package oracles: the drift
+  # job skips the version gate so archived-inventory probes stay behavioral.
+  if (Sys.getenv("RT_TYPESHED_DRIFT") == "") {
+    stopifnot(identical(as.character(packageVersion(pkg)), versions[[pkg]]))
+  }
   doc <- jsonlite::read_json(file.path(root, "stubs", pkg, paste0(pkg, ".json")))
   exports <- getNamespaceExports(pkg)
   functions <- exports[vapply(exports, function(name) {
