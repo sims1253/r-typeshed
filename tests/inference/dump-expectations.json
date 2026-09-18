@@ -1,0 +1,43 @@
+{
+  "_comment": "Expected inferred binding types per dump fixture, keyed by file stem. Each entry maps a binding name to the exact type string from `ry dump-types`. These fixtures run under an ry.toml whose `typeshed` points at the candidate stubs, because dump-types has no --typeshed flag at the pin and always reads the project config. Asserting the type string (not just diagnostic silence) proves the fact came from the candidate stubs: the embedded snapshot at f2fe5de infers the stale strings recorded in the stale_* fields, which the gate cross-checks when available.",
+  "density": {
+    "bindings": {
+      "d": "double<len=?>"
+    },
+    "stale_embedded": {
+      "d": "double<len=1>"
+    }
+  },
+  "append": {
+    "bindings": {
+      "a": "unknown"
+    },
+    "stale_embedded": {
+      "a": "integer<len=2>"
+    }
+  },
+  "as-vector": {
+    "bindings": {
+      "v": "unknown"
+    },
+    "stale_embedded": {
+      "v": "integer<len=1>"
+    }
+  },
+  "aic": {
+    "bindings": {
+      "m": "unknown"
+    },
+    "stale_embedded": {
+      "m": "double<len=1>"
+    }
+  },
+  "math-union": {
+    "bindings": {
+      "e": "union[double<len=?>, complex<len=?>]"
+    },
+    "stale_embedded": {
+      "e": "double<len=1>"
+    }
+  }
+}
