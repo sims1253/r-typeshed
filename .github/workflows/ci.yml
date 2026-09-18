@@ -96,6 +96,8 @@ jobs:
         run: Rscript --vanilla tests/ifelse_mode.R
       - name: Verify append insertion-position semantics
         run: Rscript --vanilla tests/append.R
+      - name: Verify as.vector coercion return contract
+        run: Rscript --vanilla tests/as_vector.R
       - name: Verify dynamic-dots constructor contracts
         run: Rscript --vanilla tests/dynamic_dots.R
       - name: Verify grid inventory and captured expressions

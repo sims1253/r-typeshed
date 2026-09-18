@@ -28,6 +28,15 @@
   plain `yes_or_no` join. Mirrors the spec ry has been carrying in its
   local typeshed overlay; a vendor sync from this release is a no-op for
   this entry and lets ry drop the overlay.
+- Correct `as.vector`'s return contract in base 0.0.21: it is not an
+  identity function, so the `arg0` return becomes opaque/unknown and the
+  formals gain the missing `mode` (`as.vector(x, mode)`). `mode` can change
+  the storage type (`as.vector(1L, mode = "list")` is a list), factors
+  default-coerce to character, and atomic results lose attributes — each
+  previously survived as a false input fact (and a false RY061 on
+  `v$missing` after a `mode = "list"` coercion). Precise coercion modeling
+  — omitted mode, literal supported modes, factor default, attribute
+  stripping, dispatch — is future consumer work.
 
 ### Schema documentation
 
