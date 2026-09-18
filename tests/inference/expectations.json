@@ -1,0 +1,28 @@
+{
+  "_comment": "Expected diagnostics per inference fixture, keyed by file stem. Each entry lists the diagnostic identities (rule code, severity, line, column) that `ry check --typeshed stubs/` must report for that file. Clean fixtures expect none. Line/column pin the diagnostic to the intended expression so the gate cannot pass on an unrelated diagnostic at another position.",
+  "aic-clean": [],
+  "aic-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
+  ],
+  "append-clean": [],
+  "append-diag": [
+    {"code": "RY002", "severity": "warning", "line": 6, "column": 5}
+  ],
+  "as-vector-clean": [],
+  "as-vector-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
+  ],
+  "density-clean": [],
+  "density-diag": [
+    {"code": "RY002", "severity": "warning", "line": 4, "column": 5}
+  ],
+  "higher-order-diag": [
+    {"code": "RY040", "severity": "error", "line": 4, "column": 8}
+  ],
+  "injection-clean": [],
+  "injection-diag": [
+    {"code": "RY010", "severity": "warning", "line": 2, "column": 7}
+  ],
+  "r-version-clean": [],
+  "safe-clean": []
+}
