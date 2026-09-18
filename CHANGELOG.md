@@ -4,6 +4,29 @@
 
 ### Function semantics
 
+- Correct the return lengths and missingness of the normal, Poisson, and
+  uniform density/CDF/quantile entries in base 0.0.23: `dnorm`, `dpois`,
+  and `dunif` no longer claim `length: "arg0"` with `na: false`, and the
+  same correction applies to their verified-identical `pnorm`, `ppois`,
+  `punif`, `qnorm`, and `qunif` siblings. Live R on 4.6.1 shows the result
+  recycles across all numerical value arguments — `dnorm(0, mean = c(0, 1))`
+  has length 2, and any empty value argument empties the result
+  (`dnorm(c(0, 1), mean = numeric(0))` has length 0, unlike `paste`, which
+  recycles `""` for zero-length inputs) — while `log`, `lower.tail`, and
+  `log.p` contribute only their first element, and missing numerics
+  propagate (`dnorm(NA_real_)` is `NA`). That any-empty rule is exactly
+  what the schema's `recycled_values` cannot express (it zeroes only when
+  all values are empty, or — under a `recycle0` control — when one is, and
+  these functions take no such control), so the honest encoding is
+  `{"mode": "double", "length": "unknown", "na": true}`: it stops the
+  false scalar fact ry was resolving from `arg0` without overstating a
+  precise recycling rule. The formal lists are completed along the way
+  (`log` on the densities; `lower.tail` and `log.p` on the CDF/quantile
+  entries). The `rnorm`, `rpois`, and `runif` generators are untouched:
+  their `n` semantics differ. The remaining distribution families
+  (beta, binomial, chi-squared, exponential, F, gamma, log-normal, t)
+  show the same `arg0`/`na: false` shape and are left for follow-up.
+
 - Correct `AIC` and `BIC` in base 0.0.22: complete the public formal
   sequences (`AIC(object, ..., k = 2)`, `BIC(object, ...)`, verified
   against the installed stats generics) and keep the conservative

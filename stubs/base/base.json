@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -3706,12 +3706,13 @@
       "params": [
         "x",
         "mean",
-        "sd"
+        "sd",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "do.call": {
@@ -3764,12 +3765,13 @@
     "dpois": {
       "params": [
         "x",
-        "lambda"
+        "lambda",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "drop": {
@@ -3793,12 +3795,13 @@
       "params": [
         "x",
         "min",
-        "max"
+        "max",
+        "log"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "duplicated": {
@@ -5819,12 +5822,14 @@
       "params": [
         "q",
         "mean",
-        "sd"
+        "sd",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "polyroot": {
@@ -5840,12 +5845,14 @@
     "ppois": {
       "params": [
         "q",
-        "lambda"
+        "lambda",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "prcomp": {
@@ -5952,12 +5959,14 @@
       "params": [
         "q",
         "min",
-        "max"
+        "max",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qbeta": {
@@ -6034,12 +6043,14 @@
       "params": [
         "p",
         "mean",
-        "sd"
+        "sd",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "qt": {
@@ -6077,12 +6088,14 @@
       "params": [
         "p",
         "min",
-        "max"
+        "max",
+        "lower.tail",
+        "log.p"
       ],
       "return": {
         "mode": "double",
-        "length": "arg0",
-        "na": false
+        "length": "unknown",
+        "na": true
       }
     },
     "quote": {
