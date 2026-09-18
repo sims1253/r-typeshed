@@ -23,6 +23,9 @@
   "injection-diag": [
     {"code": "RY010", "severity": "warning", "line": 2, "column": 7}
   ],
+  "math-union-diag": [
+    {"code": "RY040", "severity": "error", "line": 4, "column": 8}
+  ],
   "r-version-clean": [],
   "safe-clean": []
 }

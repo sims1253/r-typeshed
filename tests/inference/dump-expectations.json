@@ -31,5 +31,13 @@
     "stale_embedded": {
       "m": "double<len=1>"
     }
+  },
+  "math-union": {
+    "bindings": {
+      "e": "union[double<len=?>, complex<len=?>]"
+    },
+    "stale_embedded": {
+      "e": "double<len=1>"
+    }
   }
 }
