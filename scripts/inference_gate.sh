@@ -33,10 +33,11 @@ STUBS_DIR="${2:-stubs}"
 
 # The dump and stale-embedded steps run the binary from scratch directories,
 # so a relative RY_BIN (CI passes ry/target/release/ry) must be resolved
-# against the invocation directory before any cd.
+# against the invocation directory before any cd. A bare command name (the
+# `ry`-on-PATH default) must stay untouched for PATH resolution.
 case "$RY_BIN" in
   /*) ;;
-  *) RY_BIN="$PWD/$RY_BIN" ;;
+  */*) RY_BIN="$PWD/$RY_BIN" ;;
 esac
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
