@@ -60,32 +60,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: r-lib/actions/setup-r@v2
         with:
+          # Reference R release, tied to the base/grid entries in
+          # upstream-versions.json; bump both together.
+          r-version: '4.6.1'
           use-public-rspm: true
+      - name: Render pinned package list
+        id: pins
+        run: |
+          Rscript --vanilla scripts/render_ci_packages.R pinned | tee pins.txt
+          {
+            echo 'packages<<EOF'
+            cat pins.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
       - name: Install R packages (generator JSON I/O + audited namespaces)
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: |
-            any::jsonlite
-            any::rlang
-            any::vctrs
-            any::purrr
-            any::dplyr
-            any::ggplot2
-            any::htmltools
-            any::shiny
-            any::mirai
-            any::carrier
-            any::R6
-            any::Rcpp
-            any::checkmate
-            any::magrittr
-            any::glue
-            any::stringr
-            any::tibble
-            any::lifecycle
-            any::httr
-            any::readr
-            any::scales
+          # Exact reference versions rendered from upstream-versions.json
+          # at job runtime; no version literal lives in this file.
+          packages: ${{ steps.pins.outputs.packages }}
 
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
@@ -159,6 +152,8 @@ jobs:
         run: Rscript --vanilla tests/find.R
       - name: Verify mirai status contract
         run: Rscript --vanilla tests/mirai.R
+      - name: Test pinned-version source agreement
+        run: Rscript --vanilla tests/pinned_versions.R
       - name: Test generators
         run: Rscript --vanilla tests/generators.R
       - name: Test package-update planning and curation preservation
@@ -173,3 +168,47 @@ jobs:
         run: Rscript scripts/audit_typeshed.R
       - name: Audit function-semantics provenance
         run: Rscript --vanilla scripts/audit_function_semantics.R
+
+  drift:
+    # Informational upstream-drift signal: installs latest CRAN releases and
+    # re-runs the oracle comparisons as non-failing probes. Never required;
+    # a new upstream release must not break unrelated PRs. Monthly update
+    # drafting stays in .github/workflows/update-typeshed.yml — this job is
+    # the per-PR early-warning view, not a second planner.
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - name: Render drift package list
+        id: drift
+        run: |
+          Rscript --vanilla scripts/render_ci_packages.R drift | tee drift.txt
+          {
+            echo 'packages<<EOF'
+            cat drift.txt
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+      - name: Install latest upstream packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: ${{ steps.drift.outputs.packages }}
+      - name: Install archived inventory test packages
+        run: Rscript --vanilla tests/install_set6_deps.R
+      - name: Record installed versions
+        run: Rscript --vanilla scripts/report_drift.R > drift-report.md
+      - name: Probe inventory oracles against latest upstream
+        run: |
+          set +e
+          : > drift-probes.log
+          for probe in tests/set6.R tests/magrittr.R tests/glue.R tests/stringr.R tests/tibble.R tests/lifecycle.R tests/jsonlite.R tests/httr.R tests/checkmate.R tests/readr.R tests/scales.R tests/mirai.R tests/ggplot2.R tests/html_tags.R; do
+            if Rscript --vanilla "$probe" >> drift-probes.log 2>&1; then
+              echo "- PASS ${probe}" >> drift-report.md
+            else
+              echo "- FAIL ${probe} (drift signal, non-blocking)" >> drift-report.md
+            fi
+          done
+          cat drift-report.md >> "$GITHUB_STEP_SUMMARY"
+          cat drift-probes.log
