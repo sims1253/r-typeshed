@@ -33,7 +33,8 @@ ci_packages <- c(
   "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
   "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
   "RColorBrewer",
-  "xml2"
+  "xml2",
+  "MASS"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])

@@ -32,6 +32,18 @@
   recorded reference version and runs the oracle in the generators job
   and as an upstream-drift probe. Part of the prioritized backlog in #43.
 
+- Add MASS 0.0.1 with its complete export inventory from MASS 7.3.66:
+  77 functions plus the 87 lazy-data datasets (`cats`, `Boston`, ...),
+  which are public through `::` without appearing in the namespace export
+  list, recorded as opaque dataset values per the inventory convention.
+  Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}`, resolving `import(MASS)` for its 2,176
+  CRAN reverse dependencies. MASS is a recommended package bundled with
+  R; CI still pins it through the normal CRAN install path
+  (`upstream-versions.json`) so the oracle's version gate stays
+  deterministic when the runner's bundled recommended set moves. Part of
+  the prioritized backlog in #43.
+
 ### Function semantics
 
 - Complete the distribution-family length/missingness sweep in base
