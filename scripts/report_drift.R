@@ -17,7 +17,7 @@ ci_packages <- c(
   "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
   "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
   "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
-  "RColorBrewer", "xml2", "MASS"
+  "RColorBrewer", "xml2", "MASS", "zoo"
 )
 pins <- lapply(ci_packages, function(package) list(package = package, pinned = recorded[[package]]))
 lines <- c(

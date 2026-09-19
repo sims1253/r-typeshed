@@ -44,6 +44,20 @@
   deterministic when the runner's bundled recommended set moves. Part of
   the prioritized backlog in #43.
 
+- Add zoo 0.0.1 with its complete 122-function export inventory from zoo
+  1.9-0 (recorded as 1.9.0): every export resolves to a function, so no
+  dataset values. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(zoo)` for its 457 CRAN reverse dependencies and 695K
+  downloads/month. The runtime oracle `tests/zoo.R` pins the installed
+  version at 1.9.0 and compares every export, formal list, and opaque
+  return against the live namespace, with behavioral spot-checks for
+  series construction (`zoo()`, `coredata`, `index`), `na.locf` forward
+  carry, `rollmean` windows, and locale-independent `yearmon` formatting;
+  CI installs the recorded reference version and runs the oracle in the
+  generators job and as an upstream-drift probe. Part of the prioritized
+  backlog in #43.
+
 ### Function semantics
 
 - Complete the distribution-family length/missingness sweep in base
