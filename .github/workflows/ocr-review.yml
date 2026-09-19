@@ -10,6 +10,10 @@
 #   variable  OCR_LLM_MODEL          model name (no default)
 #   variable  OCR_LLM_USE_ANTHROPIC  'true' for Anthropic, else OpenAI-compatible
 #
+# Until OCR_LLM_MODEL is set the workflow no-ops: both the concurrency
+# group and the job condition require it, so every trigger skips cleanly
+# instead of running a doomed LLM call and failing red on healthy PRs.
+#
 # Re-review on demand: comment '/open-code-review' or '@open-code-review'
 # on any PR (maintainers only).
 
@@ -26,13 +30,13 @@ name: OpenCodeReview PR Review
 #
 # Fix: matching events (trusted PR events + /open-code-review comments) share
 # a per-PR group so a new review cancels any stale one for the same PR.
-# Everything else — non-matching comments, but also PR events from untrusted
-# authors — lands in a unique noop-<run_id> group that can never collide with
-# a real review, so those runs are skipped instantly without disrupting
-# anything. Untrusted PR events must stay out of the per-PR group: although
-# the job if skips them, concurrency is evaluated first, so a shared group
-# would let a fork author cancel a maintainer-triggered review just by
-# pushing.
+# Everything else — non-matching comments, PR events from untrusted authors,
+# and every trigger while OCR_LLM_MODEL is unset — lands in a unique
+# noop-<run_id> group that can never collide with a real review, so those
+# runs are skipped instantly without disrupting anything. Untrusted PR
+# events must stay out of the per-PR group: although the job if skips them,
+# concurrency is evaluated first, so a shared group would let a fork author
+# cancel a maintainer-triggered review just by pushing.
 concurrency:
   group: >-
     ${{
@@ -44,6 +48,7 @@ concurrency:
             || github.event.pull_request.author_association == 'OWNER'
             || github.event.pull_request.author_association == 'COLLABORATOR'
           )
+          && vars.OCR_LLM_MODEL != ''
         )
         || (
           github.event_name == 'issue_comment'
@@ -58,6 +63,7 @@ concurrency:
             startsWith(github.event.comment.body, '/open-code-review')
             || startsWith(github.event.comment.body, '@open-code-review')
           )
+          && vars.OCR_LLM_MODEL != ''
         )
       )
       && format('ocr-{0}', github.event.pull_request.number || github.event.issue.number)
@@ -91,7 +97,10 @@ jobs:
     # but a PAT/App token would not. Both paths are gated on
     # author_association so only MEMBER/OWNER/COLLABORATOR users can spend
     # LLM quota: fork PRs are not auto-reviewed — a maintainer opts them in
-    # by commenting a trigger keyword on the PR.
+    # by commenting a trigger keyword on the PR. Both arms additionally
+    # require vars.OCR_LLM_MODEL to be set (mirrored in the concurrency
+    # group), so the workflow no-ops until the model is configured instead
+    # of running the LLM call unconfigured and failing red.
     if: |
       (
         github.event_name == 'pull_request_target'
@@ -100,6 +109,7 @@ jobs:
           || github.event.pull_request.author_association == 'OWNER'
           || github.event.pull_request.author_association == 'COLLABORATOR'
         )
+        && vars.OCR_LLM_MODEL != ''
       )
       || (
         github.event_name == 'issue_comment'
@@ -114,6 +124,7 @@ jobs:
           startsWith(github.event.comment.body, '/open-code-review')
           || startsWith(github.event.comment.body, '@open-code-review')
         )
+        && vars.OCR_LLM_MODEL != ''
       )
     steps:
       - name: Get PR context
@@ -144,10 +155,23 @@ jobs:
           llm_use_anthropic: ${{ vars.OCR_LLM_USE_ANTHROPIC || 'false' }}
           # Review tuning: effort high = deeper multi-round review; 'max'
           # reasoning needs a model with a steerable reasoning_effort field
-          # and only works on the OpenAI-compatible protocol — the action
-          # fails fast if the Anthropic one is selected.
+          # and only works on the OpenAI-compatible protocol — the pinned
+          # action fails fast ("llm_reasoning_effort is supported only
+          # with OpenAI-compatible protocols") when Anthropic is selected,
+          # so 'max' is sent only when the OpenAI-compatible protocol is
+          # selected, and Anthropic runs use the action's default effort
+          # (empty sends nothing). The test is inverted on purpose: GitHub
+          # expressions treat '' as falsy, so a natural-looking
+          # `== 'true' && '' || 'max'` would always evaluate to 'max'. The
+          # gate mirrors the action's toggle vocabulary — true/1/yes select
+          # Anthropic case-insensitively, while this workflow's
+          # `|| 'false'` fallback already maps an unset variable to 'false'
+          # (OpenAI-compatible).
           effort: high
-          llm_reasoning_effort: max
+          llm_reasoning_effort: >-
+            ${{ (vars.OCR_LLM_USE_ANTHROPIC != 'true' &&
+            vars.OCR_LLM_USE_ANTHROPIC != '1' &&
+            vars.OCR_LLM_USE_ANTHROPIC != 'yes') && 'max' || '' }}
           # Stream live [ocr] progress to the workflow log instead of
           # staying silent until the run finishes.
           stream_progress: 'true'
