@@ -32,7 +32,8 @@ ci_packages <- c(
   "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
   "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
   "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
-  "RColorBrewer"
+  "RColorBrewer",
+  "xml2"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
