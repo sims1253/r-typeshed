@@ -31,7 +31,8 @@ mode <- if (length(args)) args[[1L]] else "pinned"
 ci_packages <- c(
   "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
   "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
-  "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales"
+  "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
+  "RColorBrewer"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])

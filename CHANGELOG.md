@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### New stubs
+
+- Add RColorBrewer 0.0.1 with its complete export inventory from
+  RColorBrewer 1.1.3 (CRAN 1.1-3): 3 functions plus the exported
+  `brewer.pal.info` palette-catalog data frame recorded as an opaque
+  dataset value. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(RColorBrewer)` for its 461 CRAN reverse dependencies
+  and 1.27M downloads/month. The runtime oracle `tests/RColorBrewer.R`
+  pins the installed version at 1.1.3 and compares every export, formal
+  list, and opaque return against the live namespace, with behavioral
+  spot-checks for palette extraction and the catalog; CI installs the
+  recorded reference version and runs the oracle in the generators job
+  and as an upstream-drift probe. Part of the prioritized backlog in #43.
+
 ### Function semantics
 
 - Complete the distribution-family length/missingness sweep in base
