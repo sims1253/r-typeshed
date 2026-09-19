@@ -286,6 +286,33 @@
   variable `OCR_LLM_USE_ANTHROPIC` to select the Anthropic protocol
   instead of the OpenAI-compatible one).
 
+### Generators and update automation
+
+- Compare upstream versions as `package_version` objects in
+  `scripts/update_typeshed.R`: CRAN's `available.packages()` metadata
+  reports some versions in their canonical dash spelling (zoo 1.9-0,
+  RColorBrewer 1.1-3, MASS 7.3-66, Matrix 1.7-6), and
+  `upstream-versions.json` mixes spellings by construction — curation
+  records the dot-normalized `as.character(packageVersion())` form
+  (RColorBrewer 1.1.3) while the monthly publish step commits CRAN's
+  canonical string from the plan matrix (survival is already recorded
+  as 3.8-11). Strict `identical()` comparisons across that mix made
+  dash-spelled packages register as changed on every monthly plan run
+  and then crash the prepare job's expected-version assert
+  (`Expected zoo 1.9-0, installed 1.9.0`; spotted in review of #81).
+  Both comparison sites — `changed_packages()` and the
+  `prepare_package()` assert — now go through a shared `same_version()`
+  helper that parses either spelling as a version object and falls back
+  to exact string comparison for unparseable values; the normalization
+  is load-bearing for every consumer comparing recorded values against
+  CRAN metadata, since post-fix dash-spelled packages reach the publish
+  step — and its CRAN-spelling write — routinely instead of dying at
+  the assert. This also repairs the behavior of the already-merged
+  RColorBrewer pin, which the old comparison saw as perpetually
+  changed. Regression fixtures in `tests/updates.R` pin dash-versus-dot
+  equality in planning, dash-form acceptance in the prepare assert, and
+  that a genuinely different version still stops.
+
 ## [0.5.1] - 2026-09-15
 
 Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots
