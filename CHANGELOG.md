@@ -19,6 +19,22 @@
   generators job and as an upstream-drift probe. Part of the
   prioritized backlog in #43.
 
+- Add Matrix 0.0.1 with its complete export inventory from Matrix 1.7.6:
+  202 functions plus 215 exported S4 values — 108 `.__C__*` class-definition
+  objects and 107 `.__T__*` method tables (following the jsonlite
+  method-table and tibble class-object precedents) — recorded as opaque
+  dataset values. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(Matrix)` for its 1,610 CRAN reverse dependencies.
+  Matrix's four data/ datasets (`CAex`, `KNex`, `USCounties`, `wrld_1deg`)
+  ship under `LazyData: no` (upstream's `LazyDataNote`: "not possible,
+  since we use data/*.R and our S4 classes"), so they are reachable only
+  through `data()`, never `::`, and stay outside the inventory; the oracle
+  pins that boundary with the ggplot2-style lazydata union. Matrix is a
+  recommended package, so CI installs it pinned at 1.7.6 (upgrading the
+  runner's bundled 1.7-5) for a deterministic oracle. Part of the
+  prioritized backlog in #43.
+
 - Add RColorBrewer 0.0.1 with its complete export inventory from
   RColorBrewer 1.1.3 (CRAN 1.1-3): 3 functions plus the exported
   `brewer.pal.info` palette-catalog data frame recorded as an opaque
