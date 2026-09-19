@@ -91,6 +91,19 @@ jobs:
   code-review:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # The ocr launcher (bin/ocr.js) spawns a detached self-updater that runs
+    # `npm i -g @alibaba-group/open-code-review@latest` when npm has moved
+    # past the installed version (18-minute cooldown; a fresh runner always
+    # checks). That detached install removes and re-creates /usr/local/bin/ocr
+    # mid-step: with the pin behind npm latest, the Configure step's `ocr
+    # config set` invocations race the updater and one dies with
+    # `Cannot find module '/usr/local/bin/ocr'` (observed on the first
+    # configured run: ten config sets succeeded, the eleventh hit the
+    # replacement window). OCR_NO_UPDATE disables the updater entirely — the
+    # version is supply-chain-pinned via `ocr_version` below, so a silent
+    # self-bump is unwanted anyway; bump the pin deliberately instead.
+    env:
+      OCR_NO_UPDATE: "1"
     # Run on PR events from trusted authors, or on human-authored comments
     # starting with trigger keywords. Bot comments are excluded as a safety
     # net: GITHUB_TOKEN already suppresses events from bot-posted comments,
@@ -184,4 +197,7 @@ jobs:
           base_ref: ${{ steps.pr-context.outputs.base_ref }}
           head_sha: ${{ steps.pr-context.outputs.head_sha }}
           # Pinned for supply-chain hygiene; bump to update the CLI.
-          ocr_version: '1.12.5'
+          # Keep aligned with npm latest when bumping — the launcher's
+          # self-updater is disabled via OCR_NO_UPDATE above, so drift is
+          # silent and only this pin decides the reviewed-with version.
+          ocr_version: '1.12.7'
