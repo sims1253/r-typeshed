@@ -37,7 +37,8 @@ ci_packages <- c(
   "MASS",
   "zoo",
   "Matrix",
-  "gridExtra"
+  "gridExtra",
+  "curl"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
