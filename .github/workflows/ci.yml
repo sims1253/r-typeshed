@@ -230,4 +230,6 @@ jobs:
             fi
           done
           cat drift-report.md >> "$GITHUB_STEP_SUMMARY"
+          # The probes are informational: failures surface in the report
+          # table above, never in this job's exit status.
           cat drift-probes.log
