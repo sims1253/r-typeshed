@@ -80,6 +80,15 @@
   resolving `import(gridExtra)` for its 504 CRAN reverse dependencies and
   968K monthly downloads. Part of the prioritized backlog in #43.
 
+- Add curl 0.0.1 with its complete export inventory from curl 8.0.0: 44
+  functions plus the 105 exported libcurl option constants
+  (`CURLAUTH_*`, `CURL_HTTP_VERSION_*`, `CURLPROXY_*`, ...) recorded as
+  opaque dataset values. Keep formal lists inference-only and returns
+  uniformly `{opaque, unknown, na: true}` per the documented inventory
+  convention, resolving `import(curl)` for its 470 CRAN reverse
+  dependencies and 1.41M downloads last month (see #43 for methodology).
+  Part of the prioritized backlog in #43.
+
 ### Function semantics
 
 - Complete the distribution-family length/missingness sweep in base
