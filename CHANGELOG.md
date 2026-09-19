@@ -74,6 +74,12 @@
   generators job and as an upstream-drift probe. Part of the prioritized
   backlog in #43.
 
+- Add gridExtra 0.0.1 with its complete 16-function export inventory from
+  gridExtra 2.3.1. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory convention,
+  resolving `import(gridExtra)` for its 504 CRAN reverse dependencies and
+  968K monthly downloads. Part of the prioritized backlog in #43.
+
 ### Function semantics
 
 - Complete the distribution-family length/missingness sweep in base
