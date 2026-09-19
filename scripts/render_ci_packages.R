@@ -26,23 +26,14 @@
 args <- commandArgs(trailingOnly = TRUE)
 mode <- if (length(args)) args[[1L]] else "pinned"
 
-# Oracle packages in CI install order: generator JSON I/O and every
-# namespace the inventory oracles and audits load.
-ci_packages <- c(
-  "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
-  "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
-  "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
-  "RColorBrewer",
-  "xml2",
-  "MASS",
-  "zoo",
-  "Matrix",
-  "gridExtra",
-  "curl"
-)
-
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
 root <- dirname(dirname(normalizePath(script)))
+
+# Oracle packages in CI install order: the single shared definition in
+# scripts/ci_packages.R. local = TRUE keeps the vector in this script's
+# own environment under sys.source() (tests/pinned_versions.R), not just
+# the global environment.
+source(file.path(root, "scripts", "ci_packages.R"), local = TRUE)
 
 read_pins <- function(path = file.path(root, "upstream-versions.json")) {
   if (requireNamespace("jsonlite", quietly = TRUE)) {

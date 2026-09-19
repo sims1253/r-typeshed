@@ -13,12 +13,10 @@ if (!requireNamespace("jsonlite", quietly = TRUE)) stop("jsonlite is required")
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
 root <- dirname(dirname(normalizePath(script)))
 recorded <- jsonlite::read_json(file.path(root, "upstream-versions.json"))
-ci_packages <- c(
-  "jsonlite", "rlang", "vctrs", "purrr", "dplyr", "ggplot2", "htmltools",
-  "shiny", "mirai", "carrier", "R6", "Rcpp", "checkmate", "magrittr",
-  "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
-  "RColorBrewer", "xml2", "MASS", "zoo", "Matrix", "gridExtra", "curl"
-)
+# Oracle packages in CI install order: the single shared definition in
+# scripts/ci_packages.R, so this table's coverage cannot drift from the
+# installer lists rendered by scripts/render_ci_packages.R.
+source(file.path(root, "scripts", "ci_packages.R"))
 pins <- lapply(ci_packages, function(package) list(package = package, pinned = recorded[[package]]))
 lines <- c(
   "## Upstream drift report",

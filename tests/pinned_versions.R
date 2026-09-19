@@ -53,6 +53,29 @@ stopifnot(is.character(err2), grepl('invalid recorded version for glue', err2, f
 #    a reference bump without an oracle update (or vice versa) fails here.
 # install_set6_deps.R pins the archived-set installer tooling (ooplah),
 # which is not an audited namespace, so it is out of this agreement check.
+#
+# The comparison goes through package_version objects rather than exact
+# string equality: upstream-versions.json mixes spellings by construction
+# (curation records the dot-normalized as.character(packageVersion()) form
+# while the monthly publish step commits CRAN's canonical dash string), so
+# after a dash-spelled recorded bump (zoo 1.9-0 -> 1.9-1) the exact-string
+# gate failed even once the curator updated the oracle to the matching dot
+# form. Same guard style as same_version in scripts/update_typeshed.R,
+# defined locally so the test stays self-contained; values that do not
+# parse as versions fall back to exact string comparison.
+same_version <- function(a, b) {
+  if (length(a) != 1L || length(b) != 1L || is.na(a) || is.na(b)) return(FALSE)
+  parsed <- tryCatch(list(package_version(a), package_version(b)), error = function(error) NULL)
+  if (is.null(parsed)) return(identical(a, b))
+  identical(parsed[[1L]], parsed[[2L]])
+}
+# Fixtures: dot-vs-dash spellings of one version compare equal, a
+# genuinely different version still disagrees, and unparseable values fall
+# back to exact string equality in both directions.
+stopifnot(same_version('1.9.0', '1.9-0'), same_version('1.9-1', '1.9.1'))
+stopifnot(!same_version('1.9.0', '1.9-1'))
+stopifnot(same_version('draft', 'draft'), !same_version('draft', 'other'))
+
 oracle_tests <- setdiff(
   list.files(file.path(root, 'tests'), pattern = '[.]R$', full.names = TRUE),
   file.path(root, 'tests', 'install_set6_deps.R'))
@@ -69,7 +92,7 @@ for (test in oracle_tests) {
   if (length(single)) {
     package <- sub('[.]R$', '', basename(test))
     stopifnot(package %in% names(pins),
-              identical(single[[1L]][[2L]], pins[[package]]))
+              same_version(single[[1L]][[2L]], pins[[package]]))
     checked <- checked + 1L
   }
   if (length(multi)) {
@@ -77,7 +100,7 @@ for (test in oracle_tests) {
                         gregexpr('[A-Za-z0-9.]+ = "[^"]+"', multi[[1L]][[2L]]))
     for (pair in pairs[[1L]]) {
       kv <- regmatches(pair, regexec('([A-Za-z0-9.]+) = "([^"]+)"', pair))[[1L]]
-      stopifnot(kv[[2L]] %in% names(pins), identical(kv[[3L]], pins[[kv[[2L]]]]))
+      stopifnot(kv[[2L]] %in% names(pins), same_version(kv[[3L]], pins[[kv[[2L]]]]))
       checked <- checked + 1L
     }
   }

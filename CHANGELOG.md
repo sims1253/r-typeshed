@@ -240,6 +240,26 @@
 
 ### Validation and audits
 
+- Single-source the CI package list and make the pinned-version gate
+  spelling-tolerant: the `ci_packages` vector now lives once in
+  `scripts/ci_packages.R`, sourced by both consumers — the installer and
+  drift renderings in `scripts/render_ci_packages.R` and the drift-report
+  version table in `scripts/report_drift.R`, whose hand-copied second copy
+  went stale three times during the RColorBrewer..curl inventory batch
+  (RColorBrewer and xml2 sat stale until pullfrog's review of #84, which
+  also caught MASS; #82 caught curl), silently dropping rows from the
+  table that exists to say which version a moved package went to.
+  `tests/pinned_versions.R` compares each oracle's version pin against
+  the recorded entry as a `package_version` object with an exact-string
+  fallback for unparseable values (the same guard style as `same_version`
+  in `scripts/update_typeshed.R`, defined locally so the test stays
+  self-contained): the monthly publish step commits CRAN's canonical dash
+  spelling into `upstream-versions.json`, so after a dash-spelled bump
+  (zoo 1.9-0 → 1.9-1) the exact-string gate failed even once the curator
+  updated the oracle to the matching dot form. `Rplots.pdf` (a local
+  graphics-device artifact committed on PR branches twice during the
+  batch) is now ignored.
+
 - Gate candidate stubs through ry inference, not just schema validation: a
   new `inference` CI job builds the pinned ry and runs the bounded
   `tests/inference/` corpus through the checker with the candidate stubs,
