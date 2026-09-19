@@ -34,7 +34,8 @@ ci_packages <- c(
   "glue", "stringr", "tibble", "lifecycle", "httr", "readr", "scales",
   "RColorBrewer",
   "xml2",
-  "MASS"
+  "MASS",
+  "zoo"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
