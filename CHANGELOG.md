@@ -309,6 +309,17 @@
 
 ### Review automation
 
+- Disable the OCR launcher's detached self-updater and bump the CLI pin
+  to 1.12.7: the launcher (bin/ocr.js) spawns a background
+  `npm i -g @alibaba-group/open-code-review@latest` whenever npm has
+  moved past the installed version, and that detached install removes
+  and re-creates `/usr/local/bin/ocr` mid-run — with the pin at 1.12.5
+  behind npm's 1.12.7, the first configured review died in the action's
+  Configure step with `Cannot find module '/usr/local/bin/ocr'` after
+  ten successful `ocr config set` calls hit the replacement window.
+  `OCR_NO_UPDATE: "1"` on the job makes the version solely a function
+  of the `ocr_version` pin (which is the point of pinning); bumping the
+  pin to current npm latest removes the latent window for this release.
 - Add an OpenCodeReview LLM review-bot workflow
   (`.github/workflows/ocr-review.yml`): PRs from MEMBER/OWNER/COLLABORATOR
   authors are reviewed automatically on open, push, and reopen, and any
