@@ -108,6 +108,8 @@ jobs:
         run: Rscript --vanilla tests/RColorBrewer.R
       - name: Verify xml2 inventory
         run: Rscript --vanilla tests/xml2.R
+      - name: Verify MASS inventory
+        run: Rscript --vanilla tests/MASS.R
 
       - name: Test audit failure detection
         run: Rscript --vanilla tests/audits.R
@@ -212,7 +214,7 @@ jobs:
         run: |
           set +e
           : > drift-probes.log
-          for probe in tests/set6.R tests/magrittr.R tests/glue.R tests/stringr.R tests/tibble.R tests/lifecycle.R tests/jsonlite.R tests/httr.R tests/checkmate.R tests/readr.R tests/scales.R tests/RColorBrewer.R tests/xml2.R tests/mirai.R tests/ggplot2.R tests/html_tags.R; do
+          for probe in tests/set6.R tests/magrittr.R tests/glue.R tests/stringr.R tests/tibble.R tests/lifecycle.R tests/jsonlite.R tests/httr.R tests/checkmate.R tests/readr.R tests/scales.R tests/RColorBrewer.R tests/xml2.R tests/MASS.R tests/mirai.R tests/ggplot2.R tests/html_tags.R; do
             if Rscript --vanilla "$probe" >> drift-probes.log 2>&1; then
               echo "- PASS ${probe}" >> drift-report.md
             else
