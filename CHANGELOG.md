@@ -200,6 +200,20 @@
   excludes the archived-set installer's tooling pin (`ooplah`), which is
   not an audited namespace.
 
+### Review automation
+
+- Add an OpenCodeReview LLM review-bot workflow
+  (`.github/workflows/ocr-review.yml`): PRs from MEMBER/OWNER/COLLABORATOR
+  authors are reviewed automatically on open, push, and reopen, and any
+  maintainer can request or refresh a review — fork PRs included — by
+  commenting `/open-code-review` or `@open-code-review` on the PR, so
+  untrusted authors cannot spend LLM quota. The reusable action is pinned
+  by commit SHA and the CLI by version (`ocr` 1.12.5) for supply-chain
+  hygiene; running it requires repository secret `OCR_LLM_URL`, secret
+  `OCR_LLM_AUTH_TOKEN`, and variable `OCR_LLM_MODEL` (plus optional
+  variable `OCR_LLM_USE_ANTHROPIC` to select the Anthropic protocol
+  instead of the OpenAI-compatible one).
+
 ## [0.5.1] - 2026-09-15
 
 Data-revision release completing the ry 0.10.0 vendor sync: dynamic-dots
