@@ -7,6 +7,16 @@ stopifnot(valid_package("Rcpp"), valid_package("data.table"))
 for (bad in c("", "../base", "-e", "pkg; touch x", "pkg/name", "pkg\nother", "a.")) stopifnot(!valid_package(bad))
 stopifnot(identical(changed_packages(list(a = "1.0", b = "2.0"), list(a = "1.0", b = "2.1", c = "1.0")), c("b", "c")))
 stopifnot(!length(changed_packages(list(a = "1.0"), list(a = "1.0"))))
+# CRAN metadata spells some versions with dashes (zoo 1.9-0, MASS 7.3-66,
+# Matrix 1.7-6, RColorBrewer 1.1-3) and upstream-versions.json mixes
+# spellings (dot-normalized at curation, CRAN's canonical string after
+# publish); a spelling difference must not register as a change, but a
+# genuinely different version still must.
+stopifnot(same_version("1.9.0", "1.9-0"), !same_version("1.9.0", "1.9-1"))
+stopifnot(!same_version(NULL, "1.9.0"), !same_version("1.9.0", NA_character_))
+stopifnot(same_version("draft", "draft"), !same_version("draft", "other"))
+stopifnot(!length(changed_packages(list(zoo = "1.9.0", MASS = "7.3.66", Matrix = "1.7.6", RColorBrewer = "1.1.3"), list(zoo = "1.9-0", MASS = "7.3-66", Matrix = "1.7-6", RColorBrewer = "1.1-3"))))
+stopifnot(identical(changed_packages(list(zoo = "1.9.0"), list(zoo = "1.9-1")), "zoo"))
 stopifnot(identical(bump_version("0.0.9"), "0.0.10"), identical(bump_version("draft"), "draft"))
 bundled <- base_package_versions()
 stopifnot(identical(bundled$base, as.character(getRversion())), identical(bundled$grid, as.character(packageVersion("grid"))))
@@ -58,6 +68,15 @@ main <- function() {
     stopifnot(identical(stub_path(package, root), expected))
   }
   stopifnot(inherits(try(prepare_package("dplyr", work, report, "0.0.0"), silent = TRUE), "try-error"))
+  # The prepare assert sees the dash-spelled CRAN version from the plan job
+  # against the dot-normalized installed form; same_version must accept the
+  # matching spelling and still stop on a genuinely different version.
+  installed <- as.character(packageVersion("dplyr"))
+  dashed <- sub("[.]([0-9]+)$", "-\\1", installed)
+  newer <- sub("[.]([0-9]+)$", paste0("-", as.integer(sub(".*[.]", "", installed)) + 1L), installed)
+  stopifnot(installed != dashed, dashed != newer, identical(package_version(installed), package_version(dashed)))
+  prepare_package("dplyr", work, report, dashed)
+  stopifnot(inherits(try(prepare_package("dplyr", work, report, newer), silent = TRUE), "try-error"))
   prepare_package("dplyr", work, report)
   path <- file.path(work, "stubs", "dplyr", "dplyr.json")
   generated <- jsonlite::read_json(path)

@@ -30,8 +30,23 @@ upstream_versions <- function(packages) {
   setNames(versions, packages)[!vapply(versions, is.null, logical(1))]
 }
 
+# upstream-versions.json carries a mix of spellings: inventories record the
+# dot-normalized as.character(packageVersion()) form at curation time
+# (RColorBrewer 1.1.3), while the monthly publish step commits CRAN's
+# canonical string from the plan matrix, which spells some versions with
+# dashes (survival 3.8-11, zoo 1.9-0). Comparisons therefore go through
+# package_version so a spelling difference never registers as a change;
+# values that do not parse as versions fall back to exact string comparison,
+# and NA or a missing side is never the same version.
+same_version <- function(a, b) {
+  if (length(a) != 1L || length(b) != 1L || is.na(a) || is.na(b)) return(FALSE)
+  parsed <- tryCatch(list(package_version(a), package_version(b)), error = function(error) NULL)
+  if (is.null(parsed)) return(identical(a, b))
+  identical(parsed[[1]], parsed[[2]])
+}
+
 changed_packages <- function(previous, current) {
-  names(current)[!vapply(names(current), function(package) identical(previous[[package]], current[[package]]), logical(1))]
+  names(current)[!vapply(names(current), function(package) same_version(previous[[package]], current[[package]]), logical(1))]
 }
 
 merge_draft <- function(curated, draft) {
@@ -83,7 +98,7 @@ stub_path <- function(package, root) {
 prepare_package <- function(package, root, report, expected_version = NULL) {
   if (!requireNamespace(package, quietly = TRUE)) stop(sprintf("%s is not installed", package))
   version <- as.character(packageVersion(package))
-  if (!is.null(expected_version) && !identical(version, expected_version)) stop(sprintf("Expected %s %s, installed %s", package, expected_version, version))
+  if (!is.null(expected_version) && !same_version(version, expected_version)) stop(sprintf("Expected %s %s, installed %s", package, expected_version, version))
   stub_path <- stub_path(package, root)
   previous <- if (file.exists(stub_path)) jsonlite::read_json(stub_path) else NULL
   lines <- c(sprintf("Prepare typeshed for `%s` %s.", package, version), "", "This is a generated draft. Review return types, evaluation modes, and semantic metadata before merging.", "")
