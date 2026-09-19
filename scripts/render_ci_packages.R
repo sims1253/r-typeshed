@@ -35,7 +35,8 @@ ci_packages <- c(
   "RColorBrewer",
   "xml2",
   "MASS",
-  "zoo"
+  "zoo",
+  "Matrix"
 )
 
 script <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[[1]])
