@@ -16,13 +16,16 @@
 #      scratch project whose ry.toml points at the candidate stubs
 #      (dump-types has no --typeshed flag at the pin); every binding must
 #      equal the type string in dump-expectations.json.
-#   3. provenance step — the stale-embedded cross-check: the same fixtures
-#      run against the PRISTINE release binary with no override must still
-#      show the OLD facts (false RY001/RY061 diagnostics, stale scalar type
-#      strings). That proves the candidate stubs — not the embedded
-#      snapshot — supply the fixed facts in steps 1 and 2: if the override
-#      were silently ignored, step 1/2 output would equal the stale output
-#      and the gate would fail on mismatch.
+#   3. provenance step — the stale-embedded cross-check (advisory): the
+#      same fixtures run against the PRISTINE release binary with no
+#      override still show the OLD facts (false RY001/RY061 diagnostics,
+#      stale scalar type strings) while the pin's embedded catalog predates
+#      the fixes. That cross-check only corroborates that the candidate
+#      stubs — not the embedded snapshot — supply the fixed facts in steps
+#      1 and 2; once the pin's embedded catalog carries the fixes it
+#      degrades to a warning (see step 3 below), and the decisive proof
+#      that the override is live is the schema-valid semantic mutation
+#      self-test in inference_mutation_test.sh.
 #
 # Deterministic by construction: fixed fixture files, fixed expectations,
 # JSON output parsing, no installed-library discovery, no randomness.
@@ -111,15 +114,17 @@ for fixture in "$fixture_dir"/dump-*.R; do
   fi
 done
 
-# --- step 3: stale-embedded cross-check (proves the override is live) ---------
-# Run the same fixtures through the binary WITHOUT any override. A release
-# build's embedded catalog still carries the pre-fix snapshot, so the stale
-# false facts must reappear. If they do not (binary rebuilt from candidate
-# stubs, or override silently ignored making steps 1-2 meaningless), the
-# gate refuses to pass: a green step 1/2 is only meaningful if the stale
-# behavior is still reproducible without the candidate stubs.
+# --- step 3: stale-embedded cross-check (advisory corroboration) --------------
+# Run the same fixtures through the binary WITHOUT any override. While the
+# pin's release build still carries the pre-fix embedded snapshot, the stale
+# false facts reappear and corroborate that steps 1-2 read the candidate
+# stubs. This step is advisory, not a hard failure: once the pin's embedded
+# catalog is refreshed past these fixes, the old facts are gone for good and
+# each such fixture only warns (the gate's pass/fail verdict is steps 1-2
+# plus the mutation self-test, whose schema-valid semantic mutants are the
+# decisive proof that the override path is live).
 stale_root=$(mktemp -d "${TMPDIR:-/tmp}/inference-gate-stale.XXXXXX")
-stale_failures=0
+stale_drifts=0
 for fixture in "$fixture_dir"/dump-*.R; do
   [ -e "$fixture" ] || continue
   stem=$(basename "$fixture" .R)
@@ -140,12 +145,12 @@ for fixture in "$fixture_dir"/dump-*.R; do
       "$stem" "$stale" "$actual"
     printf '  (the embedded catalog no longer carries the pre-fix snapshot;\n'
     printf '   the override is still proven live by the mutated-stub self-test.)\n'
-    stale_failures=$((stale_failures + 1))
+    stale_drifts=$((stale_drifts + 1))
   fi
 done
 rm -rf "$stale_root"
-if [ "$stale_failures" -gt 0 ]; then
-  printf 'inference-gate note: %d stale-embedded cross-check(s) drifted (warning only).\n' "$stale_failures"
+if [ "$stale_drifts" -gt 0 ]; then
+  printf 'inference-gate note: %d stale-embedded cross-check(s) drifted (warning only).\n' "$stale_drifts"
 fi
 
 printf 'inference-gate: %d fixture(s) checked, %d failure(s).\n' "$checked" "$failures"
