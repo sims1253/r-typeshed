@@ -124,7 +124,7 @@ done
 # plus the mutation self-test, whose schema-valid semantic mutants are the
 # decisive proof that the override path is live).
 stale_root=$(mktemp -d "${TMPDIR:-/tmp}/inference-gate-stale.XXXXXX")
-stale_failures=0
+stale_drifts=0
 for fixture in "$fixture_dir"/dump-*.R; do
   [ -e "$fixture" ] || continue
   stem=$(basename "$fixture" .R)
@@ -145,12 +145,12 @@ for fixture in "$fixture_dir"/dump-*.R; do
       "$stem" "$stale" "$actual"
     printf '  (the embedded catalog no longer carries the pre-fix snapshot;\n'
     printf '   the override is still proven live by the mutated-stub self-test.)\n'
-    stale_failures=$((stale_failures + 1))
+    stale_drifts=$((stale_drifts + 1))
   fi
 done
 rm -rf "$stale_root"
-if [ "$stale_failures" -gt 0 ]; then
-  printf 'inference-gate note: %d stale-embedded cross-check(s) drifted (warning only).\n' "$stale_failures"
+if [ "$stale_drifts" -gt 0 ]; then
+  printf 'inference-gate note: %d stale-embedded cross-check(s) drifted (warning only).\n' "$stale_drifts"
 fi
 
 printf 'inference-gate: %d fixture(s) checked, %d failure(s).\n' "$checked" "$failures"
