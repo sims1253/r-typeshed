@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-22
+
+Inventory and function-semantics release paired with ry 0.11.0: seven new
+export inventories (xml2, Matrix, RColorBrewer, MASS, zoo, gridExtra,
+curl), the base return-contract corrections through base 0.0.26 (density
+families, complex-capable math, `AIC`/`BIC`, `append`, `as.vector`,
+`R.version`, `ifelse`), and the documented `return_mode` rule. The
+`ifelse` `test_template` entry requires a consumer that accepts the rule
+(ry #472, first released in ry 0.11.0): vendor this revision against ry
+0.11.0 or newer.
+
 ### New stubs
 
 - Add xml2 0.0.1 with its complete export inventory from xml2 1.6.0:
