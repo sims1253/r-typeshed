@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "survival",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     "Surv": {
       "params": [
@@ -18,11 +18,415 @@
         ]
       }
     },
+    "Surv2": {
+      "params": [
+        "time",
+        "event",
+        "repeated"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "aareg": {
+      "params": [
+        "formula",
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "qrtol",
+        "nmin",
+        "dfbeta",
+        "taper",
+        "test",
+        {
+          "name": "cluster",
+          "required": true
+        },
+        "model",
+        "x",
+        "y"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "aeqSurv": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "tolerance"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "agexact.fit": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "strata",
+          "required": true
+        },
+        {
+          "name": "offset",
+          "required": true
+        },
+        {
+          "name": "init",
+          "required": true
+        },
+        {
+          "name": "control",
+          "required": true
+        },
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "method",
+          "required": true
+        },
+        {
+          "name": "rownames",
+          "required": true
+        },
+        "resid",
+        "nocenter"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "agreg.fit": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "strata",
+          "required": true
+        },
+        "offset",
+        {
+          "name": "init",
+          "required": true
+        },
+        {
+          "name": "control",
+          "required": true
+        },
+        "weights",
+        {
+          "name": "method",
+          "required": true
+        },
+        {
+          "name": "rownames",
+          "required": true
+        },
+        "resid",
+        "nocenter"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "attrassign": {
+      "params": [
+        {
+          "name": "object",
+          "required": true
+        },
+        {
+          "name": "tt",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "basehaz": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        "newdata",
+        "centered"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "bcloglog": {
+      "params": [
+        "edge"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "blog": {
+      "params": [
+        "edge"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "blogit": {
+      "params": [
+        "edge"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "bprobit": {
+      "params": [
+        "edge"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "brier": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        "times",
+        "newdata",
+        "ties",
+        "detail",
+        "timefix",
+        "efron"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "cch": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "subcoh",
+          "required": true
+        },
+        {
+          "name": "id",
+          "required": true
+        },
+        "stratum",
+        {
+          "name": "cohort.size",
+          "required": true
+        },
+        "method",
+        "robust"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "cipoisson": {
+      "params": [
+        {
+          "name": "k",
+          "required": true
+        },
+        "time",
+        "p",
+        "method"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "clogit": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "method",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "cluster": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "concordance": {
+      "params": [
+        {
+          "name": "object",
+          "required": true
+        },
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "concordancefit": {
+      "params": [
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        "strata",
+        "weights",
+        "ymin",
+        "ymax",
+        "timewt",
+        "cluster",
+        "influence",
+        "ranks",
+        "reverse",
+        "timefix",
+        "keepstrata",
+        "std.err"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "cox.zph": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        "transform",
+        "terms",
+        "singledf",
+        "global"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
     "coxph": {
       "params": [
-        "formula", "data", "weights", "subset", "na.action", "init",
-        "control", "ties", "singular.ok", "robust", "model", "x", "y",
-        "tt", "method", "id", "cluster", "istate", "statedata", "nocenter", "..."
+        "formula",
+        "data",
+        "weights",
+        "subset",
+        "na.action",
+        "init",
+        "control",
+        "ties",
+        "singular.ok",
+        "robust",
+        "model",
+        "x",
+        "y",
+        "tt",
+        "method",
+        "id",
+        "cluster",
+        "istate",
+        "statedata",
+        "nocenter",
+        "..."
       ],
       "eval": {
         "formula": "quoted_expression",
@@ -33,10 +437,827 @@
         "istate": "data_mask"
       },
       "data_mask_source": "data",
-      "return": {"mode": "list", "length": "unknown", "class": ["coxph"]}
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "class": [
+          "coxph"
+        ]
+      }
+    },
+    "coxph.control": {
+      "params": [
+        "eps",
+        "toler.chol",
+        "iter.max",
+        "toler.inf",
+        "outer.max",
+        "timefix",
+        "survcheckallow"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "coxph.detail": {
+      "params": [
+        {
+          "name": "object",
+          "required": true
+        },
+        "riskmat",
+        "rorder"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "coxph.fit": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "strata",
+          "required": true
+        },
+        "offset",
+        "init",
+        {
+          "name": "control",
+          "required": true
+        },
+        "weights",
+        {
+          "name": "method",
+          "required": true
+        },
+        {
+          "name": "rownames",
+          "required": true
+        },
+        "resid",
+        "nocenter"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "coxph.wtest": {
+      "params": [
+        {
+          "name": "var",
+          "required": true
+        },
+        {
+          "name": "b",
+          "required": true
+        },
+        "toler.chol"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "coxsurv.fit": {
+      "params": [
+        {
+          "name": "ctype",
+          "required": true
+        },
+        {
+          "name": "stype",
+          "required": true
+        },
+        {
+          "name": "se.fit",
+          "required": true
+        },
+        {
+          "name": "varmat",
+          "required": true
+        },
+        {
+          "name": "cluster",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "wt",
+          "required": true
+        },
+        {
+          "name": "risk",
+          "required": true
+        },
+        {
+          "name": "position",
+          "required": true
+        },
+        "strata",
+        {
+          "name": "oldid",
+          "required": true
+        },
+        {
+          "name": "y2",
+          "required": true
+        },
+        {
+          "name": "x2",
+          "required": true
+        },
+        {
+          "name": "risk2",
+          "required": true
+        },
+        {
+          "name": "strata2",
+          "required": true
+        },
+        "id2",
+        "unlist"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "dsurvreg": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "mean",
+          "required": true
+        },
+        "scale",
+        "distribution",
+        {
+          "name": "parms",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "finegray": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        "na.action",
+        "etype",
+        "prefix",
+        "count",
+        {
+          "name": "id",
+          "required": true
+        },
+        "timefix"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "format.Surv": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "frailty": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "distribution",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "frailty.gamma": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "sparse",
+        "theta",
+        "df",
+        "eps",
+        "method",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "frailty.gaussian": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "sparse",
+        "theta",
+        "df",
+        "method",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "frailty.t": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "sparse",
+        "theta",
+        "df",
+        "eps",
+        "tdf",
+        "method",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "fromtimeline": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "id",
+          "required": true
+        },
+        "repeated",
+        "lvcf",
+        "yname"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "is.Surv": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "is.na.Surv": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "is.ratetable": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "verbose"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "lvcf": {
+      "params": [
+        {
+          "name": "id",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        "time",
+        "first"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "match.ratetable": {
+      "params": [
+        {
+          "name": "R",
+          "required": true
+        },
+        {
+          "name": "ratetable",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "neardate": {
+      "params": [
+        "id1",
+        "id2",
+        "y1",
+        "y2",
+        "best",
+        "nomatch"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "nostutter": {
+      "params": [
+        {
+          "name": "id",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        "censor",
+        "single"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "nsk": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "df",
+        "knots",
+        "intercept",
+        "b",
+        "Boundary.knots"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "pseudo": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        {
+          "name": "times",
+          "required": true
+        },
+        "type",
+        "collapse",
+        "data.frame",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "pspline": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "df",
+        "theta",
+        "nterm",
+        "degree",
+        "eps",
+        "method",
+        "Boundary.knots",
+        "intercept",
+        "penalty",
+        "combine",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "psurvreg": {
+      "params": [
+        {
+          "name": "q",
+          "required": true
+        },
+        {
+          "name": "mean",
+          "required": true
+        },
+        "scale",
+        "distribution",
+        {
+          "name": "parms",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "pyears": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "rmap",
+        "ratetable",
+        "scale",
+        "expect",
+        "model",
+        "x",
+        "y",
+        "data.frame"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "qsurvreg": {
+      "params": [
+        {
+          "name": "p",
+          "required": true
+        },
+        {
+          "name": "mean",
+          "required": true
+        },
+        "scale",
+        "distribution",
+        {
+          "name": "parms",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "ratetable": {
+      "params": [
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "ratetableDate": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "ridge": {
+      "params": [
+        "...",
+        "theta",
+        "df",
+        "eps",
+        "scale"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "royston": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        "newdata",
+        "ties",
+        "adjust"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "rsurvreg": {
+      "params": [
+        {
+          "name": "n",
+          "required": true
+        },
+        {
+          "name": "mean",
+          "required": true
+        },
+        "scale",
+        "distribution",
+        "parms"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "rttright": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": true
+        },
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "times",
+        {
+          "name": "id",
+          "required": true
+        },
+        "timefix",
+        "renorm"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "statefig": {
+      "params": [
+        {
+          "name": "layout",
+          "required": true
+        },
+        {
+          "name": "connect",
+          "required": true
+        },
+        "margin",
+        "box",
+        "cex",
+        "col",
+        "lwd",
+        "lty",
+        "bcol",
+        "acol",
+        "alwd",
+        "alty",
+        "offset"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "strata": {
+      "params": [
+        "...",
+        "na.group",
+        "shortlabel",
+        "sep"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survConcordance": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survConcordance.fit": {
+      "params": [
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        "strata",
+        "weight"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survSplit": {
+      "params": [
+        "formula",
+        "data",
+        {
+          "name": "subset",
+          "required": true
+        },
+        "na.action",
+        "id",
+        {
+          "name": "cut",
+          "required": true
+        },
+        "zero",
+        "episode",
+        "start",
+        "end",
+        "event",
+        "added",
+        "timefix"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "survcheck": {
-      "params": ["formula", "data", "subset", "na.action", "id", "istate", "..."],
+      "params": [
+        "formula",
+        "data",
+        "subset",
+        "na.action",
+        "id",
+        "istate",
+        "..."
+      ],
       "eval": {
         "formula": "quoted_expression",
         "subset": "data_mask",
@@ -44,16 +1265,95 @@
         "istate": "data_mask"
       },
       "data_mask_source": "data",
-      "return": {"mode": "list", "length": "unknown"}
+      "return": {
+        "mode": "list",
+        "length": "unknown"
+      }
+    },
+    "survcondense": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "weights",
+          "required": true
+        },
+        "na.action",
+        "id",
+        "start",
+        "end",
+        "event"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "survdiff": {
-      "params": ["formula", "data", "subset", "na.action", "..."],
+      "params": [
+        "formula",
+        "data",
+        "subset",
+        "na.action",
+        "..."
+      ],
       "eval": {
         "formula": "quoted_expression",
         "subset": "data_mask"
       },
       "data_mask_source": "data",
-      "return": {"mode": "list", "length": "unknown", "class": ["survdiff"]}
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "class": [
+          "survdiff"
+        ]
+      }
+    },
+    "survexp": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "rmap",
+        "times",
+        "method",
+        "cohort",
+        "conditional",
+        "ratetable",
+        "scale",
+        "se.fit",
+        "model",
+        "x",
+        "y"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "survfit": {
       "params": [
@@ -85,8 +1385,269 @@
         ]
       }
     },
+    "survfit.formula": {
+      "params": [
+        "formula",
+        {
+          "name": "data",
+          "required": true
+        },
+        {
+          "name": "weights",
+          "required": true
+        },
+        {
+          "name": "subset",
+          "required": true
+        },
+        "na.action",
+        "stype",
+        "ctype",
+        {
+          "name": "id",
+          "required": true
+        },
+        {
+          "name": "cluster",
+          "required": true
+        },
+        "robust",
+        {
+          "name": "istate",
+          "required": true
+        },
+        "timefix",
+        {
+          "name": "etype",
+          "required": true
+        },
+        "model",
+        {
+          "name": "error",
+          "required": true
+        },
+        "entry",
+        "time0",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survfit0": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survfitKM": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        "weights",
+        "stype",
+        "ctype",
+        "se.fit",
+        "conf.int",
+        "conf.type",
+        "conf.lower",
+        "start.time",
+        "id",
+        "cluster",
+        "robust",
+        "influence",
+        "type",
+        "entry",
+        "time0"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survfit_confint": {
+      "params": [
+        {
+          "name": "p",
+          "required": true
+        },
+        {
+          "name": "se",
+          "required": true
+        },
+        "logse",
+        {
+          "name": "conf.type",
+          "required": true
+        },
+        "conf.int",
+        "selow",
+        "ulimit"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survfitcoxph.fit": {
+      "params": [
+        {
+          "name": "y",
+          "required": true
+        },
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "wt",
+          "required": true
+        },
+        {
+          "name": "x2",
+          "required": true
+        },
+        {
+          "name": "risk",
+          "required": true
+        },
+        "newrisk",
+        {
+          "name": "strata",
+          "required": true
+        },
+        {
+          "name": "se.fit",
+          "required": true
+        },
+        "survtype",
+        {
+          "name": "vartype",
+          "required": true
+        },
+        {
+          "name": "varmat",
+          "required": true
+        },
+        "id",
+        {
+          "name": "y2",
+          "required": true
+        },
+        {
+          "name": "strata2",
+          "required": true
+        },
+        "unlist"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survobrien": {
+      "params": [
+        {
+          "name": "formula",
+          "required": true
+        },
+        "data",
+        {
+          "name": "subset",
+          "required": true
+        },
+        {
+          "name": "na.action",
+          "required": true
+        },
+        "transform"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survpenal.fit": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        "weights",
+        {
+          "name": "offset",
+          "required": true
+        },
+        {
+          "name": "init",
+          "required": true
+        },
+        {
+          "name": "controlvals",
+          "required": true
+        },
+        {
+          "name": "dist",
+          "required": true
+        },
+        "scale",
+        "nstrat",
+        "strata",
+        {
+          "name": "pcols",
+          "required": true
+        },
+        {
+          "name": "pattr",
+          "required": true
+        },
+        {
+          "name": "assign",
+          "required": true
+        },
+        "parms"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
     "survreg": {
-      "params": ["formula", "data", "weights", "subset", "na.action", "offset", "cluster", "..."],
+      "params": [
+        "formula",
+        "data",
+        "weights",
+        "subset",
+        "na.action",
+        "offset",
+        "cluster",
+        "..."
+      ],
       "eval": {
         "formula": "quoted_expression",
         "weights": "data_mask",
@@ -95,17 +1656,183 @@
         "cluster": "data_mask"
       },
       "data_mask_source": "data",
-      "return": {"mode": "list", "length": "unknown", "class": ["survreg"]}
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "class": [
+          "survreg"
+        ]
+      }
+    },
+    "survreg.control": {
+      "params": [
+        "maxiter",
+        "rel.tolerance",
+        "toler.chol",
+        "iter.max",
+        "debug",
+        "outer.max"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survreg.fit": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "y",
+          "required": true
+        },
+        "weights",
+        {
+          "name": "offset",
+          "required": true
+        },
+        {
+          "name": "init",
+          "required": true
+        },
+        {
+          "name": "controlvals",
+          "required": true
+        },
+        {
+          "name": "dist",
+          "required": true
+        },
+        "scale",
+        "nstrat",
+        "strata",
+        "parms",
+        {
+          "name": "assign",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "survregDtest": {
+      "params": [
+        {
+          "name": "dlist",
+          "required": true
+        },
+        "verbose"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "tcut": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "breaks",
+          "required": true
+        },
+        "labels",
+        "scale"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     },
     "tmerge": {
-      "params": ["data1", "data2", "id", "...", "tstart", "tstop", "options"],
+      "params": [
+        "data1",
+        "data2",
+        "id",
+        "...",
+        "tstart",
+        "tstop",
+        "options"
+      ],
       "eval": {
         "id": "data_mask",
         "...": "data_mask",
         "tstart": "data_mask",
         "tstop": "data_mask"
       },
-      "return": {"mode": "list", "length": "unknown", "class": ["data.frame"]}
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "class": [
+          "data.frame"
+        ]
+      }
+    },
+    "untangle.specials": {
+      "params": [
+        {
+          "name": "tt",
+          "required": true
+        },
+        {
+          "name": "special",
+          "required": true
+        },
+        "order"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "yates": {
+      "params": [
+        "fit",
+        {
+          "name": "term",
+          "required": true
+        },
+        "population",
+        "levels",
+        "test",
+        "predict",
+        {
+          "name": "options",
+          "required": true
+        },
+        "nsim",
+        "method"
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    "yates_setup": {
+      "params": [
+        {
+          "name": "fit",
+          "required": true
+        },
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
     }
   },
   "s3_methods": [
