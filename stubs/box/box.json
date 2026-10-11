@@ -3,7 +3,7 @@
   "package": "box",
   "version": "0.0.2",
   "functions": {
-    "use": {"params": ["..."], "eval": {"...": "quoted_expression"}, "return": {"mode": "opaque", "length": "unknown", "na": false}},
+    "use": {"params": ["..."], "eval": {"...": "quoted_expression"}, "return": {"mode": "null", "length": "0", "na": false}},
     "export": {"params": ["..."], "eval": {"...": "quoted_expression"}, "return": {"mode": "null", "length": "0", "na": false}}
   }
 }

@@ -24,7 +24,9 @@ that revision.
   `x` accepts depends on `to`.
 - Add `box::export` (box 0.0.2): its dots are captured unevaluated as
   names (box 1.2.3 `R/export.r` reads `match.call()`) and it returns
-  `invisible()`, so the return is `NULL`.
+  `invisible()`, so the return is `NULL`. `box::use` also ends in
+  `invisible()` ("has no return value", `R/use.r`), so its return changes
+  from opaque to `NULL`.
 
 ## [0.6.0] - 2026-09-22
 
