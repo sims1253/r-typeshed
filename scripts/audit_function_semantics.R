@@ -24,6 +24,7 @@ for (name in verified_base_functions) {
   actual <- names(formals(get(name, envir = baseenv())))
   expect(identical(param_names(base$functions[[name]]), actual), sprintf("base::%s parameters differ from installed R", name))
 }
+expect(identical(param_names(base$functions$median), names(formals(stats::median))), "median parameters differ from installed R")
 for (name in c("integer", "numeric", "double", "logical", "character", "raw")) {
   sig <- base$functions[[name]]
   rule <- sig$return_length
