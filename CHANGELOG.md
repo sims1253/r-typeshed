@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+Function-semantics revisions that move facts ry carried locally into the
+stubs. The new `schema_effect` values need a consumer that accepts them
+(ry #613, unreleased after ry 0.11.0); `.github/ry-consumer` advances to
+that revision.
+
+### Function semantics
+
+- Declare dplyr's column-reshaping verbs (dplyr 0.0.2): `group_by` uses the
+  new `group_by` schema effect instead of `preserve`, so grouping by a new
+  named expression (`group_by(df, big = x > 1)`) adds that column to the
+  inferred result schema; `rename`, `relocate`, and `transmute`
+  use the new `rename`, `relocate`, and `transmute` effects. `schema/SCHEMA.md`
+  documents all four values.
+- Complete `median`'s formals as `x, na.rm, ...` (base 0.0.27), matching
+  `formals(median)` in R 4.6.1. The entries stay untyped and optional, so
+  arity checks are unchanged. `scripts/audit_function_semantics.R` now
+  compares them with `formals(stats::median)`.
+- Add `vctrs::vec_cast` (vctrs 0.0.3) with vctrs 0.7.3's formals, `x` and
+  `to` required, and an opaque return. Parameters stay untyped: which modes
+  `x` accepts depends on `to`.
+- Add `box::export` (box 0.0.2): its dots are captured unevaluated as
+  names (box 1.2.3 `R/export.r` reads `match.call()`) and it returns
+  `invisible()`, so the return is `NULL`.
+
 ## [0.6.0] - 2026-09-22
 
 Inventory and function-semantics release paired with ry 0.11.0: seven new
