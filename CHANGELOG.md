@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-12
+
 Function-semantics revisions that move facts ry carried locally into the
 stubs. The new `schema_effect` values need a consumer that accepts them
 (ry #613, unreleased after ry 0.11.0); `.github/ry-consumer` advances to
