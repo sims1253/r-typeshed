@@ -53,6 +53,7 @@ Rscript --vanilla tests/audits.R
 Rscript --vanilla tests/base_lengths.R
 Rscript --vanilla tests/ifelse_mode.R
 Rscript --vanilla tests/append.R
+Rscript --vanilla tests/selection_lengths.R
 Rscript --vanilla tests/as_vector.R
 Rscript --vanilla tests/aic_bic.R
 Rscript --vanilla tests/density_lengths.R
@@ -90,6 +91,7 @@ Rscript --vanilla tests/zoo.R
 Rscript --vanilla tests/Matrix.R
 Rscript --vanilla tests/gridExtra.R
 Rscript --vanilla tests/curl.R
+Rscript --vanilla tests/tidyverse.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla tests/pinned_versions.R
