@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+Schema additions that need a consumer accepting them (ry #NNN, unreleased
+after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
+`zero_if_all_params_zero` rule, and the top-level `attaches` list.
+`.github/ry-consumer` advances to that revision.
+
+### New stubs
+
+- Add tidyverse 0.0.1 with its six-function export inventory from tidyverse
+  2.0.0 (formal lists inference-only, returns uniformly
+  `{opaque, unknown, na: true}`) and the new top-level `attaches` list
+  naming the nine core packages `library(tidyverse)` attaches, in
+  `tidyverse:::core` order. Consumers resolve dplyr, tidyr, purrr, and the
+  other stubbed core packages after `library(tidyverse)` instead of
+  special-casing it; forcats and lubridate have no stubs and keep the
+  search path open. The runtime oracle `tests/tidyverse.R` compares the
+  exports, formals, and attach list with the installed namespace.
+
+### Function semantics
+
+- Re-count the elements of `head`, `tail`, `unique`, `setdiff`, `na.omit`,
+  `subset`, `window`, and `union` (base 0.0.28). Each keeps
+  `return: "arg0"` for its mode and class but adds a `return_length` rule,
+  so the result no longer claims the input's length: `head(x, 1)` on a
+  length-3 `x` is no longer length 3. Only an empty input proves the
+  result length; `union` needs both inputs empty, and `subset` both its
+  vector and its condition (`subset(numeric(0), TRUE)` is `NA`).
+  `tests/selection_lengths.R` pins the rules with live-R witnesses.
+- Document how `return: "arg0"` composes with `return_length`, the
+  single-parameter `zero_if_any_param_zero`, `zero_if_all_params_zero`, and
+  `attaches` in `schema/SCHEMA.md`.
+
 ## [0.6.1] - 2026-10-12
 
 Function-semantics revisions that move facts ry carried locally into the
