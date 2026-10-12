@@ -31,8 +31,7 @@
   "selection-clean": [],
   "selection-diag": [
     {"code": "RY001", "severity": "warning", "line": 4, "column": 5},
-    {"code": "RY040", "severity": "error", "line": 5, "column": 6},
-    {"code": "RY119", "severity": "warning", "line": 6, "column": 6}
+    {"code": "RY040", "severity": "error", "line": 5, "column": 6}
   ],
   "tidyverse-clean": [],
   "tidyverse-diag": [
