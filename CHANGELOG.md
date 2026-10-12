@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-Schema additions that need a consumer accepting them (ry #NNN, unreleased
+Schema additions that need a consumer accepting them (ry #652, unreleased
 after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
 `zero_if_all_params_zero` rule, and the top-level `attaches` list.
 `.github/ry-consumer` advances to that revision.
