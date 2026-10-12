@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-12
+
 Schema additions that need a consumer accepting them (ry #652, unreleased
 after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
 `zero_if_all_params_zero` and `same_emptiness` rules, and the top-level
