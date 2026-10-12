@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Add testthat's block verbs `test_that(desc, code)`, `describe(description,
+  code)`, and `it(description, code = NULL)` (testthat 0.0.2) with testthat
+  3.3.2's formals and their invisible logical result. `code` keeps the
+  default `normal` evaluation: each verb captures it with `substitute()` and
+  evaluates it once in `new.env(parent = parent.frame())`, so a wrapper that
+  forwards its own `code` formal forces that promise in the wrapper's
+  caller like any ordinary argument. `quoted_expression` and
+  `captures_promise` would wrongly mark such forwarded arguments as never
+  evaluated. The fresh child frame is scoping, not an evaluation mode, and
+  stays with the consumer.
+
 ## [0.6.1] - 2026-10-12
 
 Function-semantics revisions that move facts ry carried locally into the
