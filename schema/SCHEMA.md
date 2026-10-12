@@ -76,7 +76,7 @@ The selected formal must use normal evaluation (explicitly or by default), and
 inside the argument expression and require known callee provenance. Audit each
 contract against the installed package; the schema cannot prove runtime forcing.
 
-`schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. The `join` and `pivot` values dispatch to the checker's join-union and pivot implementations while keeping the triggering function names in stub data.
+`schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. `group_by` adds named arguments as columns and marks the result grouped when a grouping column is supplied, treating `.add` and `.drop` as controls; `transmute` keeps only the bare column names and named arguments; `rename` renames each `new = old` selection in place and keeps the other columns; and `relocate` moves the selected columns to the front, renaming named selections, with `.before` and `.after` as position controls. The `join` and `pivot` values dispatch to the checker's join-union and pivot implementations while keeping the triggering function names in stub data.
 
 ### Scope changes
 
