@@ -4,7 +4,8 @@
 
 Schema additions that need a consumer accepting them (ry #652, unreleased
 after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
-`zero_if_all_params_zero` rule, and the top-level `attaches` list.
+`zero_if_all_params_zero` and `same_emptiness` rules, and the top-level
+`attaches` list.
 `.github/ry-consumer` advances to that revision.
 
 ### New stubs
@@ -26,12 +27,13 @@ after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
   `return: "arg0"` for its mode and class but adds a `return_length` rule,
   so the result no longer claims the input's length: `head(x, 1)` on a
   length-3 `x` is no longer length 3. Only an empty input proves the
-  result length; `union` needs both inputs empty, and `subset` both its
-  vector and its condition (`subset(numeric(0), TRUE)` is `NA`).
+  result length; `union` needs both inputs empty, `subset` an empty
+  condition (`subset(numeric(0), TRUE)` is `NA`), and `unique` is empty
+  exactly when its input is.
   `tests/selection_lengths.R` pins the rules with live-R witnesses.
 - Document how `return: "arg0"` composes with `return_length`, the
-  single-parameter `zero_if_any_param_zero`, `zero_if_all_params_zero`, and
-  `attaches` in `schema/SCHEMA.md`.
+  single-parameter `zero_if_any_param_zero`, `zero_if_all_params_zero`,
+  `same_emptiness`, and `attaches` in `schema/SCHEMA.md`.
 
 ## [0.6.1] - 2026-10-12
 

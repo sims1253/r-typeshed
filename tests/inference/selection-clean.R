@@ -8,3 +8,5 @@ if (setdiff(c(1, 2, 3), c(2, 3)) == 1) 1L
 if (union(c(1, 1), 1) == 1) 1L
 if (na.omit(c(1, NA)) == 1) 1L
 y <- head(1:10, 3) + c(1, 2, 3)
+b <- as.integer(head(c(1, 1e10), 1))
+d <- as.integer(setdiff(c(1e10, 1), 1e10))
