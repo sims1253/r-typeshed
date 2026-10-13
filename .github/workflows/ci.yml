@@ -79,6 +79,11 @@ jobs:
           # Exact reference versions rendered from upstream-versions.json
           # at job runtime; no version literal lives in this file.
           packages: ${{ steps.pins.outputs.packages }}
+          # Audit the explicit namespace list, not every package's optional
+          # documentation/testing stack. Required oracle extras are listed
+          # in scripts/ci_packages.R (including carrier and tidyverse).
+          dependencies: 'c("Depends", "Imports", "LinkingTo")'
+          cache-version: archived-${{ hashFiles('tests/install_set6_deps.R') }}
 
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
@@ -218,6 +223,8 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages: ${{ steps.drift.outputs.packages }}
+          dependencies: 'c("Depends", "Imports", "LinkingTo")'
+          cache-version: archived-${{ hashFiles('tests/install_set6_deps.R') }}
       - name: Install archived inventory test packages
         run: Rscript --vanilla tests/install_set6_deps.R
       - name: Record installed versions
