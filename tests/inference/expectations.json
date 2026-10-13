@@ -37,6 +37,13 @@
     {"code": "RY001", "severity": "warning", "line": 4, "column": 5},
     {"code": "RY040", "severity": "error", "line": 5, "column": 6}
   ],
+  "survival-clean": [],
+  "survival-diag": [
+    {"code": "RY091", "severity": "warning", "line": 7, "column": 6},
+    {"code": "RY010", "severity": "warning", "line": 8, "column": 48},
+    {"code": "RY010", "severity": "warning", "line": 9, "column": 72},
+    {"code": "RY010", "severity": "warning", "line": 10, "column": 59}
+  ],
   "tidyverse-clean": [],
   "tidyverse-diag": [
     {"code": "RY080", "severity": "error", "line": 3, "column": 7}
