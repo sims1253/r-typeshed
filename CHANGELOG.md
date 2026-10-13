@@ -2,6 +2,53 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Refresh survival to stub revision 0.0.2 against survival 3.8-12
+  (`upstream-versions.json` moves from 3.8-11). The inventory now covers
+  every exported function: the 72 new exports keep returns
+  `{opaque, unknown, na: true}` except where noted below, and their
+  complete formal lists carry reviewed requiredness. A formal without a
+  default is `required: false` when the body handles `missing()`,
+  forwards it to `model.frame` through `match.call()`, or never forces
+  it, so `aareg(Surv(time, status) ~ age, lung)` and
+  `rttright(Surv(time, status) ~ 1, lung)` no longer report missing
+  `weights`/`subset`/`na.action`. `dsurvreg`/`psurvreg`/`qsurvreg`'s
+  `parms` and `yates`'s `options` are optional; formals the body rejects
+  when absent stay required: `survcondense`'s `id` ("id is required"),
+  `fromtimeline`'s `data` and `id`, `survcheck`'s `id` ("an id argument
+  is required"), `yates`'s `fit` and `term`, `Surv`'s `time`, and the
+  `formula` of each formula interface except `survSplit`, whose
+  data-frame form omits it.
+- Declare the formula contract (`formula` quoted, `data_mask_source:
+  "data"`) on the new formula interfaces, masking exactly the arguments
+  each body evaluates through `model.frame`: `weights`/`subset`/`cluster`
+  for `aareg`; `weights`/`subset`/`id` for `finegray` and `rttright`;
+  `subset`/`id` for `fromtimeline` and `survSplit`;
+  `subset`/`weights`/`id` for `survcondense`; `weights`/`subset` plus
+  `rmap` (substituted and evaluated in the model frame) for `pyears` and
+  `survexp`; `weights`/`subset` for `survConcordance`; `subset` for
+  `survobrien`; `weights`/`subset` and the `...` forwarded to `coxph`
+  for `clogit`; and `weights`/`subset`/`id`/`cluster`/`istate`/`etype`
+  for `survfit.formula`. A new `concordance` `formula` S3 method entry
+  carries the same contract; the `concordance(object, ...)` generic stays
+  open for fitted models.
+- Correct the curated survival signatures. `survreg` takes its real
+  order (`dist, init, scale, control, parms, ...` before `cluster`), so
+  the seventh positional argument is `init`, and drops the invented
+  `offset` formal. `survfit` lists `survfit.formula`'s complete order, so
+  the sixth positional argument is `stype` rather than the masked `id`,
+  and stays inference-only so other methods' arguments (`newdata`)
+  remain open. `Surv` is `(time, time2, event, type, origin)` without
+  `...`; `survcheck` gains `istate0` and `timefix`; `survdiff` replaces
+  `...` with `rho` and `timefix`.
+- Correct survival returns: `Surv` may contain `NA`
+  (`anyNA(Surv(c(NA, 2), c(1, NA)))` is `TRUE`), `cluster(x)` returns
+  `x` unchanged (`"arg0"`), `is.Surv` returns one non-`NA` logical, and
+  `strata` returns a factor. New `tests/inference/survival-*.R` fixtures
+  pin the optional formals, the masked arguments, the required `id`, and
+  the corrected positional order.
+
 ## [0.6.2] - 2026-10-12
 
 Schema additions that need a consumer accepting them (ry #652, unreleased
