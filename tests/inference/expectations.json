@@ -26,6 +26,10 @@
   "math-union-diag": [
     {"code": "RY040", "severity": "error", "line": 4, "column": 8}
   ],
+  "mirai-clean": [],
+  "mirai-diag": [
+    {"code": "RY010", "severity": "warning", "line": 4, "column": 23}
+  ],
   "r-version-clean": [],
   "safe-clean": [],
   "selection-clean": [],
