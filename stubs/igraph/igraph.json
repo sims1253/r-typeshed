@@ -56,14 +56,8 @@
     },
     "%>%": {
       "params": [
-        {
-          "name": "lhs",
-          "required": true
-        },
-        {
-          "name": "rhs",
-          "required": true
-        }
+        "lhs",
+        "rhs"
       ],
       "return": {
         "mode": "opaque",
@@ -229,7 +223,10 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "igraph.es"
+        ]
       }
     },
     "E<-": {
@@ -262,7 +259,10 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "igraph.vs"
+        ]
       }
     },
     "V<-": {
@@ -1167,6 +1167,13 @@
         "pref.matrix",
         "loops"
       ],
+      "eval": {
+        "nodes": "captures_promise",
+        "types": "captures_promise",
+        "type.dist.matrix": "captures_promise",
+        "pref.matrix": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1200,6 +1207,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "n": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1572,6 +1582,13 @@
         "directed",
         "mode"
       ],
+      "eval": {
+        "n1": "captures_promise",
+        "n2": "captures_promise",
+        "m": "captures_promise",
+        "directed": "captures_promise",
+        "mode": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1596,6 +1613,13 @@
         "directed",
         "mode"
       ],
+      "eval": {
+        "n1": "captures_promise",
+        "n2": "captures_promise",
+        "p": "captures_promise",
+        "directed": "captures_promise",
+        "mode": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1614,6 +1638,11 @@
         },
         "directed"
       ],
+      "eval": {
+        "types": "captures_promise",
+        "edges": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -2062,6 +2091,11 @@
         },
         "directed"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "w": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -2079,6 +2113,12 @@
         "loops",
         "variant"
       ],
+      "eval": {
+        "out.weights": "captures_promise",
+        "in.weights": "captures_promise",
+        "...": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -2097,6 +2137,11 @@
         },
         "directed"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "shifts": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -2115,6 +2160,14 @@
         "directed",
         "attr"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "edges": "captures_promise",
+        "types": "captures_promise",
+        "pref": "captures_promise",
+        "directed": "captures_promise",
+        "attr": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -2133,6 +2186,14 @@
         "directed",
         "attr"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "edges": "captures_promise",
+        "types": "captures_promise",
+        "pref": "captures_promise",
+        "directed": "captures_promise",
+        "attr": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -3077,14 +3138,8 @@
           "name": "communities",
           "required": true
         },
-        {
-          "name": "no",
-          "required": true
-        },
-        {
-          "name": "steps",
-          "required": true
-        }
+        "no",
+        "steps"
       ],
       "return": {
         "mode": "opaque",
@@ -3103,6 +3158,10 @@
           "required": true
         }
       ],
+      "eval": {
+        "m": "captures_promise",
+        "n": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -3208,6 +3267,9 @@
         "...",
         "deterministic"
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -3421,6 +3483,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -3521,7 +3586,10 @@
           "name": "graph",
           "required": true
         },
-        "root",
+        {
+          "name": "root",
+          "required": true
+        },
         "mode"
       ],
       "return": {
@@ -3538,6 +3606,10 @@
         },
         "directed"
       ],
+      "eval": {
+        "vecs": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -3966,6 +4038,10 @@
         "n",
         "directed"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4340,6 +4416,14 @@
         "add.colnames",
         "add.rownames"
       ],
+      "eval": {
+        "adjmatrix": "captures_promise",
+        "mode": "captures_promise",
+        "weighted": "captures_promise",
+        "diag": "captures_promise",
+        "add.colnames": "captures_promise",
+        "add.rownames": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4350,6 +4434,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4360,6 +4447,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4388,7 +4478,7 @@
         "length": "unknown",
         "na": false,
         "class": [
-          "igraph"
+          "igraph_constructor_spec"
         ]
       }
     },
@@ -4399,6 +4489,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "prufer": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4418,6 +4511,12 @@
         "directed",
         "mode"
       ],
+      "eval": {
+        "n1": "captures_promise",
+        "n2": "captures_promise",
+        "directed": "captures_promise",
+        "mode": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4432,6 +4531,10 @@
         },
         "directed"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4447,6 +4550,11 @@
         "directed",
         "loops"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "directed": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4462,6 +4570,11 @@
         "directed",
         "mode"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "directed": "captures_promise",
+        "mode": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4590,10 +4703,7 @@
           "name": "graph",
           "required": true
         },
-        {
-          "name": "name",
-          "required": true
-        },
+        "name",
         "index"
       ],
       "return": {
@@ -4659,10 +4769,7 @@
           "name": "graph",
           "required": true
         },
-        {
-          "name": "name",
-          "required": true
-        }
+        "name"
       ],
       "return": {
         "mode": "opaque",
@@ -4732,10 +4839,7 @@
           "name": "graph",
           "required": true
         },
-        {
-          "name": "name",
-          "required": true
-        },
+        "name",
         "index"
       ],
       "return": {
@@ -4835,6 +4939,12 @@
         "directed",
         "loops"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "m": "captures_promise",
+        "directed": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -4854,6 +4964,12 @@
         "directed",
         "loops"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "p": "captures_promise",
+        "directed": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -5019,10 +5135,7 @@
         "callback",
         "extra",
         "rho",
-        {
-          "name": "neimode",
-          "required": true
-        }
+        "neimode"
       ],
       "return": {
         "mode": "opaque",
@@ -5216,10 +5329,7 @@
         "out.callback",
         "extra",
         "rho",
-        {
-          "name": "neimode",
-          "required": true
-        }
+        "neimode"
       ],
       "return": {
         "mode": "opaque",
@@ -5345,6 +5455,9 @@
         "...",
         "simplify"
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -5409,22 +5522,10 @@
           "name": "graph2",
           "required": true
         },
-        {
-          "name": "vertex.color1",
-          "required": true
-        },
-        {
-          "name": "vertex.color2",
-          "required": true
-        },
-        {
-          "name": "edge.color1",
-          "required": true
-        },
-        {
-          "name": "edge.color2",
-          "required": true
-        }
+        "vertex.color1",
+        "vertex.color2",
+        "edge.color1",
+        "edge.color2"
       ],
       "return": {
         "mode": "opaque",
@@ -5442,22 +5543,10 @@
           "name": "graph2",
           "required": true
         },
-        {
-          "name": "vertex.color1",
-          "required": true
-        },
-        {
-          "name": "vertex.color2",
-          "required": true
-        },
-        {
-          "name": "edge.color1",
-          "required": true
-        },
-        {
-          "name": "edge.color2",
-          "required": true
-        }
+        "vertex.color1",
+        "vertex.color2",
+        "edge.color1",
+        "edge.color2"
       ],
       "return": {
         "mode": "opaque",
@@ -6332,6 +6421,12 @@
         "torus",
         "coords"
       ],
+      "eval": {
+        "nodes": "captures_promise",
+        "radius": "captures_promise",
+        "torus": "captures_promise",
+        "coords": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -6381,6 +6476,12 @@
         "directed",
         "citation"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "m": "captures_promise",
+        "directed": "captures_promise",
+        "citation": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -6531,6 +6632,13 @@
           "required": true
         }
       ],
+      "eval": {
+        "n": "captures_promise",
+        "m": "captures_promise",
+        "rho": "captures_promise",
+        "C": "captures_promise",
+        "p": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -7892,6 +8000,10 @@
           "required": true
         }
       ],
+      "eval": {
+        "m": "captures_promise",
+        "n": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -8055,6 +8167,13 @@
         "pref",
         "directed"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "edges": "captures_promise",
+        "agebins": "captures_promise",
+        "pref": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -8089,6 +8208,16 @@
         "periodic",
         "circular"
       ],
+      "eval": {
+        "dimvector": "captures_promise",
+        "length": "captures_promise",
+        "dim": "captures_promise",
+        "nei": "captures_promise",
+        "directed": "captures_promise",
+        "mutual": "captures_promise",
+        "periodic": "captures_promise",
+        "circular": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -8840,6 +8969,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "graph": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -9724,10 +9856,7 @@
           "name": "graph",
           "required": true
         },
-        {
-          "name": "membership",
-          "required": true
-        },
+        "membership",
         "weights",
         "resolution",
         "directed"
@@ -9993,6 +10122,18 @@
         "algorithm",
         "start.graph"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "power": "captures_promise",
+        "m": "captures_promise",
+        "out.dist": "captures_promise",
+        "out.seq": "captures_promise",
+        "out.pref": "captures_promise",
+        "zero.appeal": "captures_promise",
+        "directed": "captures_promise",
+        "algorithm": "captures_promise",
+        "start.graph": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -10025,6 +10166,22 @@
         "age.coef",
         "time.window"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "pa.exp": "captures_promise",
+        "aging.exp": "captures_promise",
+        "m": "captures_promise",
+        "aging.bin": "captures_promise",
+        "out.dist": "captures_promise",
+        "out.seq": "captures_promise",
+        "out.pref": "captures_promise",
+        "directed": "captures_promise",
+        "zero.deg.appeal": "captures_promise",
+        "zero.age.appeal": "captures_promise",
+        "deg.coef": "captures_promise",
+        "age.coef": "captures_promise",
+        "time.window": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -10297,6 +10454,15 @@
         "directed",
         "loops"
       ],
+      "eval": {
+        "nodes": "captures_promise",
+        "types": "captures_promise",
+        "type.dist": "captures_promise",
+        "fixed.sizes": "captures_promise",
+        "pref.matrix": "captures_promise",
+        "directed": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -10667,6 +10833,12 @@
         "mutual",
         "circular"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "directed": "captures_promise",
+        "mutual": "captures_promise",
+        "circular": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -11480,6 +11652,13 @@
         "directed",
         "loops"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "pref.matrix": "captures_promise",
+        "block.sizes": "captures_promise",
+        "directed": "captures_promise",
+        "loops": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -11690,14 +11869,8 @@
           "name": "coords",
           "required": true
         },
-        {
-          "name": "el",
-          "required": true
-        },
-        {
-          "name": "params",
-          "required": true
-        },
+        "el",
+        "params",
         "end"
       ],
       "return": {
@@ -11708,15 +11881,9 @@
     },
     "shape_noplot": {
       "params": [
-        {
-          "name": "coords",
-          "required": true
-        },
+        "coords",
         "v",
-        {
-          "name": "params",
-          "required": true
-        }
+        "params"
       ],
       "return": {
         "mode": "opaque",
@@ -11977,6 +12144,14 @@
         "loops",
         "multiple"
       ],
+      "eval": {
+        "dim": "captures_promise",
+        "size": "captures_promise",
+        "nei": "captures_promise",
+        "p": "captures_promise",
+        "loops": "captures_promise",
+        "multiple": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12135,6 +12310,11 @@
         "mode",
         "center"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "mode": "captures_promise",
+        "center": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12747,6 +12927,14 @@
         "pref.matrix",
         "directed"
       ],
+      "eval": {
+        "nodes": "captures_promise",
+        "types": "captures_promise",
+        "k": "captures_promise",
+        "type.dist": "captures_promise",
+        "pref.matrix": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12768,6 +12956,14 @@
         "pref.matrix",
         "directed"
       ],
+      "eval": {
+        "nodes": "captures_promise",
+        "types": "captures_promise",
+        "edge.per.step": "captures_promise",
+        "type.dist": "captures_promise",
+        "pref.matrix": "captures_promise",
+        "directed": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12808,6 +13004,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12864,6 +13063,10 @@
           "required": true
         }
       ],
+      "eval": {
+        "n": "captures_promise",
+        "r": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -12874,6 +13077,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -13230,6 +13436,11 @@
         "mode",
         "center"
       ],
+      "eval": {
+        "n": "captures_promise",
+        "mode": "captures_promise",
+        "center": "captures_promise"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -13303,6 +13514,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -13333,6 +13547,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -13410,6 +13627,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -13477,6 +13697,48 @@
         "length": "unknown",
         "na": true
       }
+    }
+  },
+  "datasets": {
+    ".data": {
+      "mode": "opaque",
+      "length": "unknown",
+      "na": true
+    },
+    ".env": {
+      "mode": "opaque",
+      "length": "unknown",
+      "na": true
+    },
+    "drl_defaults": {
+      "mode": "list",
+      "length": "5",
+      "na": false
+    },
+    "igraph.drl.coarsen": {
+      "mode": "list",
+      "length": "25",
+      "na": false
+    },
+    "igraph.drl.coarsest": {
+      "mode": "list",
+      "length": "25",
+      "na": false
+    },
+    "igraph.drl.default": {
+      "mode": "list",
+      "length": "25",
+      "na": false
+    },
+    "igraph.drl.final": {
+      "mode": "list",
+      "length": "25",
+      "na": false
+    },
+    "igraph.drl.refine": {
+      "mode": "list",
+      "length": "25",
+      "na": false
     }
   }
 }
