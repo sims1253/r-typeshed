@@ -13,22 +13,26 @@
   under `datasets` as one non-NA string.
 - Declare future's captured formals `quoted_expression`: `x` and `value` of
   `%<-%` and `%->%` (`%<-%` previously captured only `x` and now lists both
-  formals as required); `fassignment` of the `%conditions%`, `%globals%`,
-  `%label%`, `%lazy%`, `%packages%`, `%plan%`, `%seed%`, `%stdout%`, and
-  `%tweak%` modifiers, which evaluate it only after setting their option,
-  plus `%plan%`'s `strategy`; `expr` of `future`, `minifuture`, `Future`,
-  `UniprocessFuture`, and `MultiprocessFuture`; `futureAssign`'s `value`;
-  `futureOf`'s `var`; `backtrace`'s `future`; and `plan`'s `strategy`, whose
-  call form `plan(sequential(...))` is a tweak although `sequential()`
-  errors when called. Unlike testthat's `code`, a future expression is
-  evaluated elsewhere, later, or never (`lazy = TRUE`, another R process),
-  and its assignments do not reach the caller. Two cases stay conservatively
-  captured: `substitute = FALSE` evaluates the argument, and a wrapper
-  forwarding its own formal has it forced by globals detection when the
-  future is created; there the capture only loses diagnostics inside the
-  argument. Modifier right operands, `futureCall`'s `FUN`, and
-  `futureAssign`'s `x` stay `normal`. Each capture was checked against
-  future 1.76.0 under `plan(sequential)`.
+  formals as required); `expr` of `future`, `minifuture`, `Future`,
+  `UniprocessFuture`, and `MultiprocessFuture`; and `futureAssign`'s
+  `value`. Unlike testthat's `code`, a future expression is evaluated
+  elsewhere, later, or never (`lazy = TRUE`, another R process), and its
+  assignments do not reach the caller. Two uses are mis-modelled and need
+  consumer support for conditional evaluation and forwarding: with
+  `substitute = FALSE` the argument is evaluated in the caller
+  (`future({x <- 1L}, substitute = FALSE)`), and a wrapper forwarding its
+  own formal (`submit <- function(e) future(e)`) has it forced by globals
+  detection when the future is created; in both, caller assignments happen
+  immediately, so a consumer can keep a stale type and report a false error.
+  Every other formal stays `normal`: the nine modifier operators evaluate
+  `fassignment` at once with `eval(fassignment, parent.frame())`, and the
+  nested `%<-%` carries its own capture; and `backtrace`'s `future`,
+  `futureOf`'s `var`, and the `strategy` of `plan` and `%plan%` capture
+  syntax but resolve every name, subscript, and strategy component in the
+  caller (`plan(list({x <- 1L; sequential}))` assigns `x`). Modifier right
+  operands, `futureCall`'s `FUN`, and `futureAssign`'s `x` are ordinary
+  arguments. Each claim was checked against future 1.76.0 under
+  `plan(sequential)`.
 - Refresh mirai to 0.0.3 from the mirai 2.7.3 namespace. Add the 27
   exported functions the stub lacked (`daemon`, `daemons_set`, `info`,
   `race_mirai`, `with_daemons`, the `*_config` helpers, and others) with
