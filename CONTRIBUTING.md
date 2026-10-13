@@ -116,9 +116,11 @@ but does not verify its behavior against R.
 ## Inference gate
 
 Schema validation agrees on JSON vocabulary; it cannot tell whether the
-checker reads a declaration the way R behaves. The `inference` CI job
-closes that gap for a bounded, representative corpus: it builds the pinned
-ry from `.github/ry-consumer`, runs `tests/inference/` through the
+checker reads a declaration the way R behaves. The consumer CI job runs
+schema validation, inference, and its mutation self-test using one build of
+the pinned ry from `.github/ry-consumer`. It reuses that exact executable
+while the consumer revision, compiler, and build configuration are unchanged.
+The inference step runs `tests/inference/` through the
 checker's inference with the candidate stubs, and asserts inferred types
 and diagnostic identities — not just counts.
 
