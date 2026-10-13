@@ -142,7 +142,7 @@
         },
         {
           "name": "rownames",
-          "required": true
+          "required": false
         },
         "resid",
         "nocenter"
@@ -189,7 +189,7 @@
         },
         {
           "name": "rownames",
-          "required": true
+          "required": false
         },
         "resid",
         "nocenter"
@@ -383,7 +383,8 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "note": "eval masks all of `...` because coxph's id/cluster/istate arrive through it; eval cannot name arguments matched to `...`, so forwarded controls such as init are masked too (an over-approximation that only loses diagnostics)."
       }
     },
     "cluster": {
@@ -572,7 +573,7 @@
         },
         {
           "name": "rownames",
-          "required": true
+          "required": false
         },
         "resid",
         "nocenter"
@@ -617,7 +618,7 @@
         },
         {
           "name": "varmat",
-          "required": true
+          "required": false
         },
         {
           "name": "cluster",
@@ -653,7 +654,7 @@
         },
         {
           "name": "y2",
-          "required": true
+          "required": false
         },
         {
           "name": "x2",
@@ -665,7 +666,7 @@
         },
         {
           "name": "strata2",
-          "required": true
+          "required": false
         },
         {
           "name": "id2",
@@ -1652,10 +1653,7 @@
       "return": {
         "mode": "list",
         "length": "unknown",
-        "na": false,
-        "class": [
-          "survfit"
-        ]
+        "na": false
       }
     },
     "survfit.formula": {
@@ -1861,7 +1859,7 @@
         },
         {
           "name": "varmat",
-          "required": true
+          "required": false
         },
         {
           "name": "id",
@@ -1869,11 +1867,11 @@
         },
         {
           "name": "y2",
-          "required": true
+          "required": false
         },
         {
           "name": "strata2",
-          "required": true
+          "required": false
         },
         "unlist"
       ],
