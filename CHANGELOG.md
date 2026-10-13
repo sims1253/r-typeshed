@@ -4,6 +4,35 @@
 
 ### Function semantics
 
+- Revise future to 0.0.2 with the complete export inventory of future
+  1.76.0: the 86 functions added next to `%<-%` carry the installed formal
+  lists, `required` exactly on the formals without a default (each errors
+  when omitted; none has a `missing()` branch), and the conservative
+  `{opaque, unknown, na: true}` return. Curated facts: `supportsMulticore()`
+  returns one non-NA logical, and the exported `FUTURE` constant is declared
+  under `datasets` as one non-NA string.
+- Declare future's captured formals `quoted_expression`: `x` and `value` of
+  `%<-%` and `%->%` (`%<-%` previously captured only `x` and now lists both
+  formals as required); `expr` of `future`, `minifuture`, `Future`,
+  `UniprocessFuture`, and `MultiprocessFuture`; and `futureAssign`'s
+  `value`. Unlike testthat's `code`, a future expression is evaluated
+  elsewhere, later, or never (`lazy = TRUE`, another R process), and its
+  assignments do not reach the caller. Two uses are mis-modelled and need
+  consumer support for conditional evaluation and forwarding: with
+  `substitute = FALSE` the argument is evaluated in the caller
+  (`future({x <- 1L}, substitute = FALSE)`), and a wrapper forwarding its
+  own formal (`submit <- function(e) future(e)`) has it forced by globals
+  detection when the future is created; in both, caller assignments happen
+  immediately, so a consumer can keep a stale type and report a false error.
+  Every other formal stays `normal`: the nine modifier operators evaluate
+  `fassignment` at once with `eval(fassignment, parent.frame())`, and the
+  nested `%<-%` carries its own capture; and `backtrace`'s `future`,
+  `futureOf`'s `var`, and the `strategy` of `plan` and `%plan%` capture
+  syntax but resolve every name, subscript, and strategy component in the
+  caller (`plan(list({x <- 1L; sequential}))` assigns `x`). Modifier right
+  operands, `futureCall`'s `FUN`, and `futureAssign`'s `x` are ordinary
+  arguments. Each claim was checked against future 1.76.0 under
+  `plan(sequential)`.
 - Complete the igraph export inventory (igraph 0.0.2) from igraph 2.3.4.
   The 0.0.1 stub had only `graph_from_literal` and `from_literal`; the 831
   other exported functions are added with their formals and conservative
