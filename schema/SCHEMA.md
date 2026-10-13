@@ -2,7 +2,7 @@
 
 Each JSON file describes one R package. Validate stubs with `ry typeshed validate`; the serde definitions and loader in ry's `crates/ry-typeshed/src/lib.rs` are the normative machine-readable schema.
 
-The required header fields are `schema_version`, `package`, and `version`. `functions` is also required; `globals`, `datasets`, and `s3_methods` are optional. Schema version 2 extends version 1 with declarative predicate, assertion, conditional scope, and return-length semantics. ry versions that support only version 1 must reject version 2 instead of ignoring its semantic fields.
+The required header fields are `schema_version`, `package`, and `version`. `functions` is also required; `globals`, `datasets`, `s3_methods`, and [`attaches`](#attached-packages) are optional. Schema version 2 extends version 1 with declarative predicate, assertion, conditional scope, and return-length semantics. ry versions that support only version 1 must reject version 2 instead of ignoring its semantic fields.
 
 ## Functions
 
@@ -46,7 +46,9 @@ Lengths may be a decimal string from the curated vocabulary accepted by `ry type
 
 ### Return-length rules
 
-`return_length` records a named, reusable exact-length rule. It is not an interval or upper-bound language: consumers whose length domain cannot retain a fact must yield `unknown`, never turn a bound into an exact length. `{"kind": "zero_if_any_param_zero", "params": ["x", "y"]}` requires at least two individually unique formal names and returns exact zero when any listed, bound parameter is known to have exact length zero; in every other case it yields unknown. This captures the only exact length fact supplied by a set-operation bound such as `intersect()` without falsely claiming that its result has the shorter input's length.
+`return_length` records a named, reusable exact-length rule. It is not an interval or upper-bound language: consumers whose length domain cannot retain a fact must yield `unknown`, never turn a bound into an exact length. `{"kind": "zero_if_any_param_zero", "params": ["x", "y"]}` requires at least one formal name, without duplicates, and returns exact zero when any listed, bound parameter is known to have exact length zero; in every other case it yields unknown. This captures the only exact length fact supplied by a set-operation bound such as `intersect()` without falsely claiming that its result has the shorter input's length. `{"kind": "zero_if_all_params_zero", "params": ["x", "y"]}` has the same requirements and returns exact zero only when every listed parameter is bound and known to have exact length zero (`union()`). `{"kind": "same_emptiness", "param": "x"}` returns exact zero when the bound parameter is known to be empty and a nonempty result when it is known to be nonempty (`unique()`); otherwise unknown. The named parameter must exist.
+
+With `return: "arg0"`, a `return_length` rule replaces only the length: the result keeps the first argument's mode and class but re-counts its elements, as `head()`, `unique()`, `na.omit()`, and the set operations do. Facts about the whole value, such as its exact values, no longer hold, except that a selection proven nonempty from a fully known, NA-free constant vector still holds that value. A data frame keeps its columns, and therefore its length, while the selection changes its row count; any other record loses its element schema.
 
 `{"kind": "recycled_values", ...}` describes vector recycling without treating controls as values. `value_params` must not be empty. It and `control_params` contain disjoint, individually unique formal-parameter names, resolved with R's normal exact, partial, and positional argument matching. A `...` value parameter denotes every argument captured by that formal; it does not include arguments bound to a named control. All non-`...` value parameters and every control must be explicit, so a consumer can determine the value set without relying on an argument's source position. `collapse.param` and `recycle0.param` must each be a member of `control_params`. `all_values_zero: "zero"` preserves the all-empty result, `collapse` requires `when: "non_null"` and `length: "1"`, and `recycle0` requires `when: "true"` and `any_value_zero: "zero"`. Each control rejects fields belonging to the other. This models the real `paste`/`paste0` contract, including `collapse` and `recycle0`, without special-casing function names.
 
@@ -76,7 +78,7 @@ The selected formal must use normal evaluation (explicitly or by default), and
 inside the argument expression and require known callee provenance. Audit each
 contract against the installed package; the schema cannot prove runtime forcing.
 
-`schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. The `join` and `pivot` values dispatch to the checker's join-union and pivot implementations while keeping the triggering function names in stub data.
+`schema_effect` describes how a data-aware function computes its result schema after evaluating arguments. `preserve` returns the first argument unchanged; `add_named_args` adds named arguments as columns; `select` keeps selected columns; `aggregate` creates a fresh data frame from named arguments; and `expression_value` returns the second argument's inferred type. `group_by` adds named arguments as columns and marks the result grouped when a grouping column is supplied, treating `.add` and `.drop` as controls; `transmute` keeps only the bare column names and named arguments; `rename` renames each `new = old` selection in place and keeps the other columns; and `relocate` moves the selected columns to the front, renaming named selections, with `.before` and `.after` as position controls. The `join` and `pivot` values dispatch to the checker's join-union and pivot implementations while keeping the triggering function names in stub data.
 
 ### Scope changes
 
@@ -136,5 +138,9 @@ stub's ambient globals and mechanically inventoried base/recommended datasets.
 Generated datasets are unioned with the existing map, and existing curated
 entries are never replaced. Pass `--check` to verify that both inventories are
 current without writing the file.
+
+## Attached packages
+
+The optional top-level `attaches` array lists the packages that attaching this package also attaches, in attach order. A meta-package such as tidyverse declares its core packages here, so `library(tidyverse)` makes their stubs resolvable exactly as if each had been attached. Entries must name other packages, each once; they need not have stubs, and a consumer treats an attached package without one as able to supply any name.
 
 `schema_version` changes only for incompatible format changes. Package `version` describes the stub data version.

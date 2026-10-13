@@ -2,6 +2,79 @@
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-12
+
+Schema additions that need a consumer accepting them (ry #652, unreleased
+after ry 0.11.0): `zero_if_any_param_zero` with a single parameter, the
+`zero_if_all_params_zero` and `same_emptiness` rules, and the top-level
+`attaches` list.
+`.github/ry-consumer` advances to that revision.
+
+### New stubs
+
+- Add tidyverse 0.0.1 with its six-function export inventory from tidyverse
+  2.0.0 (formal lists inference-only, returns uniformly
+  `{opaque, unknown, na: true}`) and the new top-level `attaches` list
+  naming the nine core packages `library(tidyverse)` attaches, in
+  `tidyverse:::core` order. Consumers resolve dplyr, tidyr, purrr, and the
+  other stubbed core packages after `library(tidyverse)` instead of
+  special-casing it; forcats and lubridate have no stubs and keep the
+  search path open. The runtime oracle `tests/tidyverse.R` compares the
+  exports, formals, and attach list with the installed namespace.
+
+### Function semantics
+
+- Re-count the elements of `head`, `tail`, `unique`, `setdiff`, `na.omit`,
+  `subset`, `window`, and `union` (base 0.0.28). Each keeps
+  `return: "arg0"` for its mode and class but adds a `return_length` rule,
+  so the result no longer claims the input's length: `head(x, 1)` on a
+  length-3 `x` is no longer length 3. Only an empty input proves the
+  result length; `union` needs both inputs empty, `subset` an empty
+  condition (`subset(numeric(0), TRUE)` is `NA`), and `unique` is empty
+  exactly when its input is.
+  `tests/selection_lengths.R` pins the rules with live-R witnesses.
+- Document how `return: "arg0"` composes with `return_length`, the
+  single-parameter `zero_if_any_param_zero`, `zero_if_all_params_zero`,
+  `same_emptiness`, and `attaches` in `schema/SCHEMA.md`.
+- Add testthat's block verbs `test_that(desc, code)`, `describe(description,
+  code)`, and `it(description, code = NULL)` (testthat 0.0.2) with testthat
+  3.3.2's formals and their invisible logical result. `code` keeps the
+  default `normal` evaluation: each verb captures it with `substitute()` and
+  evaluates it once in `new.env(parent = parent.frame())`, so a wrapper that
+  forwards its own `code` formal forces that promise in the wrapper's
+  caller like any ordinary argument. `quoted_expression` and
+  `captures_promise` would wrongly mark such forwarded arguments as never
+  evaluated. The fresh child frame is scoping, not an evaluation mode, and
+  stays with the consumer.
+
+## [0.6.1] - 2026-10-12
+
+Function-semantics revisions that move facts ry carried locally into the
+stubs. The new `schema_effect` values need a consumer that accepts them
+(ry #613, unreleased after ry 0.11.0); `.github/ry-consumer` advances to
+that revision.
+
+### Function semantics
+
+- Declare dplyr's column-reshaping verbs (dplyr 0.0.2): `group_by` uses the
+  new `group_by` schema effect instead of `preserve`, so grouping by a new
+  named expression (`group_by(df, big = x > 1)`) adds that column to the
+  inferred result schema; `rename`, `relocate`, and `transmute`
+  use the new `rename`, `relocate`, and `transmute` effects. `schema/SCHEMA.md`
+  documents all four values.
+- Complete `median`'s formals as `x, na.rm, ...` (base 0.0.27), matching
+  `formals(median)` in R 4.6.1. The entries stay untyped and optional, so
+  arity checks are unchanged. `scripts/audit_function_semantics.R` now
+  compares them with `formals(stats::median)`.
+- Add `vctrs::vec_cast` (vctrs 0.0.3) with vctrs 0.7.3's formals, `x` and
+  `to` required, and an opaque return. Parameters stay untyped: which modes
+  `x` accepts depends on `to`.
+- Add `box::export` (box 0.0.2): its dots are captured unevaluated as
+  names (box 1.2.3 `R/export.r` reads `match.call()`) and it returns
+  `invisible()`, so the return is `NULL`. `box::use` also ends in
+  `invisible()` ("has no return value", `R/use.r`), so its return changes
+  from opaque to `NULL`.
+
 ## [0.6.0] - 2026-09-22
 
 Inventory and function-semantics release paired with ry 0.11.0: seven new

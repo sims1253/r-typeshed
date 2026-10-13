@@ -27,5 +27,14 @@
     {"code": "RY040", "severity": "error", "line": 4, "column": 8}
   ],
   "r-version-clean": [],
-  "safe-clean": []
+  "safe-clean": [],
+  "selection-clean": [],
+  "selection-diag": [
+    {"code": "RY001", "severity": "warning", "line": 4, "column": 5},
+    {"code": "RY040", "severity": "error", "line": 5, "column": 6}
+  ],
+  "tidyverse-clean": [],
+  "tidyverse-diag": [
+    {"code": "RY080", "severity": "error", "line": 3, "column": 7}
+  ]
 }
