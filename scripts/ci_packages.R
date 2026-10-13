@@ -15,5 +15,6 @@ ci_packages <- c(
   "zoo",
   "Matrix",
   "gridExtra",
-  "curl"
+  "curl",
+  "tidyverse"
 )
