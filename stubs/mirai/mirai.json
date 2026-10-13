@@ -2,17 +2,35 @@
   "schema_version": "2",
   "package": "mirai",
   "version": "0.0.3",
+  "datasets": {
+    ".flat": {
+      "mode": "opaque",
+      "length": "1",
+      "na": false,
+      "note": "Compiled bytecode option for indexing a mirai_map, as in x[.flat]; not callable. Exported by mirai 2.7.3."
+    },
+    ".progress": {
+      "mode": "opaque",
+      "length": "1",
+      "na": false,
+      "note": "Compiled bytecode option for indexing a mirai_map, as in x[.progress]; not callable. Exported by mirai 2.7.3."
+    },
+    ".stop": {
+      "mode": "opaque",
+      "length": "1",
+      "na": false,
+      "note": "Compiled bytecode option for indexing a mirai_map, as in x[.stop]; not callable. Exported by mirai 2.7.3."
+    }
+  },
   "functions": {
     "call_mirai": {
       "params": [
-        ".x",
-        "..."
+        {
+          "name": "x",
+          "required": true
+        }
       ],
-      "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": false
-      }
+      "return": "arg0"
     },
     "cluster_config": {
       "params": [
@@ -21,20 +39,23 @@
         "rscript"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "list",
+        "length": "4",
+        "na": false
       }
     },
     "collect_mirai": {
       "params": [
-        ".x",
-        "..."
+        {
+          "name": "x",
+          "required": true
+        },
+        "options"
       ],
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "daemon": {
@@ -64,15 +85,23 @@
     "daemons": {
       "params": [
         "n",
-        "..."
+        "url",
+        "remote",
+        "dispatcher",
+        "...",
+        "sync",
+        "seed",
+        "memory",
+        "serial",
+        "tls",
+        "pass",
+        ".compute"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "logical",
         "length": "1",
         "na": false,
-        "class": [
-          "mirai_daemons"
-        ]
+        "note": "Invisible TRUE classed c(\"miraiDaemons\", <.compute profile>) when daemons are set; unclassed FALSE when reset with n = 0. n may be omitted when url is supplied. Source: mirai 2.7.3 daemons() body; runtime checked on mirai 2.7.3 / R 4.5.0."
       }
     },
     "daemons_set": {
@@ -80,20 +109,33 @@
         ".compute"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "everywhere": {
       "params": [
-        ".expr",
-        "..."
+        {
+          "name": ".expr",
+          "required": true
+        },
+        "...",
+        ".args",
+        ".min",
+        ".compute"
       ],
+      "eval": {
+        ".expr": "quoted_expression"
+      },
       "return": {
-        "mode": "null",
-        "length": "0",
-        "na": false
+        "mode": "opaque",
+        "length": "unknown",
+        "na": false,
+        "class": [
+          "mirai_map"
+        ],
+        "note": "Invisible list of mirai objects, one per connected daemon; .expr is captured as in mirai(). Source: mirai 2.7.3 everywhere() body; runtime checked on mirai 2.7.3 / R 4.5.0."
       }
     },
     "host_url": {
@@ -118,9 +160,9 @@
         "token"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "list",
+        "length": "8",
+        "na": false
       }
     },
     "info": {
@@ -141,14 +183,17 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "is_mirai": {
       "params": [
-        "x"
+        {
+          "name": "x",
+          "required": true
+        }
       ],
       "return": {
         "mode": "logical",
@@ -164,9 +209,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "is_mirai_interrupt": {
@@ -177,9 +222,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "is_mirai_map": {
@@ -190,9 +235,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "launch_local": {
@@ -240,9 +285,9 @@
         "port"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "character",
+        "length": "1",
+        "na": false
       }
     },
     "make_cluster": {
@@ -260,29 +305,52 @@
     },
     "mirai": {
       "params": [
-        ".expr",
-        "..."
+        {
+          "name": ".expr",
+          "required": true
+        },
+        "...",
+        ".args",
+        ".timeout",
+        ".compute"
       ],
+      "eval": {
+        ".expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
-        "length": "1",
+        "length": "unknown",
         "na": false,
         "class": [
-          "mirai"
-        ]
+          "mirai",
+          "recvAio"
+        ],
+        "note": "An environment. .expr is captured with substitute() at this call site and evaluated on the daemon; the caller evaluates it only when it is a bare symbol bound in the calling frame (forcing a forwarded formal's promise), substituting the value when that is a language object. Source: mirai 2.7.3 mirai() and resolve_expr() bodies; runtime checked on mirai 2.7.3 / R 4.5.0."
       }
     },
     "mirai_map": {
       "params": [
-        "..."
+        {
+          "name": ".x",
+          "required": true
+        },
+        {
+          "name": ".f",
+          "required": true
+        },
+        "...",
+        ".args",
+        ".promise",
+        ".compute"
       ],
       "return": {
         "mode": "opaque",
-        "length": "1",
+        "length": "unknown",
         "na": false,
         "class": [
           "mirai_map"
-        ]
+        ],
+        "note": "Invisible list of mirai objects: one per element of a vector or list .x, one per row of a data frame or matrix .x. Source: mirai 2.7.3 mirai_map() body; runtime checked on mirai 2.7.3 / R 4.5.0."
       }
     },
     "nextcode": {
@@ -325,9 +393,9 @@
     "on_daemon": {
       "params": [],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "race_mirai": {
@@ -360,9 +428,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "null",
+        "length": "0",
+        "na": false
       }
     },
     "remote_config": {
@@ -373,9 +441,9 @@
         "quote"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "list",
+        "length": "5",
+        "na": false
       }
     },
     "require_daemons": {
@@ -384,9 +452,9 @@
         "call"
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "serial_config": {
@@ -405,9 +473,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "list",
+        "length": "3",
+        "na": false
       }
     },
     "ssh_config": {
@@ -446,36 +514,52 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
-      }
-    },
-    "stop_mirai": {
-      "params": [
-        ".x",
-        "..."
-      ],
-      "return": {
         "mode": "null",
         "length": "0",
         "na": false
       }
     },
+    "stop_mirai": {
+      "params": [
+        {
+          "name": "x",
+          "required": true
+        }
+      ],
+      "return": {
+        "mode": "logical",
+        "length": "unknown",
+        "na": false,
+        "note": "Invisible TRUE/FALSE per mirai: length 1 for a single mirai, one per element for a list or mirai_map. Source: mirai 2.7.3 stop_mirai() body; runtime checked on mirai 2.7.3 / R 4.5.0."
+      }
+    },
     "try_mirai": {
       "params": [
-        ".x",
-        "..."
+        {
+          "name": ".expr",
+          "required": true
+        },
+        "...",
+        ".args",
+        ".timeout",
+        ".compute"
       ],
+      "eval": {
+        ".expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": false,
+        "note": "A mirai, or invisible NULL when a bounded dispatcher queue is full; .expr is captured as in mirai(). Source: mirai 2.7.3 try_mirai() body; runtime checked on mirai 2.7.3 / R 4.5.0."
       }
     },
     "unresolved": {
       "params": [
-        ".x"
+        {
+          "name": "x",
+          "required": true
+        }
       ],
       "return": {
         "mode": "logical",
