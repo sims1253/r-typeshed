@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Revise future to 0.0.2 with the complete export inventory of future
+  1.76.0: the 86 functions added next to `%<-%` carry the installed formal
+  lists, `required` exactly on the formals without a default (each errors
+  when omitted; none has a `missing()` branch), and the conservative
+  `{opaque, unknown, na: true}` return. Curated facts: `supportsMulticore()`
+  returns one non-NA logical, and the exported `FUTURE` constant is declared
+  under `datasets` as one non-NA string.
+- Declare future's captured formals `quoted_expression`: `x` and `value` of
+  `%<-%` and `%->%` (`%<-%` previously captured only `x` and now lists both
+  formals as required); `fassignment` of the `%conditions%`, `%globals%`,
+  `%label%`, `%lazy%`, `%packages%`, `%plan%`, `%seed%`, `%stdout%`, and
+  `%tweak%` modifiers, which evaluate it only after setting their option,
+  plus `%plan%`'s `strategy`; `expr` of `future`, `minifuture`, `Future`,
+  `UniprocessFuture`, and `MultiprocessFuture`; `futureAssign`'s `value`;
+  `futureOf`'s `var`; `backtrace`'s `future`; and `plan`'s `strategy`, whose
+  call form `plan(sequential(...))` is a tweak although `sequential()`
+  errors when called. Unlike testthat's `code`, a future expression is
+  evaluated elsewhere, later, or never (`lazy = TRUE`, another R process),
+  and its assignments do not reach the caller. Two cases stay conservatively
+  captured: `substitute = FALSE` evaluates the argument, and a wrapper
+  forwarding its own formal has it forced by globals detection when the
+  future is created; there the capture only loses diagnostics inside the
+  argument. Modifier right operands, `futureCall`'s `FUN`, and
+  `futureAssign`'s `x` stay `normal`. Each capture was checked against
+  future 1.76.0 under `plan(sequential)`.
+
 ## [0.6.2] - 2026-10-12
 
 Schema additions that need a consumer accepting them (ry #652, unreleased

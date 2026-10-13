@@ -2,6 +2,13 @@
   "schema_version": "2",
   "package": "future",
   "version": "0.0.2",
+  "datasets": {
+    "FUTURE": {
+      "mode": "character",
+      "length": "1",
+      "na": false
+    }
+  },
   "functions": {
     "%->%": {
       "params": [
@@ -14,6 +21,10 @@
           "required": true
         }
       ],
+      "eval": {
+        "value": "quoted_expression",
+        "x": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -22,11 +33,18 @@
     },
     "%<-%": {
       "params": [
-        "x",
-        "value"
+        {
+          "name": "x",
+          "required": true
+        },
+        {
+          "name": "value",
+          "required": true
+        }
       ],
       "eval": {
-        "x": "quoted_expression"
+        "x": "quoted_expression",
+        "value": "quoted_expression"
       },
       "return": {
         "mode": "opaque",
@@ -45,6 +63,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -62,6 +83,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -79,6 +103,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -96,6 +123,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -113,6 +143,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -130,6 +163,10 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression",
+        "strategy": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -147,6 +184,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -164,6 +204,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -181,6 +224,9 @@
           "required": true
         }
       ],
+      "eval": {
+        "fassignment": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -321,6 +367,9 @@
         "label",
         "..."
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -564,6 +613,9 @@
         "envir",
         "..."
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -664,6 +716,9 @@
         "envir",
         "..."
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -727,6 +782,9 @@
         "envir",
         "..."
       ],
+      "eval": {
+        "future": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -777,6 +835,9 @@
         "label",
         "..."
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -805,6 +866,9 @@
         "...",
         "assign.env"
       ],
+      "eval": {
+        "value": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -842,6 +906,9 @@
         "default",
         "drop"
       ],
+      "eval": {
+        "var": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1033,6 +1100,9 @@
         "...",
         "envir"
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1094,6 +1164,9 @@
         ".cleanup",
         ".init"
       ],
+      "eval": {
+        "strategy": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1231,9 +1304,9 @@
         "..."
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "tweak": {
