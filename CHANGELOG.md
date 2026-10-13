@@ -4,6 +4,43 @@
 
 ### Function semantics
 
+- Complete the igraph export inventory (igraph 0.0.2) from igraph 2.3.4.
+  The 0.0.1 stub had only `graph_from_literal` and `from_literal`; the 831
+  other exported functions are added with their formals and conservative
+  `{opaque, unknown, na: true}` returns. The eight non-function exports go
+  under `datasets` instead: `.data` and `.env` (rlang's pronouns) as opaque
+  values, `drl_defaults` as a length-5 list, and the five `igraph.drl.*`
+  parameter presets as length-25 lists.
+- Curate igraph's argument capture against the installed namespace.
+  `graph.formula(...)` reads its dots through `match.call()` like
+  `graph_from_literal`, so it gets the same `quoted_expression` contract.
+  The 45 `make_()` constructor specs built by `constructor_spec()`
+  (`ring`, `directed_graph`, `gnp`, `tree`, ...) capture their formals
+  with `rlang::enquos()` and declare `captures_promise`. For example,
+  `directed_graph(stop("x"))` returns a spec without signalling. Formals
+  these specs evaluate up front keep normal evaluation: `chung_lu(variant)`,
+  `degseq(deterministic)`, and the `check_dots_empty()` dots of
+  `bipartite_gnm`, `bipartite_gnp`, `growing`, and `wheel`. The
+  `with_vertex_`, `with_edge_`, and `with_graph_` modifiers keep their dots
+  as `match.call()` expressions and `eval()` them later, outside the caller,
+  so they are `quoted_expression`. The layout specs (`in_circle`,
+  `with_fr`, ...) and the `normalize`/`component_wise` modifiers evaluate
+  their arguments immediately and stay normal. `make_graph`, `graph`, and
+  `graph.famous` capture `...` literally only when `edges` is a formula and
+  otherwise evaluate them, which a per-parameter `eval` mode cannot express,
+  so they stay undeclared. The re-exported `%>%` now matches magrittr's stub.
+- Return the `igraph.vs` and `igraph.es` classes from `V()` and `E()`.
+  Correct `from_literal`'s class from `igraph` to `igraph_constructor_spec`,
+  and its `...` from `quoted_expression` to `captures_promise`: it captures
+  through `constructor_spec()`'s `rlang::enquos()`, so a wrapper forwarding
+  its dots passes the caller's expressions through.
+- Make `dominator_tree(root)` required, since a missing `root` aborts. Make
+  formals optional where a call without them succeeds in igraph 2.3.4:
+  `cutat(no, steps)`, `get.{edge,graph,vertex}.attribute(name)`,
+  `graph.bfs`/`graph.dfs(neimode)`, the four color formals of
+  `graph.get.isomorphisms.vf2` and `graph.get.subisomorphisms.vf2`,
+  `mod.matrix(membership)`, `shape_noclip(el, params)`, and
+  `shape_noplot(coords, params)`.
 - Refresh mirai to 0.0.3 from the mirai 2.7.3 namespace. Add the 27
   exported functions the stub lacked (`daemon`, `daemons_set`, `info`,
   `race_mirai`, `with_daemons`, the `*_config` helpers, and others) with
