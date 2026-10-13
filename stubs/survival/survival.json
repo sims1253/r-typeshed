@@ -5,14 +5,25 @@
   "functions": {
     "Surv": {
       "params": [
-        "time",
-        "event",
-        "..."
+        {
+          "name": "time",
+          "required": true
+        },
+        {
+          "name": "time2",
+          "required": false
+        },
+        {
+          "name": "event",
+          "required": false
+        },
+        "type",
+        "origin"
       ],
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false,
+        "na": true,
         "class": [
           "Surv"
         ]
@@ -32,33 +43,49 @@
     },
     "aareg": {
       "params": [
-        "formula",
-        "data",
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
         "qrtol",
-        "nmin",
+        {
+          "name": "nmin",
+          "required": false
+        },
         "dfbeta",
         "taper",
         "test",
         {
           "name": "cluster",
-          "required": true
+          "required": false
         },
         "model",
         "x",
         "y"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "cluster": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -111,7 +138,7 @@
         },
         {
           "name": "method",
-          "required": true
+          "required": false
         },
         {
           "name": "rownames",
@@ -140,7 +167,10 @@
           "name": "strata",
           "required": true
         },
-        "offset",
+        {
+          "name": "offset",
+          "required": false
+        },
         {
           "name": "init",
           "required": true
@@ -149,7 +179,10 @@
           "name": "control",
           "required": true
         },
-        "weights",
+        {
+          "name": "weights",
+          "required": false
+        },
         {
           "name": "method",
           "required": true
@@ -190,7 +223,10 @@
           "name": "fit",
           "required": true
         },
-        "newdata",
+        {
+          "name": "newdata",
+          "required": false
+        },
         "centered"
       ],
       "return": {
@@ -245,8 +281,14 @@
           "name": "fit",
           "required": true
         },
-        "times",
-        "newdata",
+        {
+          "name": "times",
+          "required": false
+        },
+        {
+          "name": "newdata",
+          "required": false
+        },
         "ties",
         "detail",
         "timefix",
@@ -264,7 +306,10 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "subcoh",
           "required": true
@@ -309,22 +354,32 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
         "method",
         "..."
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "...": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -338,11 +393,7 @@
           "required": true
         }
       ],
-      "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
-      }
+      "return": "arg0"
     },
     "concordance": {
       "params": [
@@ -368,12 +419,21 @@
           "name": "x",
           "required": true
         },
-        "strata",
-        "weights",
+        {
+          "name": "strata",
+          "required": false
+        },
+        {
+          "name": "weights",
+          "required": false
+        },
         "ymin",
         "ymax",
         "timewt",
-        "cluster",
+        {
+          "name": "cluster",
+          "required": false
+        },
         "influence",
         "ranks",
         "reverse",
@@ -490,13 +550,22 @@
           "name": "strata",
           "required": true
         },
-        "offset",
-        "init",
+        {
+          "name": "offset",
+          "required": false
+        },
+        {
+          "name": "init",
+          "required": false
+        },
         {
           "name": "control",
           "required": true
         },
-        "weights",
+        {
+          "name": "weights",
+          "required": false
+        },
         {
           "name": "method",
           "required": true
@@ -552,7 +621,7 @@
         },
         {
           "name": "cluster",
-          "required": true
+          "required": false
         },
         {
           "name": "y",
@@ -572,12 +641,15 @@
         },
         {
           "name": "position",
-          "required": true
+          "required": false
         },
-        "strata",
+        {
+          "name": "strata",
+          "required": false
+        },
         {
           "name": "oldid",
-          "required": true
+          "required": false
         },
         {
           "name": "y2",
@@ -595,7 +667,10 @@
           "name": "strata2",
           "required": true
         },
-        "id2",
+        {
+          "name": "id2",
+          "required": false
+        },
         "unlist"
       ],
       "return": {
@@ -618,7 +693,7 @@
         "distribution",
         {
           "name": "parms",
-          "required": true
+          "required": false
         }
       ],
       "return": {
@@ -633,25 +708,38 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         "na.action",
-        "etype",
+        {
+          "name": "etype",
+          "required": false
+        },
         "prefix",
         "count",
         {
           "name": "id",
-          "required": true
+          "required": false
         },
         "timefix"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "id": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -694,8 +782,14 @@
           "required": true
         },
         "sparse",
-        "theta",
-        "df",
+        {
+          "name": "theta",
+          "required": false
+        },
+        {
+          "name": "df",
+          "required": false
+        },
         "eps",
         "method",
         "..."
@@ -713,8 +807,14 @@
           "required": true
         },
         "sparse",
-        "theta",
-        "df",
+        {
+          "name": "theta",
+          "required": false
+        },
+        {
+          "name": "df",
+          "required": false
+        },
         "method",
         "..."
       ],
@@ -731,8 +831,14 @@
           "required": true
         },
         "sparse",
-        "theta",
-        "df",
+        {
+          "name": "theta",
+          "required": false
+        },
+        {
+          "name": "df",
+          "required": false
+        },
         "eps",
         "tdf",
         "method",
@@ -756,7 +862,7 @@
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "id",
@@ -766,6 +872,12 @@
         "lvcf",
         "yname"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "subset": "data_mask",
+        "id": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -780,9 +892,9 @@
         }
       ],
       "return": {
-        "mode": "opaque",
-        "length": "unknown",
-        "na": true
+        "mode": "logical",
+        "length": "1",
+        "na": false
       }
     },
     "is.na.Surv": {
@@ -822,7 +934,10 @@
           "name": "x",
           "required": true
         },
-        "time",
+        {
+          "name": "time",
+          "required": false
+        },
         "first"
       ],
       "return": {
@@ -910,7 +1025,10 @@
           "name": "times",
           "required": true
         },
-        "type",
+        {
+          "name": "type",
+          "required": false
+        },
         "collapse",
         "data.frame",
         "..."
@@ -928,15 +1046,24 @@
           "required": true
         },
         "df",
-        "theta",
+        {
+          "name": "theta",
+          "required": false
+        },
         "nterm",
         "degree",
         "eps",
-        "method",
+        {
+          "name": "method",
+          "required": false
+        },
         "Boundary.knots",
         "intercept",
         "penalty",
-        "combine",
+        {
+          "name": "combine",
+          "required": false
+        },
         "..."
       ],
       "return": {
@@ -959,7 +1086,7 @@
         "distribution",
         {
           "name": "parms",
-          "required": true
+          "required": false
         }
       ],
       "return": {
@@ -974,21 +1101,30 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
-        "rmap",
-        "ratetable",
+        {
+          "name": "rmap",
+          "required": false
+        },
+        {
+          "name": "ratetable",
+          "required": false
+        },
         "scale",
         "expect",
         "model",
@@ -996,6 +1132,13 @@
         "y",
         "data.frame"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "rmap": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1016,7 +1159,7 @@
         "distribution",
         {
           "name": "parms",
-          "required": true
+          "required": false
         }
       ],
       "return": {
@@ -1068,7 +1211,10 @@
           "name": "fit",
           "required": true
         },
-        "newdata",
+        {
+          "name": "newdata",
+          "required": false
+        },
         "ties",
         "adjust"
       ],
@@ -1090,7 +1236,10 @@
         },
         "scale",
         "distribution",
-        "parms"
+        {
+          "name": "parms",
+          "required": false
+        }
       ],
       "return": {
         "mode": "opaque",
@@ -1106,28 +1255,38 @@
         },
         {
           "name": "data",
-          "required": true
+          "required": false
         },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
-        "times",
+        {
+          "name": "times",
+          "required": false
+        },
         {
           "name": "id",
-          "required": true
+          "required": false
         },
         "timefix",
         "renorm"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "id": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1170,9 +1329,12 @@
         "sep"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "integer",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "factor"
+        ]
       }
     },
     "survConcordance": {
@@ -1181,20 +1343,29 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         }
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1211,8 +1382,14 @@
           "name": "x",
           "required": true
         },
-        "strata",
-        "weight"
+        {
+          "name": "strata",
+          "required": false
+        },
+        {
+          "name": "weight",
+          "required": false
+        }
       ],
       "return": {
         "mode": "opaque",
@@ -1222,26 +1399,47 @@
     },
     "survSplit": {
       "params": [
-        "formula",
-        "data",
+        {
+          "name": "formula",
+          "required": false
+        },
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         "na.action",
-        "id",
+        {
+          "name": "id",
+          "required": false
+        },
         {
           "name": "cut",
           "required": true
         },
         "zero",
-        "episode",
+        {
+          "name": "episode",
+          "required": false
+        },
         "start",
         "end",
         "event",
-        "added",
+        {
+          "name": "added",
+          "required": false
+        },
         "timefix"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "subset": "data_mask",
+        "id": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1250,12 +1448,32 @@
     },
     "survcheck": {
       "params": [
-        "formula",
-        "data",
-        "subset",
-        "na.action",
-        "id",
-        "istate",
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": false
+        },
+        {
+          "name": "subset",
+          "required": false
+        },
+        {
+          "name": "na.action",
+          "required": false
+        },
+        {
+          "name": "id",
+          "required": true
+        },
+        {
+          "name": "istate",
+          "required": false
+        },
+        "istate0",
+        "timefix",
         "..."
       ],
       "eval": {
@@ -1276,21 +1494,34 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         "na.action",
-        "id",
+        {
+          "name": "id",
+          "required": true
+        },
         "start",
         "end",
         "event"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "subset": "data_mask",
+        "weights": "data_mask",
+        "id": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1299,11 +1530,24 @@
     },
     "survdiff": {
       "params": [
-        "formula",
-        "data",
-        "subset",
-        "na.action",
-        "..."
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": false
+        },
+        {
+          "name": "subset",
+          "required": false
+        },
+        {
+          "name": "na.action",
+          "required": false
+        },
+        "rho",
+        "timefix"
       ],
       "eval": {
         "formula": "quoted_expression",
@@ -1324,31 +1568,50 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
-        "rmap",
-        "times",
+        {
+          "name": "rmap",
+          "required": false
+        },
+        {
+          "name": "times",
+          "required": false
+        },
         "method",
         "cohort",
         "conditional",
         "ratetable",
         "scale",
-        "se.fit",
+        {
+          "name": "se.fit",
+          "required": false
+        },
         "model",
         "x",
         "y"
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "rmap": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1362,9 +1625,18 @@
         "weights",
         "subset",
         "na.action",
+        "stype",
+        "ctype",
         "id",
         "cluster",
+        "robust",
         "istate",
+        "timefix",
+        "etype",
+        "model",
+        "error",
+        "entry",
+        "time0",
         "..."
       ],
       "eval": {
@@ -1373,7 +1645,8 @@
         "subset": "data_mask",
         "id": "data_mask",
         "cluster": "data_mask",
-        "istate": "data_mask"
+        "istate": "data_mask",
+        "etype": "data_mask"
       },
       "data_mask_source": "data",
       "return": {
@@ -1387,53 +1660,72 @@
     },
     "survfit.formula": {
       "params": [
-        "formula",
+        {
+          "name": "formula",
+          "required": true
+        },
         {
           "name": "data",
-          "required": true
+          "required": false
         },
         {
           "name": "weights",
-          "required": true
+          "required": false
         },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
-        "na.action",
+        {
+          "name": "na.action",
+          "required": false
+        },
         "stype",
         "ctype",
         {
           "name": "id",
-          "required": true
+          "required": false
         },
         {
           "name": "cluster",
-          "required": true
+          "required": false
         },
-        "robust",
+        {
+          "name": "robust",
+          "required": false
+        },
         {
           "name": "istate",
-          "required": true
+          "required": false
         },
         "timefix",
         {
           "name": "etype",
-          "required": true
+          "required": false
         },
         "model",
         {
           "name": "error",
-          "required": true
+          "required": false
         },
         "entry",
         "time0",
         "..."
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "id": "data_mask",
+        "cluster": "data_mask",
+        "istate": "data_mask",
+        "etype": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": false
       }
     },
     "survfit0": {
@@ -1467,12 +1759,27 @@
         "conf.int",
         "conf.type",
         "conf.lower",
-        "start.time",
-        "id",
-        "cluster",
-        "robust",
+        {
+          "name": "start.time",
+          "required": false
+        },
+        {
+          "name": "id",
+          "required": false
+        },
+        {
+          "name": "cluster",
+          "required": false
+        },
+        {
+          "name": "robust",
+          "required": false
+        },
         "influence",
-        "type",
+        {
+          "name": "type",
+          "required": false
+        },
         "entry",
         "time0"
       ],
@@ -1498,7 +1805,10 @@
           "required": true
         },
         "conf.int",
-        "selow",
+        {
+          "name": "selow",
+          "required": false
+        },
         "ulimit"
       ],
       "return": {
@@ -1529,25 +1839,34 @@
           "name": "risk",
           "required": true
         },
-        "newrisk",
+        {
+          "name": "newrisk",
+          "required": false
+        },
         {
           "name": "strata",
-          "required": true
+          "required": false
         },
         {
           "name": "se.fit",
           "required": true
         },
-        "survtype",
+        {
+          "name": "survtype",
+          "required": false
+        },
         {
           "name": "vartype",
-          "required": true
+          "required": false
         },
         {
           "name": "varmat",
           "required": true
         },
-        "id",
+        {
+          "name": "id",
+          "required": false
+        },
         {
           "name": "y2",
           "required": true
@@ -1570,17 +1889,28 @@
           "name": "formula",
           "required": true
         },
-        "data",
+        {
+          "name": "data",
+          "required": false
+        },
         {
           "name": "subset",
-          "required": true
+          "required": false
         },
         {
           "name": "na.action",
-          "required": true
+          "required": false
         },
-        "transform"
+        {
+          "name": "transform",
+          "required": false
+        }
       ],
+      "eval": {
+        "formula": "quoted_expression",
+        "subset": "data_mask"
+      },
+      "data_mask_source": "data",
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1597,7 +1927,10 @@
           "name": "y",
           "required": true
         },
-        "weights",
+        {
+          "name": "weights",
+          "required": false
+        },
         {
           "name": "offset",
           "required": true
@@ -1616,7 +1949,10 @@
         },
         "scale",
         "nstrat",
-        "strata",
+        {
+          "name": "strata",
+          "required": false
+        },
         {
           "name": "pcols",
           "required": true
@@ -1639,20 +1975,49 @@
     },
     "survreg": {
       "params": [
-        "formula",
-        "data",
-        "weights",
-        "subset",
-        "na.action",
-        "offset",
-        "cluster",
+        {
+          "name": "formula",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": false
+        },
+        {
+          "name": "weights",
+          "required": false
+        },
+        {
+          "name": "subset",
+          "required": false
+        },
+        {
+          "name": "na.action",
+          "required": false
+        },
+        "dist",
+        "init",
+        "scale",
+        {
+          "name": "control",
+          "required": false
+        },
+        "parms",
+        "model",
+        "x",
+        "y",
+        "robust",
+        {
+          "name": "cluster",
+          "required": false
+        },
+        "score",
         "..."
       ],
       "eval": {
         "formula": "quoted_expression",
         "weights": "data_mask",
         "subset": "data_mask",
-        "offset": "data_mask",
         "cluster": "data_mask"
       },
       "data_mask_source": "data",
@@ -1689,7 +2054,10 @@
           "name": "y",
           "required": true
         },
-        "weights",
+        {
+          "name": "weights",
+          "required": false
+        },
         {
           "name": "offset",
           "required": true
@@ -1708,11 +2076,14 @@
         },
         "scale",
         "nstrat",
-        "strata",
+        {
+          "name": "strata",
+          "required": false
+        },
         "parms",
         {
           "name": "assign",
-          "required": true
+          "required": false
         }
       ],
       "return": {
@@ -1745,7 +2116,10 @@
           "name": "breaks",
           "required": true
         },
-        "labels",
+        {
+          "name": "labels",
+          "required": false
+        },
         "scale"
       ],
       "return": {
@@ -1798,18 +2172,24 @@
     },
     "yates": {
       "params": [
-        "fit",
+        {
+          "name": "fit",
+          "required": true
+        },
         {
           "name": "term",
           "required": true
         },
         "population",
-        "levels",
+        {
+          "name": "levels",
+          "required": false
+        },
         "test",
         "predict",
         {
           "name": "options",
-          "required": true
+          "required": false
         },
         "nsim",
         "method"
@@ -1836,6 +2216,66 @@
     }
   },
   "s3_methods": [
+    {
+      "generic": "concordance",
+      "class": "formula",
+      "params": [
+        {
+          "name": "object",
+          "required": true
+        },
+        {
+          "name": "data",
+          "required": false
+        },
+        {
+          "name": "weights",
+          "required": false
+        },
+        {
+          "name": "subset",
+          "required": false
+        },
+        {
+          "name": "na.action",
+          "required": false
+        },
+        {
+          "name": "cluster",
+          "required": false
+        },
+        {
+          "name": "ymin",
+          "required": false
+        },
+        {
+          "name": "ymax",
+          "required": false
+        },
+        "timewt",
+        "influence",
+        "ranks",
+        "reverse",
+        "timefix",
+        "keepstrata",
+        "..."
+      ],
+      "eval": {
+        "object": "quoted_expression",
+        "weights": "data_mask",
+        "subset": "data_mask",
+        "cluster": "data_mask"
+      },
+      "data_mask_source": "data",
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "na": true,
+        "class": [
+          "concordance"
+        ]
+      }
+    },
     {
       "generic": "quantile",
       "class": "survfit",
