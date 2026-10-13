@@ -30,7 +30,10 @@
   otherwise evaluate them, which a per-parameter `eval` mode cannot express,
   so they stay undeclared. The re-exported `%>%` now matches magrittr's stub.
 - Return the `igraph.vs` and `igraph.es` classes from `V()` and `E()`.
-  Correct `from_literal`'s class from `igraph` to `igraph_constructor_spec`.
+  Correct `from_literal`'s class from `igraph` to `igraph_constructor_spec`,
+  and its `...` from `quoted_expression` to `captures_promise`: it captures
+  through `constructor_spec()`'s `rlang::enquos()`, so a wrapper forwarding
+  its dots passes the caller's expressions through.
 - Make `dominator_tree(root)` required, since a missing `root` aborts. Make
   formals optional where a call without them succeeds in igraph 2.3.4:
   `cutat(no, steps)`, `get.{edge,graph,vertex}.attribute(name)`,

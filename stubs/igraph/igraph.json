@@ -4471,7 +4471,7 @@
         "..."
       ],
       "eval": {
-        "...": "quoted_expression"
+        "...": "captures_promise"
       },
       "return": {
         "mode": "opaque",
