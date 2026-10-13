@@ -4,6 +4,41 @@
 
 ### Function semantics
 
+- Refresh mirai to 0.0.3 from the mirai 2.7.3 namespace. Add the 27
+  exported functions the stub lacked (`daemon`, `daemons_set`, `info`,
+  `race_mirai`, `with_daemons`, the `*_config` helpers, and others) with
+  their full formal lists, and declare the exported bytecode values
+  `.flat`, `.progress`, and `.stop` under `datasets` as non-callable
+  `{opaque, 1, na: false}` values instead of functions.
+- Correct the formals of `call_mirai(x)`, `collect_mirai(x, options)`,
+  `daemons(n, url, remote, dispatcher, ..., sync, seed, memory, serial, tls,
+  pass, .compute)`, `everywhere`, `mirai`, `mirai_map`, `stop_mirai(x)`,
+  `try_mirai`, `unresolved(x)`, and `is_mirai(x)`, which listed `.x` or
+  dropped formals. `x`, `.expr`, and `mirai_map`'s `.x`/`.f` are required;
+  `daemons`' `n` stays optional because `daemons(url = ...)` works without it.
+- Declare `.expr` of `mirai`, `try_mirai`, and `everywhere` as
+  `quoted_expression`: each captures its own call-site expression with
+  `substitute()` and evaluates it on a daemon, so names supplied through
+  `...` (`mirai(a + b, a = 1, b = 2)`) no longer warn RY010. The caller
+  forces `.expr` only when it is a bare symbol bound in the calling frame;
+  `...` is evaluated through `list(...)` and keeps `normal` evaluation.
+- Correct the return claims: `collect_mirai` may be `NA`; `call_mirai`
+  returns its argument (`arg0`); `mirai` is a `c("mirai", "recvAio")`
+  environment of unknown length; `everywhere` returns a `mirai_map` list,
+  not `NULL`; `mirai_map`'s length follows the elements or rows of `.x`
+  (unknown); `stop_mirai` returns one non-NA logical per mirai, not
+  `NULL`; and `daemons` returns a non-NA scalar logical without the
+  unconditional, misspelled `mirai_daemons` class (`TRUE` classed
+  `c("miraiDaemons", <profile>)` when set, unclassed `FALSE` when reset).
+- Curate returns for added functions: the `is_*` predicates, `daemons_set`,
+  `on_daemon`, and `require_daemons` return a non-NA scalar logical;
+  `remote_config`, `cluster_config`, `http_config`, and `serial_config`
+  return lists of length 5, 4, 8, and 3; `local_url` returns non-NA strings,
+  one per port;
+  `register_serial` and `stop_cluster` return `NULL`.
+- `tests/mirai.R` pins mirai 2.7.3 and checks exports, formal order and
+  requiredness, the `.expr` capture, and each return claim at runtime; the
+  `mirai-clean`/`mirai-diag` inference fixtures pin the RY010 behavior.
 - Refresh survival to stub revision 0.0.2 against survival 3.8-12
   (`upstream-versions.json` moves from 3.8-11). The inventory now covers
   every exported function: the 72 new exports keep returns

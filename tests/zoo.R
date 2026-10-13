@@ -3,7 +3,7 @@
 args <- grep("^--file=", commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
 pkg <- "zoo"
-version <- "1.9.0"
+version <- "1.9.1"
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
 
 # The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
