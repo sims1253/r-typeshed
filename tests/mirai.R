@@ -75,7 +75,8 @@ stopifnot(inherits(try(mirai(), silent = TRUE), 'try-error'))
 stopifnot(inherits(try(mirai_map(1:2), silent = TRUE), 'try-error'))
 
 # .expr capture: mirai(), try_mirai(), and everywhere() substitute() their
-# own call-site expression and never evaluate it in the caller; `...` goes
+# own call-site expression and evaluate it in the caller only when it is a
+# bare symbol bound there (checked below); `...` goes
 # through list(...) and is evaluated in the caller, so it is not quoted.
 for (name in c('mirai', 'try_mirai', 'everywhere')) {
   stopifnot(identical(doc$functions[[name]]$eval, list(.expr = 'quoted_expression')))
@@ -168,9 +169,13 @@ for (name in names(fixed_lists)) {
 }
 stopifnot(identical(vapply(fixed_lists, length, integer(1)),
                     c(remote_config = 5L, cluster_config = 4L, http_config = 8L, serial_config = 3L)))
+# One URL per port: the default is one string, but a port vector gives one
+# each and an empty one gives character(0), so the length is unknown.
 url <- local_url()
 stopifnot(is.character(url), identical(length(url), 1L), !is.na(url))
-stopifnot(identical(ret('local_url'), list(mode = 'character', length = '1', na = FALSE)))
+stopifnot(identical(length(local_url(TRUE, c(8001L, 8002L))), 2L))
+stopifnot(identical(local_url(TRUE, integer()), character(0)))
+stopifnot(identical(ret('local_url'), list(mode = 'character', length = 'unknown', na = FALSE)))
 daemons(0)
 stopifnot(identical(daemons_set(), FALSE))
 null0 <- list(mode = 'null', length = '0', na = FALSE)

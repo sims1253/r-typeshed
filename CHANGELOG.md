@@ -33,7 +33,8 @@
 - Curate returns for added functions: the `is_*` predicates, `daemons_set`,
   `on_daemon`, and `require_daemons` return a non-NA scalar logical;
   `remote_config`, `cluster_config`, `http_config`, and `serial_config`
-  return lists of length 5, 4, 8, and 3; `local_url` returns one string;
+  return lists of length 5, 4, 8, and 3; `local_url` returns non-NA strings,
+  one per port;
   `register_serial` and `stop_cluster` return `NULL`.
 - `tests/mirai.R` pins mirai 2.7.3 and checks exports, formal order and
   requiredness, the `.expr` capture, and each return claim at runtime; the

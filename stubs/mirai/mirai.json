@@ -286,7 +286,7 @@
       ],
       "return": {
         "mode": "character",
-        "length": "1",
+        "length": "unknown",
         "na": false
       }
     },
