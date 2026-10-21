@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Continuous integration
+
+- Trim the R oracle installs in the `generators` and `drift` CI jobs to
+  `Depends`/`Imports`/`LinkingTo` of the explicit package list in
+  `scripts/ci_packages.R`, which still names every namespace the tests
+  load. `tests/install_set6_deps.R` reuses the exact archived `ooplah`,
+  `dictionar6`, and `set6` versions from a cached library instead of
+  recompiling them, still checking each version and loading its
+  namespace. The library cache version hashes that installer, so a pin
+  change starts a fresh cache.
+
 ### Function semantics
 
 - Revise future to 0.0.2 with the complete export inventory of future
