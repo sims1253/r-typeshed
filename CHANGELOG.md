@@ -166,6 +166,16 @@
   pin the optional formals, the masked arguments, the required `id`, and
   the corrected positional order.
 
+### Validation and audits
+
+- Run schema validation, the inference gate, and its mutation self-test in
+  one `Consumer (validate and inference)` CI job, replacing the separate
+  `validate` and `inference` jobs that each built the pinned ry. The job
+  reuses a cached ry executable only when the consumer revision, `rustc`
+  fingerprint, platform, `Cargo.lock`, and workflow file all match; only
+  master pushes save it, and a cache miss builds with `--locked`. The
+  inference and mutation steps still run when validation fails.
+
 ## [0.6.2] - 2026-10-12
 
 Schema additions that need a consumer accepting them (ry #652, unreleased
