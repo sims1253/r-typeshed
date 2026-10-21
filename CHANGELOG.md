@@ -4,6 +4,23 @@
 
 ### Function semantics
 
+- Revise base to 0.0.29 with data-frame and matrix returns
+  (sims1253/ry#709). `read.table` and `read.csv` now return a
+  `data.frame` instead of a class-less list, and `read.csv2`,
+  `read.delim`, and `read.delim2` move from the untyped ambient
+  functions to the same return. `merge` returns an opaque value: base's
+  methods always return a data frame, but registered methods return
+  their own classes (`merge(<dendrogram>, <dendrogram>)` is a
+  dendrogram, zoo returns zoo), and `merge` is not a declared S3
+  generic, so a `merge.data.frame` method entry would never be
+  selected. `gc` returns a double `c("matrix", "array")`, which may
+  hold `NA` in its `limit (Mb)` column when a memory limit is set. Column
+  arithmetic such as `merge(a, b)[, 1] - 1`, `merge(a, a)[1] + 1`,
+  `100 * read.csv(p)[, c("x", "y")]`, and `gc()[, 1] * c(56, 8)` no
+  longer reports list arithmetic. `tests/dataframe_returns.R` pins the
+  returns against live R, and new `tests/inference/dataframe-returns-*.R`
+  fixtures pin the column arithmetic and two true-error controls.
+
 - Revise future to 0.0.2 with the complete export inventory of future
   1.76.0: the 86 functions added next to `%<-%` carry the installed formal
   lists, `required` exactly on the formals without a default (each errors
