@@ -21,6 +21,16 @@
   returns against live R, and new `tests/inference/dataframe-returns-*.R`
   fixtures pin the column arithmetic and two true-error controls.
 
+- Revise survival to 0.0.3: `survfit` and `survfit.formula` return an
+  opaque value instead of a class-less list (sims1253/ry#709). Every fit
+  inherits `"survfit"`, but multi-state and Cox curves return
+  `c("survfitms", "survfit")` and `c("survfitcox", "survfit")`, and the
+  schema cannot say "inherits" without claiming the exact class. The
+  class-less list made `quantile(fit)` the default double quantile, so
+  `quantile(fit)$quantile[, "50"]` reported RY061. The
+  `survfit-returns-*` inference fixtures pin the field access and a
+  default-quantile control.
+
 - Revise future to 0.0.2 with the complete export inventory of future
   1.76.0: the 86 functions added next to `%<-%` carry the installed formal
   lists, `required` exactly on the formals without a default (each errors
