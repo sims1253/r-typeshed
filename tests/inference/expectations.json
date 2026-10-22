@@ -12,6 +12,10 @@
   "as-vector-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
   ],
+  "cut-generic-clean": [],
+  "cut-generic-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
+  ],
   "dataframe-returns-clean": [],
   "dataframe-returns-diag": [
     {"code": "RY040", "severity": "error", "line": 3, "column": 6},
