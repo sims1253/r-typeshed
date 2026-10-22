@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "survival",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "functions": {
     "Surv": {
       "params": [
@@ -1651,9 +1651,9 @@
       },
       "data_mask_source": "data",
       "return": {
-        "mode": "list",
+        "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "survfit.formula": {
@@ -1721,9 +1721,9 @@
       },
       "data_mask_source": "data",
       "return": {
-        "mode": "list",
+        "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "survfit0": {

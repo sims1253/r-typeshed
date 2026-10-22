@@ -42,6 +42,10 @@
     {"code": "RY001", "severity": "warning", "line": 4, "column": 5},
     {"code": "RY040", "severity": "error", "line": 5, "column": 6}
   ],
+  "survfit-returns-clean": [],
+  "survfit-returns-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
+  ],
   "survival-clean": [],
   "survival-diag": [
     {"code": "RY091", "severity": "warning", "line": 7, "column": 6},
