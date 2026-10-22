@@ -4,6 +4,17 @@
 
 ### Function semantics
 
+- Revise base to 0.0.30: `cut` joins the declared S3 generics
+  (sims1253/ry#711), and the generated method inventory gains
+  `cut.default`, `cut.Date`, and `cut.POSIXt`. The `cut.dendrogram`
+  entry was never selected because `cut` was not a generic, so
+  `cut(dend, h = h)$lower`, the documented way to split a dendrogram,
+  took the generic's integer return and reported `$` on an atomic
+  vector. Dispatch now picks `cut.dendrogram` for a dendrogram, an
+  unknown receiver is opaque, and a plain numeric vector keeps the
+  integer return. The `cut-generic-*` inference fixtures pin both field
+  accesses and the numeric control.
+
 - Revise base to 0.0.29 with data-frame and matrix returns
   (sims1253/ry#709). `read.table` and `read.csv` now return a
   `data.frame` instead of a class-less list, and `read.csv2`,
