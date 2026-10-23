@@ -15,6 +15,13 @@
 
 ### Function semantics
 
+- Revise rlang to 0.1.5: `caller_arg(arg)` captures its argument with
+  `substitute()` and never evaluates it, so its `arg` is now
+  `captures_promise` (sims1253/ry#688). A validator such as rlang's
+  standalone `check_not_missing(x, arg_name = rlang::caller_arg(x))` then
+  no longer counts as forcing `x`. The `caller-arg-*` inference fixtures
+  pin the silent capture and an evaluating `caller_env(n)` control.
+
 - Revise base to 0.0.30: `cut` joins the declared S3 generics
   (sims1253/ry#711), and the generated method inventory gains
   `cut.default`, `cut.Date`, and `cut.POSIXt`. The `cut.dendrogram`

@@ -12,6 +12,10 @@
   "as-vector-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
   ],
+  "caller-arg-clean": [],
+  "caller-arg-diag": [
+    {"code": "RY010", "severity": "warning", "line": 3, "column": 39}
+  ],
   "cut-generic-clean": [],
   "cut-generic-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
