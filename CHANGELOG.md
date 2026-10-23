@@ -15,6 +15,44 @@
 
 ### Function semantics
 
+- Revise base to 0.0.30: `cut` joins the declared S3 generics
+  (sims1253/ry#711), and the generated method inventory gains
+  `cut.default`, `cut.Date`, and `cut.POSIXt`. The `cut.dendrogram`
+  entry was never selected because `cut` was not a generic, so
+  `cut(dend, h = h)$lower`, the documented way to split a dendrogram,
+  took the generic's integer return and reported `$` on an atomic
+  vector. Dispatch now picks `cut.dendrogram` for a dendrogram, an
+  unknown receiver is opaque, and a plain numeric vector keeps the
+  integer return. The `cut-generic-*` inference fixtures pin both field
+  accesses and the numeric control.
+
+- Revise base to 0.0.29 with data-frame and matrix returns
+  (sims1253/ry#709). `read.table` and `read.csv` now return a
+  `data.frame` instead of a class-less list, and `read.csv2`,
+  `read.delim`, and `read.delim2` move from the untyped ambient
+  functions to the same return. `merge` returns an opaque value: base's
+  methods always return a data frame, but registered methods return
+  their own classes (`merge(<dendrogram>, <dendrogram>)` is a
+  dendrogram, zoo returns zoo), and `merge` is not a declared S3
+  generic, so a `merge.data.frame` method entry would never be
+  selected. `gc` returns a double `c("matrix", "array")`, which may
+  hold `NA` in its `limit (Mb)` column when a memory limit is set. Column
+  arithmetic such as `merge(a, b)[, 1] - 1`, `merge(a, a)[1] + 1`,
+  `100 * read.csv(p)[, c("x", "y")]`, and `gc()[, 1] * c(56, 8)` no
+  longer reports list arithmetic. `tests/dataframe_returns.R` pins the
+  returns against live R, and new `tests/inference/dataframe-returns-*.R`
+  fixtures pin the column arithmetic and two true-error controls.
+
+- Revise survival to 0.0.3: `survfit` and `survfit.formula` return an
+  opaque value instead of a class-less list (sims1253/ry#709). Every fit
+  inherits `"survfit"`, but multi-state and Cox curves return
+  `c("survfitms", "survfit")` and `c("survfitcox", "survfit")`, and the
+  schema cannot say "inherits" without claiming the exact class. The
+  class-less list made `quantile(fit)` the default double quantile, so
+  `quantile(fit)$quantile[, "50"]` reported RY061. The
+  `survfit-returns-*` inference fixtures pin the field access and a
+  default-quantile control.
+
 - Revise future to 0.0.2 with the complete export inventory of future
   1.76.0: the 86 functions added next to `%<-%` carry the installed formal
   lists, `required` exactly on the formals without a default (each errors
@@ -176,6 +214,16 @@
   `strata` returns a factor. New `tests/inference/survival-*.R` fixtures
   pin the optional formals, the masked arguments, the required `id`, and
   the corrected positional order.
+
+### Validation and audits
+
+- Run schema validation, the inference gate, and its mutation self-test in
+  one `Consumer (validate and inference)` CI job, replacing the separate
+  `validate` and `inference` jobs that each built the pinned ry. The job
+  reuses a cached ry executable only when the consumer revision, `rustc`
+  fingerprint, platform, `Cargo.lock`, and workflow file all match; only
+  master pushes save it, and a cache miss builds with `--locked`. The
+  inference and mutation steps still run when validation fails.
 
 ## [0.6.2] - 2026-10-12
 

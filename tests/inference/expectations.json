@@ -12,6 +12,15 @@
   "as-vector-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
   ],
+  "cut-generic-clean": [],
+  "cut-generic-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
+  ],
+  "dataframe-returns-clean": [],
+  "dataframe-returns-diag": [
+    {"code": "RY040", "severity": "error", "line": 3, "column": 6},
+    {"code": "RY040", "severity": "error", "line": 4, "column": 6}
+  ],
   "density-clean": [],
   "density-diag": [
     {"code": "RY002", "severity": "warning", "line": 4, "column": 5}
@@ -36,6 +45,10 @@
   "selection-diag": [
     {"code": "RY001", "severity": "warning", "line": 4, "column": 5},
     {"code": "RY040", "severity": "error", "line": 5, "column": 6}
+  ],
+  "survfit-returns-clean": [],
+  "survfit-returns-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6}
   ],
   "survival-clean": [],
   "survival-diag": [

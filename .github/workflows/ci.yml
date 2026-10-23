@@ -8,7 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  validate:
+  consumer:
+    name: Consumer (validate and inference)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -22,37 +23,48 @@ jobs:
           ref: ${{ steps.consumer.outputs.ref }}
           path: ry
       - uses: dtolnay/rust-toolchain@stable
+      - name: Fingerprint the consumer toolchain
+        id: toolchain
+        run: echo "key=$(rustc -Vv | sha256sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      # Ordinary stub edits do not change the pinned consumer source. Cache
+      # its executable, not just dependencies that leave workspace crates
+      # to be recompiled. Workflow changes invalidate build configuration.
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        id: binary
+        with:
+          path: ${{ runner.temp }}/ry-consumer/ry
+          key: consumer-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.consumer.outputs.ref }}-${{ steps.toolchain.outputs.key }}-${{ hashFiles('ry/Cargo.lock', '.github/workflows/ci.yml') }}
       - uses: Swatinem/rust-cache@v2
+        if: steps.binary.outputs.cache-hit != 'true'
         with:
           workspaces: ry -> target
       - name: Build ry
-        run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
+        if: steps.binary.outputs.cache-hit != 'true'
+        run: |
+          cargo build --locked --manifest-path ry/Cargo.toml -p ry-cli --release
+          mkdir -p "$RUNNER_TEMP/ry-consumer"
+          cp ry/target/release/ry "$RUNNER_TEMP/ry-consumer/ry"
+      - name: Verify the consumer executable
+        id: ready
+        run: |
+          test -x "$RUNNER_TEMP/ry-consumer/ry"
+          "$RUNNER_TEMP/ry-consumer/ry" --version
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        # Only trusted default-branch builds populate the reusable binary.
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master' && steps.binary.outputs.cache-hit != 'true'
+        with:
+          path: ${{ runner.temp }}/ry-consumer/ry
+          key: ${{ steps.binary.outputs.cache-primary-key }}
       - name: Validate stubs
-        run: ry/target/release/ry typeshed validate stubs/
-
-  inference:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Read consumer revision
-        id: consumer
-        run: echo "ref=$(cat .github/ry-consumer)" >> "$GITHUB_OUTPUT"
-      - name: Check out ry source
-        uses: actions/checkout@v4
-        with:
-          repository: sims1253/ry
-          ref: ${{ steps.consumer.outputs.ref }}
-          path: ry
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: ry -> target
-      - name: Build ry
-        run: cargo build --manifest-path ry/Cargo.toml -p ry-cli --release
+        run: '"$RUNNER_TEMP/ry-consumer/ry" typeshed validate stubs/'
       - name: Check candidate stubs through ry inference
-        run: scripts/inference_gate.sh ry/target/release/ry stubs/
+        # Preserve diagnostics from the other gates when validation fails.
+        # A failure still fails the job; none uses continue-on-error.
+        if: ${{ !cancelled() && steps.ready.outcome == 'success' }}
+        run: scripts/inference_gate.sh "$RUNNER_TEMP/ry-consumer/ry" stubs/
       - name: Prove the gate bites (mutation self-test)
-        run: scripts/inference_mutation_test.sh ry/target/release/ry
+        if: ${{ !cancelled() && steps.ready.outcome == 'success' }}
+        run: scripts/inference_mutation_test.sh "$RUNNER_TEMP/ry-consumer/ry"
 
   generators:
     runs-on: ubuntu-latest

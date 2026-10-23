@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.28",
+  "version": "0.0.30",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -228,7 +228,8 @@
       "anova",
       "str",
       "terms",
-      "quantile"
+      "quantile",
+      "cut"
     ],
     "s3_split_denylist": [
       "t.test",
@@ -1852,10 +1853,7 @@
       "rchisq",
       "rcond",
       "read.DIF",
-      "read.csv2",
       "read.dcf",
-      "read.delim",
-      "read.delim2",
       "read.fortran",
       "read.ftable",
       "read.fwf",
@@ -4192,9 +4190,13 @@
     "gc": {
       "params": [],
       "return": {
-        "mode": "list",
+        "mode": "double",
         "length": "unknown",
-        "na": false
+        "na": true,
+        "class": [
+          "matrix",
+          "array"
+        ]
       }
     },
     "get": {
@@ -5290,9 +5292,9 @@
         "y"
       ],
       "return": {
-        "mode": "list",
+        "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "message": {
@@ -6388,7 +6390,49 @@
       "return": {
         "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.frame"
+        ]
+      }
+    },
+    "read.csv2": {
+      "params": [
+        "file"
+      ],
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "na": true,
+        "class": [
+          "data.frame"
+        ]
+      }
+    },
+    "read.delim": {
+      "params": [
+        "file"
+      ],
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "na": true,
+        "class": [
+          "data.frame"
+        ]
+      }
+    },
+    "read.delim2": {
+      "params": [
+        "file"
+      ],
+      "return": {
+        "mode": "list",
+        "length": "unknown",
+        "na": true,
+        "class": [
+          "data.frame"
+        ]
       }
     },
     "read.table": {
@@ -6398,7 +6442,10 @@
       "return": {
         "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.frame"
+        ]
       }
     },
     "readLines": {
@@ -22025,6 +22072,59 @@
       "class": "warnings",
       "params": [
         "object",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    {
+      "generic": "cut",
+      "class": "Date",
+      "params": [
+        "x",
+        "breaks",
+        "labels",
+        "start.on.monday",
+        "right",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    {
+      "generic": "cut",
+      "class": "POSIXt",
+      "params": [
+        "x",
+        "breaks",
+        "labels",
+        "start.on.monday",
+        "right",
+        "..."
+      ],
+      "return": {
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
+      }
+    },
+    {
+      "generic": "cut",
+      "class": "default",
+      "params": [
+        "x",
+        "breaks",
+        "labels",
+        "include.lowest",
+        "right",
+        "dig.lab",
+        "ordered_result",
         "..."
       ],
       "return": {
