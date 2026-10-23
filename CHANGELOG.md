@@ -225,6 +225,10 @@
   master pushes save it, and a cache miss builds with `--locked`. The
   inference and mutation steps still run when validation fails.
 
+- Run `tests/dataframe_returns.R` in the `generators` CI job. The check
+  pins the reader, `merge`, and `gc` returns against live R and was
+  previously local-only.
+
 ## [0.6.2] - 2026-10-12
 
 Schema additions that need a consumer accepting them (ry #652, unreleased

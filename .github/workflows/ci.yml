@@ -177,6 +177,8 @@ jobs:
         run: Rscript --vanilla tests/confint.R
       - name: Verify expand.grid columns and dispatch controls
         run: Rscript --vanilla tests/expand_grid.R
+      - name: Verify data-frame and matrix returns of readers, merge, and gc
+        run: Rscript --vanilla tests/dataframe_returns.R
       - name: Verify exported HTML tag lists
         run: Rscript --vanilla tests/html_tags.R
       - name: Verify model.extract symbol capture and coercion controls
