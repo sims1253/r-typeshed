@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Revise rlang to 0.1.6: `lhs %<~% rhs` is
+  `delayedAssign(as_string(substitute(lhs)), substitute(rhs))` in the
+  caller's frame, so its `lhs` is now `quoted_symbol` (a name to bind,
+  never read) and its `rhs` is `captures_promise`, matching base
+  `delayedAssign`'s `value` (sims1253/ry#706). pkgload's
+  `desc_desc %<~% desc::desc` lazy imports no longer read the bound
+  name as an unbound variable. The `lazy-assign-*` inference fixtures pin
+  both silent captures and an evaluating `env_bind_lazy(.env)` control.
+
 ## [0.6.3] - 2026-10-24
 
 Data-revision release with stub fixes found by ry's top-500 package probe
