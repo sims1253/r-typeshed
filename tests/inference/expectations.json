@@ -25,6 +25,11 @@
     {"code": "RY040", "severity": "error", "line": 3, "column": 6},
     {"code": "RY040", "severity": "error", "line": 4, "column": 6}
   ],
+  "date-time-clean": [],
+  "date-time-diag": [
+    {"code": "RY061", "severity": "error", "line": 3, "column": 6},
+    {"code": "RY040", "severity": "error", "line": 4, "column": 6}
+  ],
   "density-clean": [],
   "density-diag": [
     {"code": "RY002", "severity": "warning", "line": 4, "column": 5}
