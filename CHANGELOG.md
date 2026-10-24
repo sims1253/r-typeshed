@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [0.6.3] - 2026-10-24
+
+Data-revision release with stub fixes found by ry's top-500 package probe
+(sims1253/ry#688, #709, #711), plus CI consolidation. No schema changes.
+
 ### Continuous integration
 
 - Trim the R oracle installs in the `generators` and `drift` CI jobs to
