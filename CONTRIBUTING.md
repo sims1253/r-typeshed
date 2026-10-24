@@ -69,6 +69,7 @@ Rscript --vanilla tests/folds.R
 Rscript --vanilla tests/confint.R
 Rscript --vanilla tests/expand_grid.R
 Rscript --vanilla tests/dataframe_returns.R
+Rscript --vanilla tests/date_time_returns.R
 Rscript --vanilla tests/html_tags.R
 Rscript --vanilla tests/model_extract.R
 Rscript --vanilla tests/filter_position.R

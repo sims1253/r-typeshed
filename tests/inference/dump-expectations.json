@@ -39,5 +39,17 @@
     "stale_embedded": {
       "e": "double<len=1>"
     }
+  },
+  "date-time": {
+    "bindings": {
+      "d": "double<len=1>:Date",
+      "s": "character<len=1>",
+      "t": "double<len=1>:POSIXct,POSIXt"
+    },
+    "stale_embedded": {
+      "d": "double<len=1>",
+      "s": "character<len=1>",
+      "t": "double<len=1>"
+    }
   }
 }

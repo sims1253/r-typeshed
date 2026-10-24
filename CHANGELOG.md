@@ -4,6 +4,17 @@
 
 ### Function semantics
 
+- Revise base to 0.0.31: `Sys.Date()` returns class `"Date"` and
+  `Sys.time()` returns class `c("POSIXct", "POSIXt")`, both still double
+  scalars that are never `NA`. They used to return class-less doubles, so
+  ry treated `is.numeric(Sys.Date())` as TRUE (R says FALSE) and reported
+  RY061 for `$` inside `if (is.numeric(x))` or `if (!inherits(x, "Date"))`
+  branches that never run. `date()` already returned a plain string.
+  `tests/date_time_returns.R` pins the returns against live R. The
+  `date-time-*` inference fixtures pin the dead branches and two
+  neighboring true-error controls, and `dump-date-time.R` pins the
+  classed binding types (sims1253/ry#710).
+
 - Revise rlang to 0.1.6: `lhs %<~% rhs` is
   `delayedAssign(as_string(substitute(lhs)), substitute(rhs))` in the
   caller's frame, so its `lhs` is now `quoted_symbol` (a name to bind,
