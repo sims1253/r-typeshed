@@ -30,6 +30,7 @@
   "jsonlite": "2.0.0",
   "lifecycle": "1.0.5",
   "loo": "2.10.1",
+  "lubridate": "1.9.5",
   "magrittr": "2.0.5",
   "mirai": "2.7.3",
   "patrick": "0.3.1",
