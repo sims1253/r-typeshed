@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### New stubs
+
+- Add lubridate 0.0.1 with its complete export inventory from lubridate
+  1.9.5: 159 functions plus 46 exported non-function values — the four
+  `.__C__*` S4 class objects (`Duration`, `Interval`, `Period`,
+  `Timespan`), 39 `.__T__*` method tables, and the `NA_Date_`,
+  `NA_POSIXct_`, and `origin` constants — and the `lakers` lazy dataset,
+  recorded as opaque dataset values. Keep formal lists inference-only and
+  returns uniformly `{opaque, unknown, na: true}` per the documented
+  inventory convention, resolving `import(lubridate)` for its 845 CRAN
+  reverse dependencies. `library(tidyverse)` now also resolves lubridate
+  through tidyverse's `attaches` list instead of treating it as an
+  unstubbed package that can supply any name; forcats is the only core
+  package left in that position. The runtime oracle
+  `tests/lubridate.R` pins the installed version at 1.9.5 and compares
+  every export, formal list, and lazy dataset with the installed
+  namespace. CI installs lubridate pinned at 1.9.5 in the generators job
+  and as an upstream-drift probe. Part of the prioritized backlog in #43.
+
 ### Function semantics
 
 - Revise base to 0.0.31: `Sys.Date()` returns class `"Date"` and

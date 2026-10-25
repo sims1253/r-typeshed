@@ -16,5 +16,6 @@ ci_packages <- c(
   "Matrix",
   "gridExtra",
   "curl",
+  "lubridate",
   "tidyverse"
 )
