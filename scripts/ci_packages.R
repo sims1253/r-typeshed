@@ -18,5 +18,6 @@ ci_packages <- c(
   "curl",
   "lubridate",
   "knitr",
+  "data.table",
   "tidyverse"
 )

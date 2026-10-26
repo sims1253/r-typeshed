@@ -38,7 +38,25 @@
   installed version at 1.52 and compares every export and formal list
   with the installed namespace. CI installs knitr pinned at 1.52 in
   the generators job and as an upstream-drift probe. Part of the
-  prioritized backlog in #43; data.table remains from that table.
+  prioritized backlog in #43.
+
+- Add data.table 0.0.1 with its complete export inventory from
+  data.table 1.18.6.1: 129 functions plus 12 exported non-function
+  values — the eight `[.data.table` frame symbols (`.SD`, `.BY`,
+  `.N`, `.I`, `.GRP`, `.NGRP`, `.ROW`, `.EACHI`), `.Last.updated`,
+  and the three `.__C__*` S4 class values (`IDate`, `ITime`,
+  `data.table`) — recorded as opaque dataset values. This is the
+  inventory slice only: formal lists stay inference-only and returns
+  uniformly `{opaque, unknown, na: true}` per the documented
+  inventory convention, and no `[.data.table` semantics are claimed
+  beyond name and formal resolution; the `:=`/`j` NSE scoping #43
+  calls for remains deliberate follow-up beyond inventory. Resolves
+  `import(data.table)` for its 1,641 CRAN reverse dependencies. The
+  runtime oracle `tests/data.table.R` pins the installed version at
+  1.18.6.1 and compares every export and formal list with the
+  installed namespace. CI installs data.table pinned at 1.18.6.1 in
+  the generators job and as an upstream-drift probe. Part of the
+  prioritized backlog in #43.
 
 ### Function semantics
 
