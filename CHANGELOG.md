@@ -21,6 +21,25 @@
   namespace. CI installs lubridate pinned at 1.9.5 in the generators job
   and as an upstream-drift probe. Part of the prioritized backlog in #43.
 
+- Add knitr 0.0.1 with its complete export inventory from knitr 1.52:
+  120 functions plus 13 exported non-function values — the ten
+  `new_defaults` stores (`opts_chunk`, `opts_current`, `opts_hooks`,
+  `opts_knit`, `opts_template`, `cache_engines`, `knit_code`,
+  `knit_engines`, `knit_hooks`, `knit_patterns`), the `knit_theme`
+  set/get pair, the `all_patterns` pattern list, and the `rand_seed`
+  expression — recorded as opaque dataset values, like the R6
+  generators in set6 and scales. The stores' `$get`/`$set` members are
+  not modeled; no semantics are claimed beyond name and formal
+  resolution. Keep formal lists inference-only and returns uniformly
+  `{opaque, unknown, na: true}` per the documented inventory
+  convention, resolving `import(knitr)` for its 483 CRAN reverse
+  dependencies plus the 11,676 packages that need it through Suggests
+  for their vignettes. The runtime oracle `tests/knitr.R` pins the
+  installed version at 1.52 and compares every export and formal list
+  with the installed namespace. CI installs knitr pinned at 1.52 in
+  the generators job and as an upstream-drift probe. Part of the
+  prioritized backlog in #43; data.table remains from that table.
+
 ### Function semantics
 
 - Revise base to 0.0.31: `Sys.Date()` returns class `"Date"` and
