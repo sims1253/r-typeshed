@@ -38,7 +38,7 @@
   installed version at 1.52 and compares every export and formal list
   with the installed namespace. CI installs knitr pinned at 1.52 in
   the generators job and as an upstream-drift probe. Part of the
-  prioritized backlog in #43; data.table remains from that table.
+  prioritized backlog in #43.
 
 - Add data.table 0.0.1 with its complete export inventory from
   data.table 1.18.6.1: 129 functions plus 12 exported non-function
