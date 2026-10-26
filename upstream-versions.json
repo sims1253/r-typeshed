@@ -28,6 +28,7 @@
   "httr": "1.4.9",
   "igraph": "2.3.4",
   "jsonlite": "2.0.0",
+  "knitr": "1.52",
   "lifecycle": "1.0.5",
   "loo": "2.10.1",
   "lubridate": "1.9.5",

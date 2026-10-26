@@ -137,6 +137,8 @@ jobs:
         run: Rscript --vanilla tests/curl.R
       - name: Verify lubridate inventory
         run: Rscript --vanilla tests/lubridate.R
+      - name: Verify knitr inventory
+        run: Rscript --vanilla tests/knitr.R
       - name: Verify tidyverse inventory and attached packages
         run: Rscript --vanilla tests/tidyverse.R
 
@@ -251,7 +253,7 @@ jobs:
         run: |
           set +e
           : > drift-probes.log
-          for probe in tests/set6.R tests/magrittr.R tests/glue.R tests/stringr.R tests/tibble.R tests/lifecycle.R tests/jsonlite.R tests/httr.R tests/checkmate.R tests/readr.R tests/scales.R tests/RColorBrewer.R tests/xml2.R tests/MASS.R tests/zoo.R tests/Matrix.R tests/gridExtra.R tests/curl.R tests/lubridate.R tests/tidyverse.R tests/mirai.R tests/ggplot2.R tests/html_tags.R; do
+          for probe in tests/set6.R tests/magrittr.R tests/glue.R tests/stringr.R tests/tibble.R tests/lifecycle.R tests/jsonlite.R tests/httr.R tests/checkmate.R tests/readr.R tests/scales.R tests/RColorBrewer.R tests/xml2.R tests/MASS.R tests/zoo.R tests/Matrix.R tests/gridExtra.R tests/curl.R tests/lubridate.R tests/knitr.R tests/tidyverse.R tests/mirai.R tests/ggplot2.R tests/html_tags.R; do
             if Rscript --vanilla "$probe" >> drift-probes.log 2>&1; then
               echo "- PASS ${probe}" >> drift-report.md
             else

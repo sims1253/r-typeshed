@@ -94,6 +94,7 @@ Rscript --vanilla tests/Matrix.R
 Rscript --vanilla tests/gridExtra.R
 Rscript --vanilla tests/curl.R
 Rscript --vanilla tests/lubridate.R
+Rscript --vanilla tests/knitr.R
 Rscript --vanilla tests/tidyverse.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
