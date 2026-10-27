@@ -80,6 +80,15 @@
   name as an unbound variable. The `lazy-assign-*` inference fixtures pin
   both silent captures and an evaluating `env_bind_lazy(.env)` control.
 
+- Revise knitr to 0.0.2: `all_labels(...)` captures its filters with
+  `match.call()` and evaluates each against a chunk's options, and
+  `all_rcpp_labels(...)` forwards `...` to it, so both now mark `...` as
+  `quoted_expression`. `all_labels(engine == "R")` and
+  `all_rcpp_labels(echo)` no longer read chunk option names as unbound
+  variables. `tests/knitr.R` pins the capture against live R, and the
+  `knitr-labels-*` inference fixtures pin both silent captures and an
+  eager `knit_child()` control.
+
 ## [0.6.3] - 2026-10-24
 
 Data-revision release with stub fixes found by ry's top-500 package probe

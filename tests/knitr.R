@@ -109,4 +109,17 @@ stopifnot(is.function(knitr::knit_engines$get("probe_engine_xyz")))
 knitr::knit_engines$delete("probe_engine_xyz")
 stopifnot(is.null(knitr::knit_engines$get("probe_engine_xyz")))
 
+# all_labels() captures its filters with match.call() and evaluates them
+# against each chunk's options, so a bare option name such as `engine` or
+# `echo` needs no binding in the caller; all_rcpp_labels() forwards its
+# `...` to it. Inside a knit, `!echo` selects only the echo = FALSE chunk.
+stopifnot(!exists("engine"), !exists("echo"))
+labels_doc <- c("```{r first}", "1", "```",
+                "```{r second, echo=FALSE}", "2", "```",
+                "```{r probe}",
+                "cat('labels:', knitr::all_labels(!echo), knitr::all_rcpp_labels(echo), '\\n')",
+                "```")
+labelled <- knitr::knit(text = labels_doc, quiet = TRUE)
+stopifnot(grepl("## labels: second\n", labelled, fixed = TRUE))
+
 cat("knitr exports, formals, opts/hooks objects, and knitting verified.\n")
