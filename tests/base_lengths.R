@@ -6,6 +6,8 @@ base <- jsonlite::read_json(file.path(root, 'stubs/base/base.json'))$functions
 # Stub pins: flip any pinned field and this test must fail.
 stopifnot(identical(base$file.path$return,
                     list(mode = 'character', length = 'longest_arg_or_zero', na = FALSE)))
+stopifnot(identical(base$sprintf$return,
+                    list(mode = 'character', length = 'longest_arg_or_zero', na = TRUE)))
 stopifnot(identical(base$seq_len$return,
                     list(mode = 'integer', length = 'unknown', na = FALSE)))
 stopifnot(identical(base$seq_len$return_length,
@@ -18,6 +20,11 @@ stopifnot(identical(file.path(c('a', 'b'), 'x'), c('a/x', 'b/x')))
 stopifnot(identical(file.path('a', 'b'), 'a/b'))
 stopifnot(identical(file.path('a', character(0)), character(0)))
 stopifnot(identical(length(paste0('a', character(0))), 1L))
+# sprintf recycles fmt and its values the same way, and a zero-length
+# fmt or value likewise yields character(0).
+stopifnot(identical(sprintf('%s-%s', c('a', 'b'), 'x'), c('a-x', 'b-x')))
+stopifnot(identical(sprintf('%s-%s', c('a', 'b'), character(0)), character(0)))
+stopifnot(identical(sprintf(character(0), 1), character(0)))
 
 # seq_len's result length is the *value* of length.out, not its vector
 # length: 0 empties, scalars pass through, dynamic counts stay runtime.
@@ -25,4 +32,4 @@ stopifnot(identical(seq_len(0L), integer(0)))
 stopifnot(identical(seq_len(3L), 1:3))
 stopifnot(identical(length(seq_len(nrow(data.frame(a = 1:2)))), 2L))
 
-cat('file.path recycling and seq_len value-length semantics passed\n')
+cat('file.path and sprintf recycling and seq_len value-length semantics passed\n')
