@@ -109,4 +109,12 @@ stopifnot(is.function(knitr::knit_engines$get("probe_engine_xyz")))
 knitr::knit_engines$delete("probe_engine_xyz")
 stopifnot(is.null(knitr::knit_engines$get("probe_engine_xyz")))
 
+# all_labels() captures its filters with match.call() and evaluates them
+# against each chunk's options, so a bare option name such as `engine` or
+# `echo` needs no binding in the caller; all_rcpp_labels() forwards its
+# `...` to it. Outside a knit there are no chunks, so both return NULL.
+stopifnot(!exists("engine"), !exists("echo"))
+stopifnot(is.null(knitr::all_labels(engine == "R")),
+          is.null(knitr::all_rcpp_labels(echo)))
+
 cat("knitr exports, formals, opts/hooks objects, and knitting verified.\n")

@@ -41,6 +41,10 @@
   "injection-diag": [
     {"code": "RY010", "severity": "warning", "line": 2, "column": 7}
   ],
+  "knitr-labels-clean": [],
+  "knitr-labels-diag": [
+    {"code": "RY010", "severity": "warning", "line": 5, "column": 12}
+  ],
   "lazy-assign-clean": [],
   "lazy-assign-diag": [
     {"code": "RY010", "severity": "warning", "line": 5, "column": 15}
