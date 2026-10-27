@@ -89,6 +89,14 @@
   `knitr-labels-*` inference fixtures pin both silent captures and an
   eager `knit_child()` control.
 
+- Revise base to 0.0.32: `sprintf()` returns `character(0)` when `fmt` or
+  any value is zero-length, like `file.path()`, so its length is now
+  `longest_arg_or_zero` instead of `longest_arg`. ry inferred
+  `sprintf("%s", character(0))` as length one, and with a guarded
+  `length(x) > 1L` operand it would claim at least two elements for a
+  result that may be empty. `tests/base_lengths.R` pins the spec against
+  live R, and `dump-sprintf.R` pins the empty binding type.
+
 ## [0.6.3] - 2026-10-24
 
 Data-revision release with stub fixes found by ry's top-500 package probe
