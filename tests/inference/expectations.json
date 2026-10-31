@@ -20,6 +20,11 @@
   "cut-generic-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
   ],
+  "data-table-clean": [],
+  "data-table-diag": [
+    {"code": "RY010", "severity": "warning", "line": 4, "column": 3},
+    {"code": "RY010", "severity": "warning", "line": 5, "column": 7}
+  ],
   "dataframe-returns-clean": [],
   "dataframe-returns-diag": [
     {"code": "RY040", "severity": "error", "line": 3, "column": 6},
