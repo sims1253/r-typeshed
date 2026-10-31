@@ -23,7 +23,9 @@
   "data-table-clean": [],
   "data-table-diag": [
     {"code": "RY010", "severity": "warning", "line": 4, "column": 3},
-    {"code": "RY010", "severity": "warning", "line": 5, "column": 7}
+    {"code": "RY010", "severity": "warning", "line": 5, "column": 7},
+    {"code": "RY010", "severity": "warning", "line": 8, "column": 22},
+    {"code": "RY010", "severity": "warning", "line": 9, "column": 63}
   ],
   "dataframe-returns-clean": [],
   "dataframe-returns-diag": [

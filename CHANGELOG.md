@@ -70,7 +70,10 @@
   return anything, and `setDT()` keeps the classes that follow
   `"data.frame"`. `setkey()`, `setorder()`, and `frank()` declare their
   `...` as `quoted_expression`, and `substitute2()` declares its `expr`
-  that way, because they capture column names with `substitute()`.
+  that way, because they capture column names with `substitute()`. A
+  `...` mode is the default for formals without their own entry, so each
+  of these stubs declares its other formals, such as `x` and `na.last`,
+  as `normal`.
   `setindex()`, `measure()`, `rollup()`, `cube()`, and `groupingsets()`
   also declare `...` that way, but only part of their `...` is quoted.
   `setindex(...)` forwards to `setkey()`, so its `...` also carries the

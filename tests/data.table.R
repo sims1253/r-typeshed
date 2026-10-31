@@ -23,16 +23,18 @@ constructors <- c("data.table", "rbindlist", "CJ", "SJ")
 # quote `j` but evaluate `by`, `.SDcols`, `id`, `label`, and `sets`. The
 # schema cannot mark part of `...`, so the quoted mode covers the column
 # names and leaves those other arguments unchecked.
-quoted <- list(
-  setkey = list(`...` = "quoted_expression"),
-  setindex = list(`...` = "quoted_expression"),
-  setorder = list(`...` = "quoted_expression"),
-  frank = list(`...` = "quoted_expression"),
-  measure = list(`...` = "quoted_expression"),
-  rollup = list(`...` = "quoted_expression"),
-  cube = list(`...` = "quoted_expression"),
-  groupingsets = list(`...` = "quoted_expression"),
-  substitute2 = list(expr = "quoted_expression")
+# A `...` mode is the default for formals without their own entry, so the
+# explicit formals around a quoted `...` are declared "normal".
+quoted_dots <- function(name) {
+  formals <- names(formals(getExportedValue(pkg, name)))
+  modes <- ifelse(formals == "...", "quoted_expression", "normal")
+  stats::setNames(as.list(modes), formals)
+}
+quoted <- c(
+  sapply(c("setkey", "setindex", "setorder", "frank", "measure",
+           "rollup", "cube", "groupingsets"),
+         quoted_dots, simplify = FALSE),
+  list(substitute2 = list(expr = "quoted_expression"))
 )
 
 # The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
@@ -148,6 +150,19 @@ stopifnot(identical(data.table::rollup(sales, j = sum(amount), by = "grp")$V1,
 stopifnot(!exists("missing_table"), !exists("missing_conversion"),
           !exists("missing_by"))
 stopifnot(inherits(try(data.table::rollup(sales, j = sum(amount), by = missing_by),
+                       silent = TRUE),
+                   "try-error"))
+# The explicit formals around a quoted `...` are evaluated.
+stopifnot(!exists("missing_flag"), !exists("missing_method"))
+stopifnot(inherits(try(data.table::setorder(missing_table, x2), silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::setorder(q, x2, na.last = missing_flag),
+                       silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::frank(q, x2, ties.method = missing_method),
+                       silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::setkey(q, g2, verbose = missing_flag),
                        silent = TRUE),
                    "try-error"))
 stopifnot(inherits(try(data.table::setindex(missing_table, x2), silent = TRUE),
