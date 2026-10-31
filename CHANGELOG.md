@@ -68,11 +68,16 @@
   `fread(data.table = FALSE)` returns a plain data frame, `copy()` copies
   any object, `as.data.table()` is an S3 generic whose methods can
   return anything, and `setDT()` keeps the classes that follow
-  `"data.frame"`. `setkey()`,
-  `setindex()`, `setorder()`, `frank()`, and `measure()` declare their
+  `"data.frame"`. `setkey()`, `setorder()`, and `frank()` declare their
   `...` as `quoted_expression`, and `substitute2()` declares its `expr`
-  that way, because they capture column names with `substitute()`. Before,
-  ry read the 0.0.1 stub as declaring them eager, so
+  that way, because they capture column names with `substitute()`.
+  `setindex()` and `measure()` also declare `...` that way, but only part
+  of their `...` is quoted. `setindex(...)` forwards to `setkey()`, so its
+  `...` also carries the evaluated table and `verbose`. `measure()`
+  evaluates its named arguments as conversion functions. The schema
+  cannot mark part of `...`, and declaring it eager would report the
+  column names in `setindex(dt, a)` and `measure(value.name, dim)`.
+  Before, ry read the 0.0.1 stub as declaring all six eager, so
   `setorder(dt, grp)` reported `grp` as RY010. `tests/data.table.R` pins
   the returns and the quoted arguments against live R, and the
   `data-table-*` inference fixtures pin the column mask and the quoted

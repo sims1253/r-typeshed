@@ -16,7 +16,11 @@ table <- list(mode = "list", length = "unknown", na = TRUE,
 constructors <- c("data.table", "rbindlist", "CJ", "SJ")
 # These capture their column-name arguments with substitute() instead of
 # evaluating them. setkeyv(), setindexv(), and setorderv() take character
-# vectors and evaluate them.
+# vectors and evaluate them. setindex() and measure() quote only part of
+# their `...`: setindex(...) forwards the evaluated table and `verbose`
+# to setkey(), and measure() evaluates its named arguments. The schema
+# cannot mark part of `...`, so the quoted mode covers the column names
+# and leaves those other arguments unchecked.
 quoted <- list(
   setkey = list(`...` = "quoted_expression"),
   setindex = list(`...` = "quoted_expression"),
@@ -126,6 +130,14 @@ stopifnot(identical(data.table::frank(q, x2), c(2, 1)))
 wide <- data.table::data.table(id = 1L, a_1 = 1, a_2 = 2)
 long <- data.table::melt(wide, measure.vars = data.table::measure(value.name, dim, sep = "_"))
 stopifnot(identical(names(long), c("id", "dim", "a")))
+# The evaluated parts of setindex()'s and measure()'s `...`.
+stopifnot(!exists("missing_table"), !exists("missing_conversion"))
+stopifnot(inherits(try(data.table::setindex(missing_table, x2), silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::measure(value.name, dim = missing_conversion,
+                                           cols = c("a_1", "a_2")),
+                       silent = TRUE),
+                   "try-error"))
 stopifnot(identical(data.table::substitute2(undefined_name + 1, list()),
                     quote(undefined_name + 1)))
 
