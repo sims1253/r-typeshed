@@ -60,6 +60,29 @@
 
 ### Function semantics
 
+- Revise data.table to 0.0.2: `data.table()`, `rbindlist()`, `CJ()`, and
+  `SJ()` return a list of class `c("data.table", "data.frame")` instead
+  of an opaque value. A consumer can then treat `dt[val > 1]` as a column
+  mask: before, ry closed the search path for `library(data.table)` and
+  reported `val` as RY010. The other constructors stay opaque.
+  `fread(data.table = FALSE)` returns a plain data frame, `copy()` copies
+  any object, `as.data.table()` is an S3 generic whose methods can
+  return anything, and `setDT()` keeps the classes that follow
+  `"data.frame"`. `setkey()`, `setorder()`, and `frank()` declare their
+  `...` as `quoted_expression`, and `substitute2()` declares its `expr`
+  that way, because they capture column names with `substitute()`.
+  `setindex()` and `measure()` also declare `...` that way, but only part
+  of their `...` is quoted. `setindex(...)` forwards to `setkey()`, so its
+  `...` also carries the evaluated table and `verbose`. `measure()`
+  evaluates its named arguments as conversion functions. The schema
+  cannot mark part of `...`, and declaring it eager would report the
+  column names in `setindex(dt, a)` and `measure(value.name, dim)`.
+  Before, ry read the 0.0.1 stub as declaring all six eager, so
+  `setorder(dt, grp)` reported `grp` as RY010. `tests/data.table.R` pins
+  the returns and the quoted arguments against live R, and the
+  `data-table-*` inference fixtures pin the column mask and the quoted
+  arguments with true-error controls.
+
 - Revise base to 0.0.31: `Sys.Date()` returns class `"Date"` and
   `Sys.time()` returns class `c("POSIXct", "POSIXt")`, both still double
   scalars that are never `NA`. They used to return class-less doubles, so

@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "data.table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     ":=": {
       "params": [
@@ -244,9 +244,13 @@
         "unique"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "copy": {
@@ -279,9 +283,13 @@
         "stringsAsFactors"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "dcast": {
@@ -458,6 +466,9 @@
         "na.last",
         "ties.method"
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -992,6 +1003,9 @@
         "cols",
         "multiple.keyword"
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1149,9 +1163,13 @@
         "ignore.attr"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "rleid": {
@@ -1356,6 +1374,9 @@
       "params": [
         "..."
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1381,6 +1402,9 @@
         "verbose",
         "physical"
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1458,6 +1482,9 @@
         "...",
         "na.last"
       ],
+      "eval": {
+        "...": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
@@ -1506,9 +1533,13 @@
         "..."
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "substitute2": {
@@ -1516,6 +1547,9 @@
         "expr",
         "env"
       ],
+      "eval": {
+        "expr": "quoted_expression"
+      },
       "return": {
         "mode": "opaque",
         "length": "unknown",
