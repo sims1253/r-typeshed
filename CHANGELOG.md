@@ -60,13 +60,15 @@
 
 ### Function semantics
 
-- Revise data.table to 0.0.2: `data.table()`, `as.data.table()`,
-  `rbindlist()`, `setDT()`, `CJ()`, and `SJ()` return a list of class
-  `c("data.table", "data.frame")` instead of an opaque value. A consumer
-  can then treat `dt[val > 1]` as a column mask: before, ry closed the
-  search path for `library(data.table)` and reported `val` as RY010.
-  `fread()` stays opaque because `fread(data.table = FALSE)` returns a
-  plain data frame, and `copy()` copies any object. `setkey()`,
+- Revise data.table to 0.0.2: `data.table()`, `rbindlist()`, `CJ()`, and
+  `SJ()` return a list of class `c("data.table", "data.frame")` instead
+  of an opaque value. A consumer can then treat `dt[val > 1]` as a column
+  mask: before, ry closed the search path for `library(data.table)` and
+  reported `val` as RY010. The other constructors stay opaque.
+  `fread(data.table = FALSE)` returns a plain data frame, `copy()` copies
+  any object, `as.data.table()` is an S3 generic whose methods can
+  return anything, and `setDT()` keeps the classes that follow
+  `"data.frame"`. `setkey()`,
   `setindex()`, `setorder()`, `frank()`, and `measure()` declare their
   `...` as `quoted_expression`, and `substitute2()` declares its `expr`
   that way, because they capture column names with `substitute()`. Before,
