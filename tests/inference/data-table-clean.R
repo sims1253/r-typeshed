@@ -11,3 +11,9 @@ d4 <- data.table::CJ(a = 1:2, b = 3:4)
 d4[a > b]
 d5 <- data.table::setDT(list(a = 1:3))
 d5[a > 1]
+# setorder(), frank(), setkey(), and setindex() capture their column
+# names unevaluated, so `a` needs no binding here either.
+data.table::setorder(d1, -a)
+r <- data.table::frank(d1, a)
+data.table::setkey(d1, a)
+data.table::setindex(d1, a)

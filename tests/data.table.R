@@ -12,6 +12,17 @@ opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
 table <- list(mode = "list", length = "unknown", na = TRUE,
               class = list("data.table", "data.frame"))
 constructors <- c("data.table", "as.data.table", "rbindlist", "setDT", "CJ", "SJ")
+# These capture their column-name arguments with substitute() instead of
+# evaluating them. setkeyv(), setindexv(), and setorderv() take character
+# vectors and evaluate them.
+quoted <- list(
+  setkey = list(`...` = "quoted_expression"),
+  setindex = list(`...` = "quoted_expression"),
+  setorder = list(`...` = "quoted_expression"),
+  frank = list(`...` = "quoted_expression"),
+  measure = list(`...` = "quoted_expression"),
+  substitute2 = list(expr = "quoted_expression")
+)
 
 # The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
 # behavioral export/formal checks even when CRAN has moved past this
@@ -43,6 +54,7 @@ for (name in functions) {
   stopifnot(identical(sig$params, as.list(names(formals(getExportedValue(pkg, name))))))
   expected <- if (name %in% constructors) table else opaque
   stopifnot(identical(sig$return, expected))
+  stopifnot(identical(sig$eval, quoted[[name]]))
 }
 for (name in values) {
   stopifnot(!is.function(getExportedValue(pkg, name)))
@@ -50,7 +62,8 @@ for (name in values) {
 }
 
 # The inventory claims no [.data.table semantics beyond name/formal
-# resolution and the constructor classes -- the :=/`j` NSE surface is deliberately out of scope for
+# resolution, the constructor classes, and the quoted arguments above --
+# the :=/`j` NSE surface is deliberately out of scope for
 # an inventory stub (#43) -- but the exported API the inventory names
 # keeps its documented behavior: construction, by-reference :=, grouped
 # aggregation over .N, and keys.
@@ -87,6 +100,25 @@ for (w in witnesses) {
 }
 stopifnot(identical(class(data.table::fread(text = "a\n1", data.table = FALSE)),
                     "data.frame"))
+
+# Live-R witnesses for the quoted arguments: these column names are
+# not bound in the calling frame (measure()'s `dim` names a column even
+# though base::dim exists).
+stopifnot(!exists("g2"), !exists("x2"), !exists("value.name"),
+          !exists("undefined_name"))
+q <- data.table::data.table(g2 = c("b", "a"), x2 = 2:1)
+data.table::setkey(q, g2)
+stopifnot(identical(data.table::key(q), "g2"))
+data.table::setindex(q, x2)
+stopifnot(identical(data.table::indices(q), "x2"))
+data.table::setorder(q, -x2)
+stopifnot(identical(q$x2, 2:1))
+stopifnot(identical(data.table::frank(q, x2), c(2, 1)))
+wide <- data.table::data.table(id = 1L, a_1 = 1, a_2 = 2)
+long <- data.table::melt(wide, measure.vars = data.table::measure(value.name, dim, sep = "_"))
+stopifnot(identical(names(long), c("id", "dim", "a")))
+stopifnot(identical(data.table::substitute2(undefined_name + 1, list()),
+                    quote(undefined_name + 1)))
 
 # fread/fwrite round-trip the same values through text.
 f <- tempfile(fileext = ".csv")
