@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-10-31
+
+Data-revision release with export inventories for lubridate, knitr, and
+data.table (#43), data.table constructor returns and quoted column
+names, and fixes to base, rlang, and knitr stubs. No schema changes.
+
 ### New stubs
 
 - Add lubridate 0.0.1 with its complete export inventory from lubridate
