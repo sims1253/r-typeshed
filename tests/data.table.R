@@ -16,17 +16,22 @@ table <- list(mode = "list", length = "unknown", na = TRUE,
 constructors <- c("data.table", "rbindlist", "CJ", "SJ")
 # These capture their column-name arguments with substitute() instead of
 # evaluating them. setkeyv(), setindexv(), and setorderv() take character
-# vectors and evaluate them. setindex() and measure() quote only part of
-# their `...`: setindex(...) forwards the evaluated table and `verbose`
-# to setkey(), and measure() evaluates its named arguments. The schema
-# cannot mark part of `...`, so the quoted mode covers the column names
-# and leaves those other arguments unchecked.
+# vectors and evaluate them. setindex(), measure(), rollup(), cube(), and
+# groupingsets() quote only part of their `...`: setindex(...) forwards
+# the evaluated table and `verbose` to setkey(), measure() evaluates its
+# named arguments, and the rollup(), cube(), and groupingsets() methods
+# quote `j` but evaluate `by`, `.SDcols`, `id`, `label`, and `sets`. The
+# schema cannot mark part of `...`, so the quoted mode covers the column
+# names and leaves those other arguments unchecked.
 quoted <- list(
   setkey = list(`...` = "quoted_expression"),
   setindex = list(`...` = "quoted_expression"),
   setorder = list(`...` = "quoted_expression"),
   frank = list(`...` = "quoted_expression"),
   measure = list(`...` = "quoted_expression"),
+  rollup = list(`...` = "quoted_expression"),
+  cube = list(`...` = "quoted_expression"),
+  groupingsets = list(`...` = "quoted_expression"),
   substitute2 = list(expr = "quoted_expression")
 )
 
@@ -130,8 +135,21 @@ stopifnot(identical(data.table::frank(q, x2), c(2, 1)))
 wide <- data.table::data.table(id = 1L, a_1 = 1, a_2 = 2)
 long <- data.table::melt(wide, measure.vars = data.table::measure(value.name, dim, sep = "_"))
 stopifnot(identical(names(long), c("id", "dim", "a")))
-# The evaluated parts of setindex()'s and measure()'s `...`.
-stopifnot(!exists("missing_table"), !exists("missing_conversion"))
+stopifnot(!exists("amount"))
+sales <- data.table::data.table(grp = c("a", "a", "b"), amount = 1:3)
+stopifnot(identical(data.table::rollup(sales, j = sum(amount), by = "grp")$V1,
+                    c(3L, 3L, 6L)),
+          identical(data.table::cube(sales, sum(amount), by = "grp")$V1,
+                    c(3L, 3L, 6L)),
+          identical(data.table::groupingsets(sales, j = sum(amount), by = "grp",
+                                             sets = list("grp"))$V1,
+                    c(3L, 3L)))
+# The evaluated parts of setindex()'s, measure()'s, and rollup()'s `...`.
+stopifnot(!exists("missing_table"), !exists("missing_conversion"),
+          !exists("missing_by"))
+stopifnot(inherits(try(data.table::rollup(sales, j = sum(amount), by = missing_by),
+                       silent = TRUE),
+                   "try-error"))
 stopifnot(inherits(try(data.table::setindex(missing_table, x2), silent = TRUE),
                    "try-error"),
           inherits(try(data.table::measure(value.name, dim = missing_conversion,

@@ -15,3 +15,8 @@ data.table::setorder(d1, -a)
 r <- data.table::frank(d1, a)
 data.table::setkey(d1, a)
 data.table::setindex(d1, a)
+# rollup(), cube(), and groupingsets() evaluate `j` in the table's columns,
+# so `a` in `sum(a)` needs no binding either.
+r1 <- data.table::rollup(d1, j = sum(a), by = "a")
+r2 <- data.table::cube(d1, sum(a), by = "a")
+r3 <- data.table::groupingsets(d1, j = sum(a), by = "a", sets = list("a"))

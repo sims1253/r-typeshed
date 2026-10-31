@@ -71,12 +71,15 @@
   `"data.frame"`. `setkey()`, `setorder()`, and `frank()` declare their
   `...` as `quoted_expression`, and `substitute2()` declares its `expr`
   that way, because they capture column names with `substitute()`.
-  `setindex()` and `measure()` also declare `...` that way, but only part
-  of their `...` is quoted. `setindex(...)` forwards to `setkey()`, so its
-  `...` also carries the evaluated table and `verbose`. `measure()`
-  evaluates its named arguments as conversion functions. The schema
-  cannot mark part of `...`, and declaring it eager would report the
-  column names in `setindex(dt, a)` and `measure(value.name, dim)`.
+  `setindex()`, `measure()`, `rollup()`, `cube()`, and `groupingsets()`
+  also declare `...` that way, but only part of their `...` is quoted.
+  `setindex(...)` forwards to `setkey()`, so its `...` also carries the
+  evaluated table and `verbose`. `measure()` evaluates its named
+  arguments as conversion functions. The `rollup()`, `cube()`, and
+  `groupingsets()` methods quote `j` and evaluate `by`, `.SDcols`, `id`,
+  `label`, and `sets`. The schema cannot mark part of `...`, and
+  declaring it eager would report the column names in `setindex(dt, a)`,
+  `measure(value.name, dim)`, and `rollup(dt, j = sum(amount), by = "g")`.
   Before, ry read the 0.0.1 stub as declaring all six eager, so
   `setorder(dt, grp)` reported `grp` as RY010. `tests/data.table.R` pins
   the returns and the quoted arguments against live R, and the
