@@ -60,6 +60,16 @@
 
 ### Function semantics
 
+- Revise data.table to 0.0.2: `data.table()`, `as.data.table()`,
+  `rbindlist()`, `setDT()`, `CJ()`, and `SJ()` return a list of class
+  `c("data.table", "data.frame")` instead of an opaque value. A consumer
+  can then treat `dt[val > 1]` as a column mask: before, ry closed the
+  search path for `library(data.table)` and reported `val` as RY010.
+  `fread()` stays opaque because `fread(data.table = FALSE)` returns a
+  plain data frame, and `copy()` copies any object. `tests/data.table.R`
+  pins the returns against live R, and the `data-table-*` inference
+  fixtures pin the column mask with true-error controls.
+
 - Revise base to 0.0.31: `Sys.Date()` returns class `"Date"` and
   `Sys.time()` returns class `c("POSIXct", "POSIXt")`, both still double
   scalars that are never `NA`. They used to return class-less doubles, so

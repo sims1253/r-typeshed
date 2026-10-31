@@ -5,6 +5,13 @@ root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
 pkg <- "data.table"
 version <- "1.18.6.1"
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
+# Constructors that always return a data.table are typed as one, so a
+# consumer can scope `dt[val > 1]` to the table's columns. fread() stays
+# opaque because fread(data.table = FALSE) returns a plain data.frame,
+# and copy() returns a copy of any object.
+table <- list(mode = "list", length = "unknown", na = TRUE,
+              class = list("data.table", "data.frame"))
+constructors <- c("data.table", "as.data.table", "rbindlist", "setDT", "CJ", "SJ")
 
 # The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
 # behavioral export/formal checks even when CRAN has moved past this
@@ -34,7 +41,8 @@ stopifnot(setequal(names(doc$datasets), values))
 for (name in functions) {
   sig <- doc$functions[[name]]
   stopifnot(identical(sig$params, as.list(names(formals(getExportedValue(pkg, name))))))
-  stopifnot(identical(sig$return, opaque))
+  expected <- if (name %in% constructors) table else opaque
+  stopifnot(identical(sig$return, expected))
 }
 for (name in values) {
   stopifnot(!is.function(getExportedValue(pkg, name)))
@@ -42,7 +50,7 @@ for (name in values) {
 }
 
 # The inventory claims no [.data.table semantics beyond name/formal
-# resolution -- the :=/`j` NSE surface is deliberately out of scope for
+# resolution and the constructor classes -- the :=/`j` NSE surface is deliberately out of scope for
 # an inventory stub (#43) -- but the exported API the inventory names
 # keeps its documented behavior: construction, by-reference :=, grouped
 # aggregation over .N, and keys.
@@ -59,6 +67,26 @@ stopifnot(identical(data.table::key(dt), "g"),
 stopifnot(identical(nrow(data.table::CJ(a = 1:2, b = 1:3)), 6L))
 stopifnot(identical(data.table::`%between%`(2L, c(1L, 3L)), TRUE),
           identical(data.table::`%chin%`("a", c("a", "b")), TRUE))
+
+# Live-R witnesses for the typed constructor returns, including the
+# empty and coerced inputs, and for the fread() exception.
+witnesses <- list(
+  data.table::data.table(a = 1),
+  data.table::data.table(),
+  data.table::as.data.table(list(a = 1)),
+  data.table::as.data.table(matrix(1:4, 2)),
+  data.table::as.data.table(data.frame(a = 1)),
+  data.table::rbindlist(list(list(a = 1))),
+  data.table::rbindlist(list()),
+  data.table::setDT(list(a = 1)),
+  data.table::CJ(1:2, 3:4),
+  data.table::SJ(1:2)
+)
+for (w in witnesses) {
+  stopifnot(identical(class(w), c("data.table", "data.frame")), is.list(w))
+}
+stopifnot(identical(class(data.table::fread(text = "a\n1", data.table = FALSE)),
+                    "data.frame"))
 
 # fread/fwrite round-trip the same values through text.
 f <- tempfile(fileext = ".csv")

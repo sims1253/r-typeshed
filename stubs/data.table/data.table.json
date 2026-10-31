@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "data.table",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "functions": {
     ":=": {
       "params": [
@@ -140,9 +140,13 @@
         "..."
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "as.IDate": {
@@ -244,9 +248,13 @@
         "unique"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "copy": {
@@ -279,9 +287,13 @@
         "stringsAsFactors"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "dcast": {
@@ -1149,9 +1161,13 @@
         "ignore.attr"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "rleid": {
@@ -1334,9 +1350,13 @@
         "check.names"
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "setDTthreads": {
@@ -1506,9 +1526,13 @@
         "..."
       ],
       "return": {
-        "mode": "opaque",
+        "mode": "list",
         "length": "unknown",
-        "na": true
+        "na": true,
+        "class": [
+          "data.table",
+          "data.frame"
+        ]
       }
     },
     "substitute2": {
