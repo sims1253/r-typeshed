@@ -48,6 +48,16 @@
       "e": "double<len=1>"
     }
   },
+  "data-table": {
+    "bindings": {
+      "d": "list<len=?>:data.table,data.frame",
+      "e": "unknown"
+    },
+    "stale_embedded": {
+      "d": "unknown",
+      "e": "unknown"
+    }
+  },
   "date-time": {
     "bindings": {
       "d": "double<len=1>:Date",

@@ -5,6 +5,37 @@ root <- dirname(dirname(normalizePath(sub("^--file=", "", args[[1]]))))
 pkg <- "data.table"
 version <- "1.18.6.1"
 opaque <- list(mode = "opaque", length = "unknown", na = TRUE)
+# Constructors that always return exactly c("data.table", "data.frame")
+# are typed as one, so a consumer can scope `dt[val > 1]` to the table's
+# columns. The rest stay opaque: fread(data.table = FALSE) returns a
+# plain data.frame, copy() copies any object, as.data.table() is an S3
+# generic whose methods may return anything, and setDT() keeps the
+# classes that follow "data.frame".
+table <- list(mode = "list", length = "unknown", na = TRUE,
+              class = list("data.table", "data.frame"))
+constructors <- c("data.table", "rbindlist", "CJ", "SJ")
+# These capture their column-name arguments with substitute() instead of
+# evaluating them. setkeyv(), setindexv(), and setorderv() take character
+# vectors and evaluate them. setindex(), measure(), rollup(), cube(), and
+# groupingsets() quote only part of their `...`: setindex(...) forwards
+# the evaluated table and `verbose` to setkey(), measure() evaluates its
+# named arguments, and the rollup(), cube(), and groupingsets() methods
+# quote `j` but evaluate `by`, `.SDcols`, `id`, `label`, and `sets`. The
+# schema cannot mark part of `...`, so the quoted mode covers the column
+# names and leaves those other arguments unchecked.
+# A `...` mode is the default for formals without their own entry, so the
+# explicit formals around a quoted `...` are declared "normal".
+quoted_dots <- function(name) {
+  formals <- names(formals(getExportedValue(pkg, name)))
+  modes <- ifelse(formals == "...", "quoted_expression", "normal")
+  stats::setNames(as.list(modes), formals)
+}
+quoted <- c(
+  sapply(c("setkey", "setindex", "setorder", "frank", "measure",
+           "rollup", "cube", "groupingsets"),
+         quoted_dots, simplify = FALSE),
+  list(substitute2 = list(expr = "quoted_expression"))
+)
 
 # The upstream-drift CI job sets RT_TYPESHED_DRIFT so its probes reach the
 # behavioral export/formal checks even when CRAN has moved past this
@@ -34,7 +65,9 @@ stopifnot(setequal(names(doc$datasets), values))
 for (name in functions) {
   sig <- doc$functions[[name]]
   stopifnot(identical(sig$params, as.list(names(formals(getExportedValue(pkg, name))))))
-  stopifnot(identical(sig$return, opaque))
+  expected <- if (name %in% constructors) table else opaque
+  stopifnot(identical(sig$return, expected))
+  stopifnot(identical(sig$eval, quoted[[name]]))
 }
 for (name in values) {
   stopifnot(!is.function(getExportedValue(pkg, name)))
@@ -42,7 +75,8 @@ for (name in values) {
 }
 
 # The inventory claims no [.data.table semantics beyond name/formal
-# resolution -- the :=/`j` NSE surface is deliberately out of scope for
+# resolution, the constructor classes, and the quoted arguments above --
+# the :=/`j` NSE surface is deliberately out of scope for
 # an inventory stub (#43) -- but the exported API the inventory names
 # keeps its documented behavior: construction, by-reference :=, grouped
 # aggregation over .N, and keys.
@@ -59,6 +93,86 @@ stopifnot(identical(data.table::key(dt), "g"),
 stopifnot(identical(nrow(data.table::CJ(a = 1:2, b = 1:3)), 6L))
 stopifnot(identical(data.table::`%between%`(2L, c(1L, 3L)), TRUE),
           identical(data.table::`%chin%`("a", c("a", "b")), TRUE))
+
+# Live-R witnesses for the typed constructor returns, including empty
+# inputs and inputs that carry an extra class, and for the opaque
+# exceptions.
+# data.table() drops the extra class from its argument by reference, so
+# each call gets a fresh object.
+extra <- function() structure(data.frame(a = 1), class = c("data.frame", "extra"))
+witnesses <- list(
+  data.table::data.table(a = 1),
+  data.table::data.table(),
+  data.table::data.table(extra()),
+  data.table::rbindlist(list(list(a = 1))),
+  data.table::rbindlist(list()),
+  data.table::rbindlist(list(extra())),
+  data.table::CJ(1:2, 3:4),
+  data.table::SJ(1:2)
+)
+for (w in witnesses) {
+  stopifnot(identical(class(w), c("data.table", "data.frame")), is.list(w))
+}
+stopifnot(identical(class(data.table::fread(text = "a\n1", data.table = FALSE)),
+                    "data.frame"))
+stopifnot(identical(class(data.table::setDT(extra())),
+                    c("data.table", "data.frame", "extra")))
+registerS3method("as.data.table", "rts_probe", function(x, ...) 42L,
+                 envir = asNamespace("data.table"))
+stopifnot(identical(data.table::as.data.table(structure(1, class = "rts_probe")), 42L))
+
+# Live-R witnesses for the quoted arguments: these column names are
+# not bound in the calling frame (measure()'s `dim` names a column even
+# though base::dim exists).
+stopifnot(!exists("g2"), !exists("x2"), !exists("value.name"),
+          !exists("undefined_name"))
+q <- data.table::data.table(g2 = c("b", "a"), x2 = 2:1)
+data.table::setkey(q, g2)
+stopifnot(identical(data.table::key(q), "g2"))
+data.table::setindex(q, x2)
+stopifnot(identical(data.table::indices(q), "x2"))
+data.table::setorder(q, -x2)
+stopifnot(identical(q$x2, 2:1))
+stopifnot(identical(data.table::frank(q, x2), c(2, 1)))
+wide <- data.table::data.table(id = 1L, a_1 = 1, a_2 = 2)
+long <- data.table::melt(wide, measure.vars = data.table::measure(value.name, dim, sep = "_"))
+stopifnot(identical(names(long), c("id", "dim", "a")))
+stopifnot(!exists("amount"))
+sales <- data.table::data.table(grp = c("a", "a", "b"), amount = 1:3)
+stopifnot(identical(data.table::rollup(sales, j = sum(amount), by = "grp")$V1,
+                    c(3L, 3L, 6L)),
+          identical(data.table::cube(sales, sum(amount), by = "grp")$V1,
+                    c(3L, 3L, 6L)),
+          identical(data.table::groupingsets(sales, j = sum(amount), by = "grp",
+                                             sets = list("grp"))$V1,
+                    c(3L, 3L)))
+# The evaluated parts of setindex()'s, measure()'s, and rollup()'s `...`.
+stopifnot(!exists("missing_table"), !exists("missing_conversion"),
+          !exists("missing_by"))
+stopifnot(inherits(try(data.table::rollup(sales, j = sum(amount), by = missing_by),
+                       silent = TRUE),
+                   "try-error"))
+# The explicit formals around a quoted `...` are evaluated.
+stopifnot(!exists("missing_flag"), !exists("missing_method"))
+stopifnot(inherits(try(data.table::setorder(missing_table, x2), silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::setorder(q, x2, na.last = missing_flag),
+                       silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::frank(q, x2, ties.method = missing_method),
+                       silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::setkey(q, g2, verbose = missing_flag),
+                       silent = TRUE),
+                   "try-error"))
+stopifnot(inherits(try(data.table::setindex(missing_table, x2), silent = TRUE),
+                   "try-error"),
+          inherits(try(data.table::measure(value.name, dim = missing_conversion,
+                                           cols = c("a_1", "a_2")),
+                       silent = TRUE),
+                   "try-error"))
+stopifnot(identical(data.table::substitute2(undefined_name + 1, list()),
+                    quote(undefined_name + 1)))
 
 # fread/fwrite round-trip the same values through text.
 f <- tempfile(fileext = ".csv")
