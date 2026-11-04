@@ -3273,8 +3273,12 @@
         "dims"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "unknown",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -5296,7 +5300,7 @@
         "..."
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "opaque",
         "length": "1",
         "na": true
       }
@@ -6725,8 +6729,12 @@
         "dims"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "unknown",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },

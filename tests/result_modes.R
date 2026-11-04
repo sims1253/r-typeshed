@@ -3,7 +3,8 @@ script <- sub('^--file=', '', grep('^--file=', commandArgs(FALSE), value = TRUE)
 root <- dirname(dirname(normalizePath(script)))
 base <- jsonlite::read_json(file.path(root, 'stubs/base/base.json'))$functions
 
-# Result modes that `double_or_int` got wrong (#124, #126). Consumers
+# Result modes that `double_or_int` got wrong (#124, #126, plus
+# colSums, rowSums, and median from the same family). Consumers
 # resolve `double_or_int` to integer for integer input, so these entries
 # claimed integer for mean(1:3) and the like. Flip any pinned field and
 # this test must fail.
@@ -22,7 +23,12 @@ returns <- list(
   seq.int = list(mode = 'union', length = 'unknown',
                  members = list('integer', 'double'), na = FALSE),
   sample = list(mode = 'opaque', length = 'unknown', na = TRUE),
-  ave = list(mode = 'opaque', length = 'arg0', na = TRUE)
+  ave = list(mode = 'opaque', length = 'arg0', na = TRUE),
+  colSums = list(mode = 'union', length = 'unknown',
+                 members = list('double', 'complex'), na = TRUE),
+  rowSums = list(mode = 'union', length = 'unknown',
+                 members = list('double', 'complex'), na = TRUE),
+  median = list(mode = 'opaque', length = '1', na = TRUE)
 )
 for (entry in names(returns)) {
   stopifnot(identical(base[[entry]]$return, returns[[entry]]))
@@ -79,5 +85,23 @@ stopifnot(identical(typeof(ave(1:3, FUN = length)), 'integer'))
 stopifnot(identical(typeof(ave(1:3, FUN = as.character)), 'character'))
 stopifnot(identical(length(ave(1:3, FUN = as.character)), 3L))
 stopifnot(identical(length(ave(1:4, c(1, 1, 2, 2), FUN = length)), 4L))
+
+# colSums() and rowSums() also never return integer: they are double,
+# or complex for complex input.
+for (f in list(colSums, rowSums)) {
+  stopifnot(identical(typeof(f(matrix(1:4, 2))), 'double'))
+  stopifnot(identical(typeof(f(matrix(c(TRUE, FALSE, TRUE, TRUE), 2))), 'double'))
+  stopifnot(identical(typeof(f(matrix(1i * (1:4), 2))), 'complex'))
+}
+
+# median() keeps the mode of x for an odd count and takes the mean of the
+# two middle values for an even one, so its mode depends on the length.
+stopifnot(identical(typeof(median(1:3)), 'integer'))
+stopifnot(identical(typeof(median(1:4)), 'double'))
+stopifnot(identical(typeof(median(c(1L, 3L))), 'double'))
+stopifnot(identical(typeof(median(TRUE)), 'logical'))
+stopifnot(identical(typeof(median(letters[1:3])), 'character'))
+stopifnot(identical(typeof(median(c(1i, 2i))), 'complex'))
+stopifnot(identical(length(median(1:4)), 1L))
 
 cat('value-dependent and non-integer result modes passed\n')

@@ -16,8 +16,14 @@
   `sample()` and `ave()` become opaque. `sample(10)` permutes
   `seq_len(10)`, while `sample(c(1.5, 2))` keeps the mode of `x`, and
   `ave()` returns the mode of `FUN`'s result at the length of `x`.
-  `tests/result_modes.R` pins each contract against live R, and
-  `dump-result-modes.R` pins the inferred bindings (#124, #126,
+  Three more `double_or_int` entries had the same faults:
+  `colSums()` and `rowSums()` return the double/complex union, since
+  they are never integer, and `median()` becomes opaque, since it keeps
+  the mode of `x` for an odd count (`median(1:3)` is integer,
+  `median(TRUE)` logical) and averages for an even one (`median(1:4)` is
+  double). The rest of `double_or_int` follows the input's mode and is
+  left to #125. `tests/result_modes.R` pins each contract against live
+  R, and `dump-result-modes.R` pins the inferred bindings (#124, #126,
   sims1253/ry#866).
 
 ## [0.6.4] - 2026-10-31
