@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.32",
+  "version": "0.0.35",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -2695,7 +2695,7 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "alias": {
@@ -2890,12 +2890,9 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
+        "mode": "opaque",
         "length": "arg0",
-        "na": false,
-        "class": [
-          "factor"
-        ]
+        "na": true
       }
     },
     "as.integer": {
@@ -2980,7 +2977,7 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "as.vector": {
@@ -3095,7 +3092,7 @@
       "return": {
         "mode": "character",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "body": {
@@ -3184,7 +3181,7 @@
       "return": {
         "mode": "double",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "character": {
@@ -3717,7 +3714,7 @@
       "return": {
         "mode": "character",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "dist": {
@@ -3727,7 +3724,10 @@
       "return": {
         "mode": "double",
         "length": "unknown",
-        "na": false
+        "na": true,
+        "class": [
+          "dist"
+        ]
       }
     },
     "dlnorm": {
@@ -4033,9 +4033,9 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
+        "mode": "opaque",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "fft": {
@@ -4045,7 +4045,7 @@
       "return": {
         "mode": "complex",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "file.exists": {
@@ -4106,7 +4106,7 @@
       "return": {
         "mode": "double",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "force": {
@@ -4181,7 +4181,7 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "gamma": {
@@ -4508,7 +4508,10 @@
       "return": {
         "mode": "integer",
         "length": "unknown",
-        "na": false
+        "na": true,
+        "class": [
+          "factor"
+        ]
       }
     },
     "intersect": {
@@ -5401,7 +5404,7 @@
       "return": {
         "mode": "complex",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "na.omit": {
@@ -5648,7 +5651,11 @@
       "return": {
         "mode": "integer",
         "length": "arg0",
-        "na": false
+        "na": true,
+        "class": [
+          "ordered",
+          "factor"
+        ]
       }
     },
     "pairwise.t.test": {
@@ -6031,8 +6038,11 @@
       "params": [],
       "return": {
         "mode": "double",
-        "length": "3",
-        "na": false
+        "length": "5",
+        "na": true,
+        "class": [
+          "proc_time"
+        ]
       }
     },
     "prod": {
@@ -6052,7 +6062,7 @@
       "return": {
         "mode": "double",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "prop.test": {
@@ -7516,7 +7526,10 @@
       "return": {
         "mode": "integer",
         "length": "unknown",
-        "na": false
+        "na": false,
+        "class": [
+          "table"
+        ]
       }
     },
     "tabulate": {
@@ -7721,7 +7734,7 @@
       "return": {
         "mode": "double",
         "length": "arg0",
-        "na": false
+        "na": true
       }
     },
     "try": {
@@ -7750,9 +7763,9 @@
         "frequency"
       ],
       "return": {
-        "mode": "double",
-        "length": "arg0",
-        "na": false
+        "mode": "opaque",
+        "length": "unknown",
+        "na": true
       }
     },
     "ts.intersect": {
@@ -7762,7 +7775,7 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "ts.plot": {
@@ -7782,7 +7795,7 @@
       "return": {
         "mode": "opaque",
         "length": "unknown",
-        "na": false
+        "na": true
       }
     },
     "typeof": {

@@ -187,6 +187,8 @@ jobs:
         run: Rscript --vanilla tests/dataframe_returns.R
       - name: Verify Date and POSIXct classes of Sys.Date and Sys.time
         run: Rscript --vanilla tests/date_time_returns.R
+      - name: Verify base constructor classes and NA claims
+        run: Rscript --vanilla tests/base_classes_na.R
       - name: Verify exported HTML tag lists
         run: Rscript --vanilla tests/html_tags.R
       - name: Verify model.extract symbol capture and coercion controls
