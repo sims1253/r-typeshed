@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -3073,7 +3073,7 @@
         "FUN"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "opaque",
         "length": "arg0",
         "na": true
       }
@@ -3447,8 +3447,12 @@
         "x"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "arg0",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -5276,8 +5280,12 @@
         "..."
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "1",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -6040,8 +6048,12 @@
         "..."
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "1",
+        "members": [
+          "double",
+          "complex"
+        ],
         "na": true
       }
     },
@@ -6685,9 +6697,13 @@
         "..."
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "arg0",
-        "na": false
+        "members": [
+          "double",
+          "complex"
+        ],
+        "na": true
       }
     },
     "rowMeans": {
@@ -6777,7 +6793,7 @@
         }
       ],
       "return": {
-        "mode": "arg0",
+        "mode": "opaque",
         "length": "unknown",
         "na": true
       }
@@ -6868,8 +6884,12 @@
         "by"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "unknown",
+        "members": [
+          "integer",
+          "double"
+        ],
         "na": false
       }
     },
@@ -6880,8 +6900,12 @@
         "by"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "union",
         "length": "unknown",
+        "members": [
+          "integer",
+          "double"
+        ],
         "na": false
       }
     },
@@ -6975,7 +6999,7 @@
         "x"
       ],
       "return": {
-        "mode": "double_or_int",
+        "mode": "double",
         "length": "arg0",
         "na": true
       }

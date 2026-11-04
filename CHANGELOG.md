@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Revise base to 0.0.33: `mean()`, `prod()`, `round()`, and `cumprod()`
+  return a double/complex union, like `signif()`, and `sign()` returns
+  double. They used `double_or_int`, which consumers resolve to integer
+  for integer input, but GNU R returns double for logical, integer, and
+  double input and complex for complex input (`sign()` rejects
+  complex), so ry inferred `mean(1:3)` and `round(1L)` as integer.
+  `round()` can also return `NA`. `seq()` and `seq.int()` return an
+  integer/double union, because the mode depends on argument values:
+  `seq(1, 10)` is integer and `seq(1, 10, by = 2)` is double.
+  `sample()` and `ave()` become opaque. `sample(10)` permutes
+  `seq_len(10)`, while `sample(c(1.5, 2))` keeps the mode of `x`, and
+  `ave()` returns the mode of `FUN`'s result at the length of `x`.
+  `tests/result_modes.R` pins each contract against live R, and
+  `dump-result-modes.R` pins the inferred bindings (#124, #126,
+  sims1253/ry#866).
+
 ## [0.6.4] - 2026-10-31
 
 Data-revision release with export inventories for lubridate, knitr, and
