@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Revise base to 0.0.34: `names()`, `rownames()`, `colnames()`, and
+  `dim()` return a union with `NULL`, because each returns `NULL` when
+  the attribute is absent, as for a plain vector. The character
+  accessors can also return `NA` names. `dimnames()` gets a typed entry
+  returning a list or `NULL` and leaves the untyped ambient inventory.
+  `nrow()` and `ncol()` also return `NULL` without a `dim`, but they
+  become opaque instead: a `NULL` member made ry report RY001 for the
+  idiomatic `if (nrow(df))` on a data frame and for a comparison on
+  `nrow(data) - 1` (two new findings in ggplot2), and the schema cannot
+  tie `NULL` to the input lacking a `dim`. `NROW()` and
+  `NCOL()` stay scalar integers. ry no longer reports RY040 for
+  `names(1:3) + 1`, which R evaluates to `numeric(0)`.
+  `tests/nullable_accessors.R` pins each contract against live R, and
+  the `nullable-accessors-*` inference fixtures pin the silenced
+  arithmetic, a quiet `if (nrow(df))`, a `dim(m) + "x"` control that
+  must still fire, and the nullable bindings (#127, sims1253/ry#866).
+
 ## [0.6.4] - 2026-10-31
 
 Data-revision release with export inventories for lubridate, knitr, and
