@@ -59,6 +59,7 @@ Rscript --vanilla tests/as_vector.R
 Rscript --vanilla tests/aic_bic.R
 Rscript --vanilla tests/density_lengths.R
 Rscript --vanilla tests/complex_math.R
+Rscript --vanilla tests/result_modes.R
 Rscript --vanilla tests/dynamic_dots.R
 Rscript --vanilla tests/grid.R
 Rscript --vanilla tests/regmatches.R
