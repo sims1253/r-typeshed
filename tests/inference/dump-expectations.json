@@ -19,7 +19,7 @@
   "nullable-accessors": {
     "bindings": {
       "cn": "union[character<len=?>, NULL<len=?>]",
-      "d": "union[integer<len=?>, NULL<len=?>]",
+      "d": "unknown",
       "dn": "union[list<len=?>, NULL<len=?>]",
       "nm": "union[character<len=?>, NULL<len=?>]",
       "r": "unknown"

@@ -4,6 +4,11 @@
 
 ### Function semantics
 
+- Revise base to 0.0.36: `dim()` becomes opaque, like `nrow()` and
+  `ncol()`. Its integer/NULL union made ry report RY001 for the valid
+  row-count test `if (dim(m)[1L])` on a matrix, because indexing kept the
+  NULL member; the schema cannot say that only dim-less values give
+  `NULL`.
 - Revise base to 0.0.35: `table()`, `proc.time()`, `ordered()`,
   `interaction()`, and `dist()` declare the classes R gives them
   (`"table"`, `"proc_time"`, `c("ordered", "factor")`, `"factor"`, and
