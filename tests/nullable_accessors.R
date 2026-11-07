@@ -10,14 +10,14 @@ base <- stub$functions
 nullable <- function(member, na) {
   list(mode = 'union', length = 'unknown', members = list(member, 'null'), na = na)
 }
-# nrow() and ncol() are opaque instead: they are NULL only when x has no
-# dim, which the schema cannot express, and a NULL member makes ry report
-# RY001 for the idiomatic if (nrow(df)) on a data frame.
+# dim(), nrow() and ncol() are opaque instead: they are NULL only when x
+# has no dim, which the schema cannot express, and a NULL member makes ry
+# report RY001 for the idiomatic if (nrow(df)) or if (dim(m)[1L]).
 returns <- list(
   names = nullable('character', TRUE),
   rownames = nullable('character', TRUE),
   colnames = nullable('character', TRUE),
-  dim = nullable('integer', FALSE),
+  dim = list(mode = 'opaque', length = 'unknown', na = FALSE),
   nrow = list(mode = 'opaque', length = 'unknown', na = FALSE),
   ncol = list(mode = 'opaque', length = 'unknown', na = FALSE),
   dimnames = nullable('list', TRUE)
