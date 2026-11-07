@@ -67,6 +67,10 @@
   "mirai-diag": [
     {"code": "RY010", "severity": "warning", "line": 4, "column": 23}
   ],
+  "nullable-accessors-clean": [],
+  "nullable-accessors-diag": [
+    {"code": "RY040", "severity": "error", "line": 3, "column": 8}
+  ],
   "r-version-clean": [],
   "safe-clean": [],
   "selection-clean": [],
