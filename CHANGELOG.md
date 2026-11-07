@@ -4,6 +4,27 @@
 
 ### Function semantics
 
+- Revise base to 0.0.35: `table()`, `proc.time()`, `ordered()`,
+  `interaction()`, and `dist()` declare the classes R gives them
+  (`"table"`, `"proc_time"`, `c("ordered", "factor")`, `"factor"`, and
+  `"dist"`), and `proc.time()` has length 5, not 3. `factor()`,
+  `as.factor()`, and `ts()` become opaque because their class depends on
+  the input: `factor(x, ordered = TRUE)` and `as.factor()` of an ordered
+  factor give `c("ordered", "factor")`, and `ts()` of a matrix gives
+  `c("mts", "ts", "matrix", "array")` and keeps the data's mode. ry no
+  longer reports RY033 for `ordered(x) < "b"`, which `Ops.ordered`
+  allows, or RY061 in the dead `else` branch of
+  `if (inherits(proc.time(), "proc_time"))`. `factor`, `as.factor`,
+  `ordered`, `interaction`, `dist`, `ts`, `addmargins`, `as.table`,
+  `basename`, `ceiling`, `dirname`, `fft`, `floor`, `ftable`, `mvfft`,
+  `prop.table`, `trunc`, `ts.intersect`, and `ts.union` declared
+  `na: false` but return `NA` for `NA` input,
+  so they now declare `na: true` (`round` changes with #124).
+  `proc.time()` does too, because ?proc.time gives `NA` child times on
+  Windows. `tests/base_classes_na.R` pins each class, length, and `NA`
+  witness against live R, and the `base-classes-*` inference fixtures pin
+  the silenced diagnostics, a `table(x) + "x"` control that must still
+  fire, and the classed bindings (#128, #129, sims1253/ry#866).
 - Revise base to 0.0.34: `names()`, `rownames()`, `colnames()`, and
   `dim()` return a union with `NULL`, because each returns `NULL` when
   the attribute is absent, as for a plain vector. The character

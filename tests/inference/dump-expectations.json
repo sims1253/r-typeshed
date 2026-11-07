@@ -56,6 +56,26 @@
       "m": "double<len=1>"
     }
   },
+  "base-classes": {
+    "bindings": {
+      "af": "opaque<len=2>:?",
+      "d": "double<len=?>:dist",
+      "i": "integer<len=?>:factor",
+      "o": "integer<len=2>:ordered,factor",
+      "pt": "double<len=5>:proc_time",
+      "s": "unknown",
+      "t1": "integer<len=?>:table"
+    },
+    "stale_embedded": {
+      "af": "integer<len=2>:factor",
+      "d": "double<len=?>",
+      "i": "integer<len=?>",
+      "o": "integer<len=2>",
+      "pt": "double<len=3>",
+      "s": "double<len=10>",
+      "t1": "integer<len=?>"
+    }
+  },
   "math-union": {
     "bindings": {
       "e": "union[double<len=?>, complex<len=?>]"
