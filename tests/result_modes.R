@@ -78,10 +78,11 @@ stopifnot(identical(typeof(sample(c(1.5, 2))), 'double'))
 stopifnot(identical(typeof(sample(letters, 2)), 'character'))
 stopifnot(identical(class(sample(factor(c('a', 'b')))), 'factor'))
 
-# ave() assigns FUN's results back into x, so the result mode is FUN's,
-# while the length stays length(x).
+# ave() assigns FUN's results into a copy of x, which keeps or promotes x's
+# mode, while the length stays length(x).
 stopifnot(identical(typeof(ave(1:3)), 'double'))
 stopifnot(identical(typeof(ave(1:3, FUN = length)), 'integer'))
+stopifnot(identical(typeof(ave(c(1.5, 2.5), FUN = length)), 'double'))
 stopifnot(identical(typeof(ave(1:3, FUN = as.character)), 'character'))
 stopifnot(identical(length(ave(1:3, FUN = as.character)), 3L))
 stopifnot(identical(length(ave(1:4, c(1, 1, 2, 2), FUN = length)), 4L))

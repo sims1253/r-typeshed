@@ -15,7 +15,9 @@
   `seq(1, 10)` is integer and `seq(1, 10, by = 2)` is double.
   `sample()` and `ave()` become opaque. `sample(10)` permutes
   `seq_len(10)`, while `sample(c(1.5, 2))` keeps the mode of `x`, and
-  `ave()` returns the mode of `FUN`'s result at the length of `x`.
+  `ave()` assigns `FUN`'s results into a copy of `x`, which keeps or
+  promotes the mode of `x` (`ave(1:3, FUN = length)` is integer,
+  `ave(c(1.5, 2.5), FUN = length)` double).
   Three more `double_or_int` entries had the same faults:
   `colSums()` and `rowSums()` return the double/complex union, since
   they are never integer, and `median()` becomes opaque, since it keeps
