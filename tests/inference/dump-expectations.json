@@ -16,6 +16,22 @@
       "d": "double<len=1>"
     }
   },
+  "nullable-accessors": {
+    "bindings": {
+      "cn": "union[character<len=?>, NULL<len=?>]",
+      "d": "union[integer<len=?>, NULL<len=?>]",
+      "dn": "union[list<len=?>, NULL<len=?>]",
+      "nm": "union[character<len=?>, NULL<len=?>]",
+      "r": "unknown"
+    },
+    "stale_embedded": {
+      "cn": "character<len=?>",
+      "d": "integer<len=?>",
+      "dn": "unknown",
+      "nm": "character<len=?>",
+      "r": "integer<len=1>"
+    }
+  },
   "append": {
     "bindings": {
       "a": "unknown"

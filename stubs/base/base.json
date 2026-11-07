@@ -1,7 +1,7 @@
 {
   "schema_version": "2",
   "package": "base",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "globals": {
     "ambient": [
       "..deparseOpts",
@@ -1047,7 +1047,6 @@
       "difftime",
       "dim.data.frame",
       "dim<-",
-      "dimnames",
       "dimnames.data.frame",
       "dimnames<-",
       "dimnames<-.data.frame",
@@ -3287,9 +3286,13 @@
         "x"
       ],
       "return": {
-        "mode": "character",
+        "mode": "union",
         "length": "unknown",
-        "na": false
+        "members": [
+          "character",
+          "null"
+        ],
+        "na": true
       }
     },
     "complete.cases": {
@@ -3713,9 +3716,27 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
+        "mode": "union",
         "length": "unknown",
+        "members": [
+          "integer",
+          "null"
+        ],
         "na": false
+      }
+    },
+    "dimnames": {
+      "params": [
+        "x"
+      ],
+      "return": {
+        "mode": "union",
+        "length": "unknown",
+        "members": [
+          "list",
+          "null"
+        ],
+        "na": true
       }
     },
     "dirname": {
@@ -5439,9 +5460,13 @@
         "x"
       ],
       "return": {
-        "mode": "character",
+        "mode": "union",
         "length": "unknown",
-        "na": false
+        "members": [
+          "character",
+          "null"
+        ],
+        "na": true
       }
     },
     "nchar": {
@@ -5474,8 +5499,8 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
-        "length": "1",
+        "mode": "opaque",
+        "length": "unknown",
         "na": false
       }
     },
@@ -5551,8 +5576,8 @@
         "x"
       ],
       "return": {
-        "mode": "integer",
-        "length": "1",
+        "mode": "opaque",
+        "length": "unknown",
         "na": false
       }
     },
@@ -6743,9 +6768,13 @@
         "x"
       ],
       "return": {
-        "mode": "character",
+        "mode": "union",
         "length": "unknown",
-        "na": false
+        "members": [
+          "character",
+          "null"
+        ],
+        "na": true
       }
     },
     "rowsum": {
