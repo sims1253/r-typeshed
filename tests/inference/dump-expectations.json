@@ -69,5 +69,23 @@
       "s": "character<len=1>",
       "t": "double<len=1>"
     }
+  },
+  "result-modes": {
+    "bindings": {
+      "a": "opaque<len=3>:?",
+      "m": "union[double<len=1>, complex<len=1>]",
+      "md": "opaque<len=1>:?",
+      "q": "list<len=2>{[[1]]:union[integer<len=?>, double<len=?>], [[2]]:union[integer<len=?>, double<len=?>]}",
+      "s": "double<len=1>",
+      "sm": "unknown"
+    },
+    "stale_embedded": {
+      "a": "integer<len=3>",
+      "m": "integer<len=1>",
+      "md": "integer<len=1>",
+      "q": "list<len=2>{[[1]]:double<len=?>, [[2]]:double<len=?>}",
+      "s": "integer<len=1>",
+      "sm": "double<len=?>"
+    }
   }
 }

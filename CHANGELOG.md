@@ -2,6 +2,32 @@
 
 ## [Unreleased]
 
+### Function semantics
+
+- Revise base to 0.0.33: `mean()`, `prod()`, `round()`, and `cumprod()`
+  return a double/complex union, like `signif()`, and `sign()` returns
+  double. They used `double_or_int`, which consumers resolve to integer
+  for integer input, but GNU R returns double for logical, integer, and
+  double input and complex for complex input (`sign()` rejects
+  complex), so ry inferred `mean(1:3)` and `round(1L)` as integer.
+  `round()` can also return `NA`. `seq()` and `seq.int()` return an
+  integer/double union, because the mode depends on argument values:
+  `seq(1, 10)` is integer and `seq(1, 10, by = 2)` is double.
+  `sample()` and `ave()` become opaque. `sample(10)` permutes
+  `seq_len(10)`, while `sample(c(1.5, 2))` keeps the mode of `x`, and
+  `ave()` assigns `FUN`'s results into a copy of `x`, which keeps or
+  promotes the mode of `x` (`ave(1:3, FUN = length)` is integer,
+  `ave(c(1.5, 2.5), FUN = length)` double).
+  Three more `double_or_int` entries had the same faults:
+  `colSums()` and `rowSums()` return the double/complex union, since
+  they are never integer, and `median()` becomes opaque, since it keeps
+  the mode of `x` for an odd count (`median(1:3)` is integer,
+  `median(TRUE)` logical) and averages for an even one (`median(1:4)` is
+  double). The rest of `double_or_int` follows the input's mode and is
+  left to #125. `tests/result_modes.R` pins each contract against live
+  R, and `dump-result-modes.R` pins the inferred bindings (#124, #126,
+  sims1253/ry#866).
+
 ## [0.6.4] - 2026-10-31
 
 Data-revision release with export inventories for lubridate, knitr, and
