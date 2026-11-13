@@ -9,11 +9,11 @@
   through an explicit `modes` table, with an optional `empty` mode for
   an integer result when the data supply no element. Remove the
   undefined `double_or_int` mode. Validating these stubs needs a ry that
-  accepts the rule (RY_PR_REF).
+  accepts the rule (sims1253/ry#914).
 
 ### Continuous integration
 
-- Pin the ry consumer that accepts `input_mode` (RY_PR_REF). Its
+- Pin the ry consumer that accepts `input_mode` (sims1253/ry#914). Its
   newer checker keeps argument lengths on union returns
   (sims1253/ry#910), so the `math-union` fixture now expects
   `exp(1)` as `union[double<len=1>, complex<len=1>]`.
