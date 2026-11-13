@@ -166,6 +166,8 @@ jobs:
         run: Rscript --vanilla tests/complex_math.R
       - name: Verify value-dependent and non-integer result modes
         run: Rscript --vanilla tests/result_modes.R
+      - name: Verify result modes that follow the input mode
+        run: Rscript --vanilla tests/input_modes.R
       - name: Verify dynamic-dots constructor contracts
         run: Rscript --vanilla tests/dynamic_dots.R
       - name: Verify grid inventory and captured expressions
