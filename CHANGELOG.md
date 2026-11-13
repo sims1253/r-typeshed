@@ -2,8 +2,39 @@
 
 ## [Unreleased]
 
+### Schema documentation
+
+- Define the `input_mode` `return_mode` rule: the result mode follows
+  the data arguments' mode, joined on R's coercion ladder and mapped
+  through an explicit `modes` table, with an optional `empty` mode for
+  an integer result when the data supply no element. Remove the
+  undefined `double_or_int` mode. Validating these stubs needs a ry that
+  accepts the rule (RY_PR_REF).
+
+### Continuous integration
+
+- Pin the ry consumer that accepts `input_mode` (RY_PR_REF). Its
+  newer checker keeps argument lengths on union returns
+  (sims1253/ry#910), so the `math-union` fixture now expects
+  `exp(1)` as `union[double<len=1>, complex<len=1>]`.
+
 ### Function semantics
 
+- Revise base to 0.0.37: the last twelve `double_or_int` entries use the
+  `input_mode` rule. `sum()`, `cumsum()`, and `diff()` keep complex, and
+  `abs()` of complex is double. `max()`, `min()`, `range()`, `pmax()`,
+  and `pmin()` keep character, and `max()`, `min()`, and `range()` are
+  double for empty data (`max(integer(0))` is `-Inf`). `pmax()` and
+  `pmin()` make no claim for all-logical data, which stays logical for
+  one argument (`pmax(c(TRUE, FALSE))`) but is integer for two
+  (`pmax(TRUE, FALSE)`). `cumsum()`, `cummax()`, and `cummin()` coerce
+  character to double, and `rowsum()` accepts only integer and double.
+  Logical input is integer for the rest. ry inferred `max(integer(0))`
+  as integer and `pmax(c(TRUE, FALSE))` as integer, and made no claim
+  for `max("a", "b")` or `sum()` of complex.
+  `tests/input_modes.R` pins every cell against live R, and
+  `dump-input-modes.R` pins the inferred bindings (#125,
+  sims1253/ry#866).
 - Revise base to 0.0.36: `dim()` becomes opaque, like `nrow()` and
   `ncol()`. Its integer/NULL union made ry report RY001 for the valid
   row-count test `if (dim(m)[1L])` on a matrix, because indexing kept the

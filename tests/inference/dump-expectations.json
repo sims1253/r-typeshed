@@ -78,7 +78,7 @@
   },
   "math-union": {
     "bindings": {
-      "e": "union[double<len=?>, complex<len=?>]"
+      "e": "union[double<len=1>, complex<len=1>]"
     },
     "stale_embedded": {
       "e": "double<len=1>"
@@ -122,6 +122,24 @@
       "q": "list<len=2>{[[1]]:double<len=?>, [[2]]:double<len=?>}",
       "s": "integer<len=1>",
       "sm": "double<len=?>"
+    }
+  },
+  "input-modes": {
+    "bindings": {
+      "ac": "double<len=?>",
+      "mc": "character<len=1>",
+      "me": "double<len=1>",
+      "rc": "character<len=2>",
+      "sc": "complex<len=1>",
+      "pn": "unknown"
+    },
+    "stale_embedded": {
+      "ac": "unknown",
+      "mc": "opaque<len=1>:?",
+      "me": "integer<len=1>",
+      "rc": "opaque<len=2>:?",
+      "sc": "opaque<len=1>:?",
+      "pn": "integer<len=?>"
     }
   }
 }
