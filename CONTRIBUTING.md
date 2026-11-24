@@ -153,6 +153,13 @@ and diagnostic identities — not just counts.
   example reverting `dnorm`'s length to `"arg0"`), and asserts the gate
   fails with useful expected/actual output. A green gate run means
   little without it — run the self-test after touching the corpus.
+- The gate is hermetic: it sets `RY_NO_INSTALLED_LIBRARIES=1`, so a
+  package installed on the machine cannot supply or gate a name the
+  candidate stubs should supply or miss.
+  `scripts/inference_mutation_test.sh <ry-binary> installed-library`
+  plants a library whose `dplyr` exports only `select`, shows that it
+  turns `box-installed-namespace-clean.R` into an `RY010` when ry may
+  read libraries, and requires the gate to stay green.
 - The gate proves the candidate stubs supplied each fact two ways: the
   `--typeshed` override (plus the `ry.toml` override for `dump-types`)
   selects the candidate tree, and a stale-embedded cross-check re-runs

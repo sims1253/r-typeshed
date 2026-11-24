@@ -13,6 +13,14 @@
 
 ### Continuous integration
 
+- Run the inference gate and its self-tests with
+  `RY_NO_INSTALLED_LIBRARIES=1`. The gate's comment promised no
+  installed-library discovery, but nothing set the variable, so a
+  package installed on the runner or on a developer's machine could
+  change a fixture's verdict: a planted `dplyr` whose `NAMESPACE`
+  exports only `select` turned a clean `box::use(dplyr[filter])`
+  fixture into an `RY010`. A new `installed-library` self-test plants
+  that library and requires the gate to stay green (#140).
 - Pin the ry consumer that accepts `input_mode` (sims1253/ry#914). Its
   newer checker keeps argument lengths on union returns
   (sims1253/ry#910), so the `math-union` fixture now expects

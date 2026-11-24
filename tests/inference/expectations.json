@@ -16,6 +16,7 @@
   "base-classes-diag": [
     {"code": "RY040", "severity": "error", "line": 4, "column": 8}
   ],
+  "box-installed-namespace-clean": [],
   "caller-arg-clean": [],
   "caller-arg-diag": [
     {"code": "RY010", "severity": "warning", "line": 3, "column": 39}
