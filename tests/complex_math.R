@@ -10,9 +10,11 @@ base <- jsonlite::read_json(file.path(root, 'stubs/base/base.json'))$functions
 # double stays in the union.
 fixed <- c('exp', 'log', 'log10', 'log2', 'sqrt', 'sin', 'cos', 'tan',
            'asin', 'acos', 'atan', 'sinh', 'cosh', 'tanh', 'signif')
+recycled <- c('log', 'signif')
 for (entry in fixed) {
+  expected_length <- if (entry %in% recycled) 'unknown' else 'arg0'
   stopifnot(identical(base[[entry]]$return,
-                      list(mode = 'union', length = 'arg0',
+                      list(mode = 'union', length = expected_length,
                            members = list('double', 'complex'), na = TRUE)))
 }
 

@@ -13,8 +13,10 @@ returns <- list(
               members = list('double', 'complex'), na = TRUE),
   prod = list(mode = 'union', length = '1',
               members = list('double', 'complex'), na = TRUE),
-  round = list(mode = 'union', length = 'arg0',
+  round = list(mode = 'union', length = 'unknown',
                members = list('double', 'complex'), na = TRUE),
+  rank = list(mode = 'union', length = 'arg0',
+              members = list('integer', 'double'), na = TRUE),
   cumprod = list(mode = 'union', length = 'arg0',
                  members = list('double', 'complex'), na = TRUE),
   sign = list(mode = 'double', length = 'arg0', na = TRUE),
@@ -104,5 +106,9 @@ stopifnot(identical(typeof(median(TRUE)), 'logical'))
 stopifnot(identical(typeof(median(letters[1:3])), 'character'))
 stopifnot(identical(typeof(median(c(1i, 2i))), 'complex'))
 stopifnot(identical(length(median(1:4)), 1L))
+
+# #137: rank() returns integer for ties.method = "first" and double for "average".
+stopifnot(identical(typeof(rank(c(1, 2), ties.method = 'first')), 'integer'))
+stopifnot(identical(typeof(rank(c(1, 2), ties.method = 'average')), 'double'))
 
 cat('value-dependent and non-integer result modes passed\n')

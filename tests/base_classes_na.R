@@ -88,7 +88,13 @@ na_witnesses <- list(
   trunc = quote(trunc(c(1.5, NA))),
   ts = quote(ts(c(1, NA))),
   ts.intersect = quote(ts.intersect(ts(c(1, NA)), ts(1:2))),
-  ts.union = quote(ts.union(ts(1:2), ts(1:2, start = 2)))
+  ts.union = quote(ts.union(ts(1:2), ts(1:2, start = 2))),
+  # #136 & #137: remaining false na: false claims verified against GNU R.
+  rowsum = quote(rowsum(c(1L, NA), c(1, 1))),
+  Sys.getenv = quote(Sys.getenv('RY_TYPESHED_DEFINITELY_UNSET_VAR', unset = NA)),
+  chartr = quote(chartr('a', 'b', NA_character_)),
+  startsWith = quote(startsWith(NA_character_, 'a')),
+  endsWith = quote(endsWith(NA_character_, 'a'))
 )
 for (entry in names(na_witnesses)) {
   stopifnot(isTRUE(base[[entry]]$return$na))

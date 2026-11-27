@@ -26,6 +26,10 @@ you want to describe before running either generator.
    metadata from the installed package.
 3. Hand-curate return types, remaining evaluation modes, `injects`,
    `injection`, and `scope_effect` entries, aliases, datasets, and methods.
+   If a hand-authored stub intentionally covers only a subset of the
+   package's exports rather than a complete export inventory, set
+   `"partial": true` at the top level so consumers keep the package's
+   namespace open for unlisted exports.
 4. Run the [local checks](#local-checks).
 5. Open a pull request containing `stubs/<package>/<package>.json`.
 
@@ -101,6 +105,8 @@ Rscript --vanilla tests/lubridate.R
 Rscript --vanilla tests/knitr.R
 Rscript --vanilla tests/data.table.R
 Rscript --vanilla tests/tidyverse.R
+Rscript --vanilla tests/S7.R
+Rscript --vanilla tests/covr.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla tests/pinned_versions.R

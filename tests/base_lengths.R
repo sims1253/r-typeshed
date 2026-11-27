@@ -32,4 +32,36 @@ stopifnot(identical(seq_len(0L), integer(0)))
 stopifnot(identical(seq_len(3L), 1:3))
 stopifnot(identical(length(seq_len(nrow(data.frame(a = 1:2)))), 2L))
 
-cat('file.path and sprintf recycling and seq_len value-length semantics passed\n')
+# #134 & #137: round(), signif(), log(), startsWith(), and endsWith() recycle
+# their second argument; file.exists() is variadic (`...`).
+for (pair in list(
+  c('round', 'digits'),
+  c('signif', 'digits'),
+  c('log', 'base'),
+  c('startsWith', 'prefix'),
+  c('endsWith', 'suffix')
+)) {
+  fn <- pair[[1L]]
+  arg2 <- pair[[2L]]
+  stopifnot(identical(base[[fn]]$return$length, 'unknown'))
+  stopifnot(identical(base[[fn]]$return_length, list(
+    kind = 'recycled_values',
+    value_params = list('x', arg2),
+    any_value_zero = 'zero'
+  )))
+}
+stopifnot(identical(base$file.exists$return$length, 'unknown'))
+
+stopifnot(
+  identical(length(round(1.234, 1:3)), 3L),
+  identical(length(signif(1.234, 1:3)), 3L),
+  identical(length(log(2, 1:3)), 3L),
+  identical(length(round(1:5, 1:2)), 5L),
+  identical(length(startsWith('abc', c('a', 'b', 'c'))), 3L),
+  identical(length(endsWith('abc', c('a', 'b', 'c'))), 3L),
+  identical(length(startsWith('abc', character(0))), 0L),
+  identical(length(endsWith('abc', character(0))), 0L),
+  identical(length(file.exists('a', c('b', 'c'))), 3L)
+)
+
+cat('file.path, sprintf, recycled-argument, and seq_len length semantics passed\n')
