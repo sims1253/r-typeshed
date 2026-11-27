@@ -76,14 +76,13 @@ return contracts through base 0.0.38. Requires a consumer at or after
   - `file.exists()` drops `length: "arg0"` for `length: "unknown"`
     because it concatenates `...` (`length(file.exists("a", c("b", "c")))`
     is 3).
-  - `rowsum()` drops its `return_mode` and becomes opaque because it
-    returns a data frame for data-frame inputs and a matrix otherwise.
-  - `Sys.getenv()` becomes opaque because zero-argument `Sys.getenv()`
-    returns a `Dlist` object rather than a plain character vector of
-    length `arg0`.
-  - `chartr()` sets `na: true` (`chartr("a", "b", NA_character_)` is
-    `NA`) and `rank()` returns `union[integer, double]` with `na: true`
-    (ties produce doubles; `na.last = "keep"` preserves `NA`).
+  - `rowsum()`, `Sys.getenv()`, `chartr()`, and `startsWith()` set
+    `na: true` (`rowsum()` returns `NA` on `NA` input or integer
+    overflow, `Sys.getenv(..., unset = NA)` returns `NA`, and `chartr()`
+    and `startsWith()` propagate `NA`).
+  - `rank()` returns `union[integer, double]` with `na: true`
+    (`ties.method = "first"` returns integer; `na.last = "keep"`
+    preserves `NA`).
   - `tests/input_modes.R`, `tests/base_lengths.R`,
     `tests/base_classes_na.R`, `tests/result_modes.R`, and
     `dump-recycled-math.R` pin every contract against live R.
