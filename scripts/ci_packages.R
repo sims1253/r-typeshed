@@ -19,5 +19,7 @@ ci_packages <- c(
   "lubridate",
   "knitr",
   "data.table",
-  "tidyverse"
+  "tidyverse",
+  "S7",
+  "covr"
 )

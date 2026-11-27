@@ -21,6 +21,10 @@
   "caller-arg-diag": [
     {"code": "RY010", "severity": "warning", "line": 3, "column": 39}
   ],
+  "covr-clean": [],
+  "covr-diag": [
+    {"code": "RY040", "severity": "error", "line": 3, "column": 6}
+  ],
   "cut-generic-clean": [],
   "cut-generic-diag": [
     {"code": "RY061", "severity": "error", "line": 3, "column": 6}
@@ -72,7 +76,9 @@
   "nullable-accessors-diag": [
     {"code": "RY040", "severity": "error", "line": 3, "column": 8}
   ],
+  "partial-stub-clean": [],
   "r-version-clean": [],
+  "s7-clean": [],
   "safe-clean": [],
   "selection-clean": [],
   "selection-diag": [

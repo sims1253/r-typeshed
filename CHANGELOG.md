@@ -2,8 +2,32 @@
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-27
+
+Schema-2 vocabulary and stub release paired with ry 0.13.0: replaces
+`double_or_int` with `input_mode` (including multi-mode outcomes and
+`drop_controls`), adds `any_value_zero` and optional `control_params` to
+`recycled_values`, adds the top-level `partial` stub marker, completes
+the `S7` export inventory, adds `covr` 4.0.0 stubs, and fixes base
+return contracts through base 0.0.38. Requires a consumer at or after
+`.github/ry-consumer` (`9924ee79`, ry 0.13.0).
+
 ### Schema documentation
 
+- Add top-level `"partial": true` for hand-authored stubs that cover
+  only a subset of a package's exports, telling consumers to keep
+  unlisted exports open instead of closing the namespace (#138,
+  sims1253/ry#926).
+- Extend `input_mode` with multi-mode outcomes (arrays of concrete
+  modes, such as `["integer", "double"]` for `sum()` integer overflow)
+  and explicit `drop_controls` (such as `["na.rm", "finite"]` for
+  `range()`) (#134, sims1253/ry#922).
+- Extend `recycled_values` with optional `control_params` and top-level
+  `any_value_zero: "zero"` for functions that recycle across value
+  arguments and empty whenever any value argument has length zero
+  (#137, sims1253/ry#922).
+- Document schema-2 versioning and consumer-pin compatibility policy in
+  `schema/SCHEMA.md` (#141).
 - Define the `input_mode` `return_mode` rule: the result mode follows
   the data arguments' mode, joined on R's coercion ladder and mapped
   through an explicit `modes` table, with an optional `empty` mode for
@@ -11,7 +35,64 @@
   undefined `double_or_int` mode. Validating these stubs needs a ry that
   accepts the rule (sims1253/ry#914).
 
+### New stubs
+
+- Add covr 0.0.1 with its complete export inventory from covr 4.0.0:
+  31 exported functions, the `colorblind_palette` dataset
+  (`character<len=3>`, `na: false`), and 13 registered S3 methods.
+  Curated return contracts cover `in_covr` (`logical<len=1>`,
+  `na: false`), `percent_coverage` (`double<len=1>`, `na: true`,
+  since empty coverage returns `NaN`), `tally_coverage` and
+  `zero_coverage` (`data.frame` lists), while `package_coverage` and
+  the other coverage runners stay conservative opaque returns without an
+  unconditional `coverage` class (`package_coverage(clean = FALSE)`
+  and error paths vary). `tests/covr.R` pins covr 4.0.0 against live R,
+  and `covr-clean`/`covr-diag`/`dump-covr` pin inference (#139).
+
+### Function semantics
+
+- Complete S7 0.0.2 with its full export inventory from S7 0.2.2:
+  32 functions (preserving `new_class`'s `self` injection) and all 25
+  exported `class_*` type descriptors under `datasets` (`class_double`,
+  `class_character`, `class_any`, etc.). Mark the 20 remaining
+  intentionally partial hand-authored stubs (`withr`, `rex`, `testthat`,
+  `R6`, `htmltools`, `dbplyr`, `patrick`, `bench`, `box`, `zeallot`,
+  `cmdstanr`, `foreach`, `Rcpp`, `loo`, `tidyselect`, `brms`,
+  `bayesplot`, `shiny`, `vctrs`, `posterior`) with `"partial": true` so
+  unlisted exports do not cause false `RY010` warnings. `tests/S7.R`
+  pins S7 0.2.2 against live R, and `s7-clean`/`partial-stub-clean` pin
+  inference (#138, sims1253/ry#926).
+- Revise base to 0.0.38 (#134, #136, #137):
+  - `sum()` maps `"integer"` to `["integer", "double"]` in `input_mode`
+    so integer overflow to double (`sum(2147483647L, 1L)`) is modeled
+    soundly.
+  - `range()` declares `drop_controls: ["na.rm", "finite"]` so
+    `range(NA_integer_, finite = TRUE)` widens to integer/double like
+    `na.rm = TRUE`.
+  - `round()`, `signif()`, `log()`, `startsWith()`, and `endsWith()`
+    replace `length: "arg0"` with `recycled_values` (`any_value_zero:
+    "zero"`), capturing recycling across `digits`/`base`/`prefix`/
+    `suffix` and empty-input behavior.
+  - `file.exists()` drops `length: "arg0"` for `length: "unknown"`
+    because it concatenates `...` (`length(file.exists("a", c("b", "c")))`
+    is 3).
+  - `rowsum()` drops its `return_mode` and becomes opaque because it
+    returns a data frame for data-frame inputs and a matrix otherwise.
+  - `Sys.getenv()` becomes opaque because zero-argument `Sys.getenv()`
+    returns a `Dlist` object rather than a plain character vector of
+    length `arg0`.
+  - `chartr()` sets `na: true` (`chartr("a", "b", NA_character_)` is
+    `NA`) and `rank()` returns `union[integer, double]` with `na: true`
+    (ties produce doubles; `na.last = "keep"` preserves `NA`).
+  - `tests/input_modes.R`, `tests/base_lengths.R`,
+    `tests/base_classes_na.R`, `tests/result_modes.R`, and
+    `dump-recycled-math.R` pin every contract against live R.
+
 ### Continuous integration
+
+- Advance `.github/ry-consumer` to `9924ee79` (ry #922/#926 support)
+  and add `S7` (0.2.2) and `covr` (4.0.0) to `scripts/ci_packages.R`,
+  `upstream-versions.json`, and `.github/workflows/ci.yml`.
 
 - Run the inference gate and its self-tests with
   `RY_NO_INSTALLED_LIBRARIES=1`. The gate's comment promised no

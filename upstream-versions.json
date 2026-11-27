@@ -14,6 +14,7 @@
   "checkmate": "2.3.4",
   "cli": "3.6.6",
   "cmdstanr": "0.9.0",
+  "covr": "4.0.0",
   "curl": "8.0.0",
   "data.table": "1.18.6.1",
   "dbplyr": "2.6.0",

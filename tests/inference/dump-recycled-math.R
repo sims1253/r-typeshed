@@ -1,0 +1,11 @@
+# Pin 0.7.0 base stub length and mode fixes via dump-types (#134, #137).
+r3 <- round(1.234, 1:3)
+s3 <- signif(1.234, 1:3)
+l3 <- log(2, 1:3)
+r5 <- round(1:5, 1:2)
+sw3 <- startsWith("abc", c("a", "b", "c"))
+ew3 <- endsWith("abc", c("a", "b", "c"))
+fe <- file.exists("a", c("b", "c"))
+rk <- rank(c(1, 2))
+si <- sum(1L, 2L)
+rf <- range(integer(0), finite = FALSE)

@@ -141,5 +141,45 @@
       "sc": "opaque<len=1>:?",
       "pn": "integer<len=?>"
     }
+  },
+  "covr": {
+    "bindings": {
+      "flag": "logical<len=1>",
+      "pal": "character<len=3>",
+      "pct": "double<len=1>",
+      "tally": "list<len=?>:data.frame"
+    },
+    "stale_embedded": {
+      "flag": "unknown",
+      "pal": "unknown",
+      "pct": "unknown",
+      "tally": "unknown"
+    }
+  },
+  "recycled-math": {
+    "bindings": {
+      "ew3": "logical<len=3>",
+      "fe": "logical<len=?>",
+      "l3": "union[double<len=3>, complex<len=3>]",
+      "r3": "union[double<len=3>, complex<len=3>]",
+      "r5": "union[double<len=5>, complex<len=5>]",
+      "rf": "double<len=2>",
+      "rk": "union[integer<len=2>, double<len=2>]",
+      "s3": "union[double<len=3>, complex<len=3>]",
+      "si": "union[integer<len=1>, double<len=1>]",
+      "sw3": "logical<len=3>"
+    },
+    "stale_embedded": {
+      "ew3": "logical<len=1>",
+      "fe": "logical<len=1>",
+      "l3": "union[double<len=1>, complex<len=1>]",
+      "r3": "union[double<len=1>, complex<len=1>]",
+      "r5": "union[double<len=5>, complex<len=5>]",
+      "rf": "double<len=2>",
+      "rk": "double<len=2>",
+      "s3": "union[double<len=1>, complex<len=1>]",
+      "si": "integer<len=1>",
+      "sw3": "logical<len=1>"
+    }
   }
 }
