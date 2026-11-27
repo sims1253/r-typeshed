@@ -65,6 +65,9 @@ jobs:
       - name: Prove the gate bites (mutation self-test)
         if: ${{ !cancelled() && steps.ready.outcome == 'success' }}
         run: scripts/inference_mutation_test.sh "$RUNNER_TEMP/ry-consumer/ry"
+      - name: Prove the gate ignores installed libraries (hermetic self-test)
+        if: ${{ !cancelled() && steps.ready.outcome == 'success' }}
+        run: scripts/inference_mutation_test.sh "$RUNNER_TEMP/ry-consumer/ry" installed-library
 
   generators:
     runs-on: ubuntu-latest

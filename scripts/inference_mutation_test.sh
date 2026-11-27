@@ -15,14 +15,59 @@
 #   density-length   dnorm return length "unknown" -> "arg0" (default)
 #   as-vector-arg0   as.vector return opaque/unknown -> "arg0"
 #   append-concat    append return opaque/unknown -> "concat_of_args"
+#   installed-library  not a mutation: plants an R library whose dplyr NAMESPACE
+#                     exports only `select`, and requires the gate to stay
+#                     green, which proves it never consults installed libraries
 set -euo pipefail
 
 RY_BIN="${1:-ry}"
 MUTATION="${2:-density-length}"
 
 repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-mutated=$(mktemp -d "${TMPDIR:-/tmp}/inference-mutant.XXXXXX")
-trap 'rm -rf "$mutated"' EXIT
+scratch=$(mktemp -d "${TMPDIR:-/tmp}/inference-selftest.XXXXXX")
+trap 'rm -rf "$scratch"' EXIT
+
+# Hermeticity self-test. ry lets a package's installed NAMESPACE gate imports
+# of a stubbed package, so a planted dplyr that exports only `select` turns
+# the `filter` import in box-installed-namespace-clean.R into an RY010
+# whenever library discovery is on. The first call proves the library bites.
+# The gate is then run the same way, so only its own RY_NO_INSTALLED_LIBRARIES
+# can keep it green. A planted library that no longer bites proves nothing, so
+# it fails here.
+if [ "$MUTATION" = installed-library ]; then
+  planted="$scratch/library"
+  mkdir -p "$planted/dplyr"
+  printf 'Package: dplyr\nTitle: planted\nVersion: 0.0.1\nEncoding: UTF-8\n' \
+    > "$planted/dplyr/DESCRIPTION"
+  printf 'export(select)\n' > "$planted/dplyr/NAMESPACE"
+  fixture="$repo_root/tests/inference/box-installed-namespace-clean.R"
+  # R_LIBS comes first in ry's root order, as in R's; the other two point at
+  # nothing so the machine's own libraries cannot answer instead.
+  with_planted_library() {
+    env -u RY_NO_INSTALLED_LIBRARIES \
+      R_LIBS="$planted" R_LIBS_USER="$scratch/none" R_LIBS_SITE="$scratch/none" "$@"
+  }
+  bite=$(with_planted_library "$RY_BIN" check \
+    --typeshed "$repo_root/stubs" --exit-zero --color never \
+    --output-format json "$fixture" 2>/dev/null \
+    | python3 -c 'import json,sys; print(json.dumps(sorted(d["code"] for d in json.load(sys.stdin))))')
+  if [ "$bite" != '["RY010"]' ]; then
+    printf 'mutation self-test FAIL: without RY_NO_INSTALLED_LIBRARIES the planted library reports %s, not ["RY010"]; the fixture no longer exercises the gate.\n' \
+      "$bite" >&2
+    exit 1
+  fi
+  printf 'planted library bites without the variable: %s\n' "$bite"
+  gate_log="$scratch/gate.log"
+  if with_planted_library "$repo_root/scripts/inference_gate.sh" "$RY_BIN" "$repo_root/stubs" > "$gate_log" 2>&1; then
+    printf 'mutation self-test ok: gate stayed green with a planted installed library.\n'
+    exit 0
+  fi
+  cat "$gate_log" >&2
+  printf 'mutation self-test FAIL: a planted installed library changed the gate verdict; it is not hermetic.\n' >&2
+  exit 1
+fi
+
+mutated="$scratch/stubs"
 cp -r "$repo_root/stubs/." "$mutated/"
 
 case "$MUTATION" in
@@ -69,8 +114,9 @@ EOF
 esac
 
 # The mutation must stay schema-valid: an invalid mutant would fail the
-# validate job instead of proving the inference gate bites.
-"$RY_BIN" typeshed validate "$mutated" >/dev/null
+# validate job instead of proving the inference gate bites. Hermetic like
+# the gate: validation must not read an installed library either.
+RY_NO_INSTALLED_LIBRARIES=1 "$RY_BIN" typeshed validate "$mutated" >/dev/null
 
 # Each mutation must be caught by a specific fixture failing with an
 # expected/actual mismatch; a bare nonzero exit could also mean a harness

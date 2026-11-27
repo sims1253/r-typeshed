@@ -34,6 +34,14 @@ set -euo pipefail
 RY_BIN="${1:-ry}"
 STUBS_DIR="${2:-stubs}"
 
+# Hermetic: ry must not consult the machine's installed R libraries. An
+# installed package's NAMESPACE gates a box import of that package
+# (`box::use(dplyr[filter])` is checked against it, stub or no stub), so a
+# library on the runner or on a developer's machine can change a fixture's
+# verdict and mask a missing or broken stub entry. Every ry invocation
+# below inherits this.
+export RY_NO_INSTALLED_LIBRARIES=1
+
 # The dump and stale-embedded steps run the binary from scratch directories,
 # so a relative RY_BIN (CI passes ry/target/release/ry) must be resolved
 # against the invocation directory before any cd. A bare command name (the
