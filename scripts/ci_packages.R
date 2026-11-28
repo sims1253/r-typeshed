@@ -21,5 +21,6 @@ ci_packages <- c(
   "data.table",
   "tidyverse",
   "S7",
-  "covr"
+  "covr",
+  "testthat"
 )
