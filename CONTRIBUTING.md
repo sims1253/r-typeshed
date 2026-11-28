@@ -107,6 +107,7 @@ Rscript --vanilla tests/data.table.R
 Rscript --vanilla tests/tidyverse.R
 Rscript --vanilla tests/S7.R
 Rscript --vanilla tests/covr.R
+Rscript --vanilla tests/testthat.R
 Rscript --vanilla tests/generators.R
 Rscript --vanilla tests/updates.R
 Rscript --vanilla tests/pinned_versions.R

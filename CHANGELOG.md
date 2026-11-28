@@ -2,6 +2,34 @@
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-11-28
+
+Data-revision release: completes the testthat export inventory. No schema
+changes.
+
+### Function semantics
+
+- Complete testthat 0.0.3 with its full export inventory from testthat
+  3.3.2: 187 functions and the 20 exported R6 reporter generators
+  (`ProgressReporter`, `CheckReporter`, ...) under `datasets`, and drop its
+  `"partial": true` marker. ry attaches testthat to every package test
+  file, so a partial stub left the search path open in all of them, and a
+  misspelled name in a test stopped reporting `RY010` when testthat was
+  not installed (sims1253/ry#944). The new entries list formal names only,
+  so they make no arity claims. Arguments testthat quasiquotes declare a
+  tidy-evaluation `injection`: the `object` and `expected` of
+  `expect_equal()` and the other `quasi_label(enquo())` expectations, the
+  `object` of `expect_error()`, `expect_no_error()` and their siblings,
+  `setup()`/`teardown()`/`try_again()` code, and the `...` of the mocking
+  helpers (`"splice"`). Expectations that also force the original promise
+  (`expect_match()`, `expect_output_file()`, the snapshot helpers) declare
+  none, since `expect_match(!!"abc", "abc")` errors. `expect_known_value()`,
+  and `expect_s3_class()`/`expect_s4_class()` with `class = NA`, force it
+  only on some paths, so their `full` is an approximation. The deprecated
+  `expect_less_than()`/`expect_more_than()` forward `...` and declare none. `describe`, `it`, `test_path` and
+  `test_that` keep their curated contracts. `tests/testthat.R` pins
+  testthat 3.3.2 against live R.
+
 ## [0.7.0] - 2026-11-27
 
 Schema-2 vocabulary and stub release paired with ry 0.13.0: replaces

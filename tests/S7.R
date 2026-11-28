@@ -46,7 +46,7 @@ stopifnot(identical(
 ))
 
 # Partial-stub completeness markers on intentionally partial stubs (#138).
-for (rel in c("stubs/withr/withr.json", "stubs/rex/rex.json", "stubs/testthat/testthat.json")) {
+for (rel in c("stubs/withr/withr.json", "stubs/rex/rex.json")) {
   partial_doc <- jsonlite::read_json(file.path(root, rel))
   stopifnot(isTRUE(partial_doc$partial))
 }
