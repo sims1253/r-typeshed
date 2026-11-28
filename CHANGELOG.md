@@ -16,7 +16,11 @@ changes.
   file, so a partial stub left the search path open in all of them, and a
   misspelled name in a test stopped reporting `RY010` when testthat was
   not installed (sims1253/ry#944). The new entries list formal names only,
-  so they make no arity claims. `describe`, `it`, `test_path` and
+  so they make no arity claims. The 46 functions that capture an argument
+  with `quasi_label(enquo())`, `enquo()` or `quasi_capture()`, such as the
+  `object` and `expected` of `expect_equal()`, declare it as a full
+  tidy-evaluation `injection`, so `expect_equal(!!x, !!y)` is injection,
+  not double negation. `describe`, `it`, `test_path` and
   `test_that` keep their curated contracts. `tests/testthat.R` pins
   testthat 3.3.2 against live R.
 

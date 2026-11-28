@@ -325,6 +325,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_all_false": {
@@ -335,6 +339,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_all_true": {
@@ -345,6 +352,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_condition": {
@@ -361,6 +371,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_contains": {
@@ -372,6 +385,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_cpp_tests_pass": {
@@ -393,6 +410,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_equal": {
@@ -409,6 +430,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_equal_to_reference": {
@@ -435,6 +460,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_error": {
@@ -451,6 +480,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_failure": {
@@ -475,6 +507,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_gt": {
@@ -488,6 +523,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_gte": {
@@ -501,6 +540,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_identical": {
@@ -516,6 +559,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_in": {
@@ -527,6 +574,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_invisible": {
@@ -551,6 +602,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_known_hash": {
@@ -562,6 +616,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_known_output": {
@@ -579,6 +636,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_known_value": {
@@ -595,6 +655,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_length": {
@@ -606,6 +669,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_less_than": {
@@ -629,6 +695,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_lte": {
@@ -642,6 +712,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_mapequal": {
@@ -653,6 +727,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_match": {
@@ -670,6 +748,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_message": {
@@ -687,6 +768,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_more_than": {
@@ -712,6 +796,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_no_condition": {
@@ -765,6 +853,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_no_message": {
@@ -813,6 +904,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_output": {
@@ -828,6 +922,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_output_file": {
@@ -845,6 +942,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_r6_class": {
@@ -856,6 +956,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_reference": {
@@ -870,6 +973,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_s3_class": {
@@ -882,6 +989,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_s4_class": {
@@ -893,6 +1003,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_s7_class": {
@@ -904,6 +1017,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_setequal": {
@@ -915,6 +1031,10 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full",
+        "expected": "full"
       }
     },
     "expect_shape": {
@@ -929,6 +1049,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_silent": {
@@ -939,6 +1062,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_snapshot": {
@@ -993,6 +1119,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "path": "full"
       }
     },
     "expect_snapshot_output": {
@@ -1005,6 +1134,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "x": "full"
       }
     },
     "expect_snapshot_value": {
@@ -1020,6 +1152,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "x": "full"
       }
     },
     "expect_snapshot_warning": {
@@ -1068,6 +1203,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_type": {
@@ -1079,6 +1217,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_vector": {
@@ -1091,6 +1232,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expect_visible": {
@@ -1119,6 +1263,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "object": "full"
       }
     },
     "expectation": {
@@ -1600,6 +1747,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "code": "full"
       }
     },
     "show_failure": {
@@ -2124,6 +2274,9 @@
         "mode": "opaque",
         "length": "unknown",
         "na": true
+      },
+      "injection": {
+        "code": "full"
       }
     },
     "use_catch": {

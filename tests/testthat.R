@@ -45,6 +45,11 @@ for (name in values) {
   stopifnot(identical(doc$datasets[[name]], opaque))
 }
 
+# Expectations quasiquote `object`/`expected` through quasi_label(enquo()),
+# so `!!` there is injection, not double negation.
+stopifnot(identical(doc$functions$expect_equal$injection, list(object = "full", expected = "full")))
+stopifnot(identical(doc$functions$expect_true$injection, list(object = "full")))
+
 # The curated block-evaluation contracts keep their declared shapes.
 stopifnot(identical(doc$functions$test_that$return$mode, "logical"))
 stopifnot(identical(doc$functions$test_path$source_relative_path_arg, 0L))
