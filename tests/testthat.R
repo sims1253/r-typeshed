@@ -50,6 +50,26 @@ for (name in values) {
 stopifnot(identical(doc$functions$expect_equal$injection, list(object = "full", expected = "full")))
 stopifnot(identical(doc$functions$expect_true$injection, list(object = "full")))
 
+# Functions that force the original promise do not support injection:
+# `expect_match(!!"abc", "abc")` errors in testthat 3.3.2.
+stopifnot(is.null(doc$functions$expect_match$injection))
+stopifnot(identical(doc$functions$expect_no_error$injection, list(object = "full")))
+stopifnot(identical(doc$functions$with_mocked_bindings$injection, list(`...` = "splice")))
+
 # The curated block-evaluation contracts keep their declared shapes.
-stopifnot(identical(doc$functions$test_that$return$mode, "logical"))
+logical1 <- list(mode = "logical", length = "1", na = FALSE)
+curated_params <- list(
+  describe = list(list(name = "description", required = TRUE), list(name = "code", required = TRUE)),
+  it = list(list(name = "description", required = TRUE), list(name = "code", default = TRUE)),
+  test_that = list(list(name = "desc", required = TRUE), list(name = "code", required = TRUE))
+)
+for (name in names(curated_params)) {
+  stopifnot(identical(doc$functions[[name]]$params, curated_params[[name]]))
+  stopifnot(identical(doc$functions[[name]]$return, logical1))
+}
+stopifnot(identical(doc$functions$test_path$params, list("...")))
+stopifnot(identical(
+  doc$functions$test_path$return,
+  list(mode = "character", length = "1", na = FALSE)
+))
 stopifnot(identical(doc$functions$test_path$source_relative_path_arg, 0L))
